@@ -126,7 +126,7 @@
     <summary>Conseils de placement</summary>
     <p id="tipPlace"></p>
     <p>Une répétition = descente puis bras tendus. La barre en bas de l'écran passe au vert quand tu es assez bas.</p>
-    <p><b>Démarrage « Main ✋ » :</b> pose le téléphone, montre ta main ouverte (5 doigts écartés) face à la caméra, de près. Le délai de départ démarre, le temps de te mettre en place.</p>
+    <p><b>Démarrage « Main ✋ » :</b> pose le téléphone, lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre, le temps de te mettre en place.</p>
     <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
   </details>
 </section>
@@ -273,27 +273,41 @@ async function loadHandModel() {
   try { handLm = await HandLandmarker.createFromOptions(files, o("GPU")); }
   catch { handLm = await HandLandmarker.createFromOptions(files, o("CPU")); }
 }
-// Main ouverte : 4 doigts tendus + pouce écarté
+// Main ouverte, à plat face à la caméra : 4 doigts tendus et écartés, pouce sorti, paume pas de profil
 function isOpenPalm(h) {
   const ar = video.videoWidth / video.videoHeight || 1;
   const d = (a, b) => Math.hypot((h[a].x - h[b].x) * ar, h[a].y - h[b].y);
   const palm = d(0, 9);
   if (palm < 0.015) return false;
-  const fingers = [[8, 6], [12, 10], [16, 14], [20, 18]].every(([t, p]) => d(0, t) > d(0, p) * 1.15);
+  const fingers = [[8, 6], [12, 10], [16, 14], [20, 18]].every(([t, p]) => d(0, t) > d(0, p) * 1.25);
   const thumb = d(0, 4) > d(0, 3) && d(4, 5) > palm * 0.5;
-  return fingers && thumb;
+  const facing = d(5, 17) > palm * 0.45;         // largeur de la paume visible : main de face, pas de profil
+  const spread = d(8, 20) > d(5, 17) * 1.15;     // doigts écartés
+  const upright = h[12].y < h[0].y;              // doigts vers le haut
+  return fingers && thumb && facing && spread && upright;
 }
 let waitingHand = false, openSince = 0;
 function handStep(ts) {
+  const ar = video.videoWidth / video.videoHeight || 1;
+  const pr = landmarker.detectForVideo(video, ts);
+  const body = pr.landmarks?.[0];
   const hr = handLm.detectForVideo(video, ts);
   const hands = hr.landmarks || [];
-  const open = hands.some(isOpenPalm);
-  drawPoints(hands.flat(), open ? "#3ddc84" : "#ffb020");
+  // poignets levés au-dessus du nez
+  const raised = body ? [15, 16].map(i => body[i]).filter(w => (w.visibility ?? 0) > 0.5 && w.y < body[0].y) : [];
+  const near = (h, w) => Math.hypot((h[0].x - w.x) * ar, h[0].y - w.y) < 0.12;
+  const goodHand = hands.find(h => isOpenPalm(h) && raised.some(w => near(h, w)));
+  draw(body);
+  drawPoints(hands.flat(), goodHand ? "#3ddc84" : "#ffb020", false);
   $("count").innerHTML = "✋";
-  $("angle").textContent = hands.length ? (open ? "Main ouverte ✔" : "Ouvre bien la main") : "";
-  if (open) {
+  if (!body) setStatus("Mets-toi face à la caméra");
+  else if (!raised.length) setStatus("Lève le bras, main ouverte ✋");
+  else if (!goodHand) setStatus("Ouvre bien la main, paume vers la caméra");
+  else setStatus("Garde la main levée…");
+  $("angle").textContent = "";
+  if (goodHand) {
     openSince ||= ts;
-    const prog = Math.min(1, (ts - openSince) / 600);
+    const prog = Math.min(1, (ts - openSince) / 1000);
     $("phaseFill").style.width = (prog * 100) + "%"; $("phaseFill").style.background = "var(--acc)";
     if (prog >= 1) {                             // signal validé : on lance le délai de départ
       waitingHand = false; openSince = 0; lastCd = -1;
@@ -302,15 +316,13 @@ function handStep(ts) {
       $("phaseFill").style.width = "0%";
     }
   } else { openSince = 0; $("phaseFill").style.width = "0%"; }
-  setStatus("Montre ta main ouverte ✋ pour démarrer");
 }
-function drawPoints(pts, color) {
-  canvas.width = canvas.clientWidth * devicePixelRatio; canvas.height = canvas.clientHeight * devicePixelRatio;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawPoints(pts, color, clear = true) {
+  if (clear) { canvas.width = canvas.clientWidth * devicePixelRatio; canvas.height = canvas.clientHeight * devicePixelRatio; ctx.clearRect(0, 0, canvas.width, canvas.height); }
   const vw = video.videoWidth, vh = video.videoHeight, cw = canvas.width, ch = canvas.height;
   const s = Math.max(cw / vw, ch / vh), ox = (cw - vw * s) / 2, oy = (ch - vh * s) / 2;
   ctx.fillStyle = color;
-  for (const p of pts) { ctx.beginPath(); ctx.arc(p.x * vw * s + ox, p.y * vh * s + oy, 5 * devicePixelRatio, 0, 7); ctx.fill(); }
+  for (const p of pts) { ctx.beginPath(); ctx.arc(p.x * vw * s + ox, p.y * vh * s + oy, 4 * devicePixelRatio, 0, 7); ctx.fill(); }
 }
 async function startCamera() {
   stopCamera();
@@ -565,7 +577,7 @@ $("startBtn").onclick = async () => {
   running = true; keepAwake(); armed = false; lastCd = -1;
   if (cfg.trigger === "hand") {
     waitingHand = true; openSince = 0; armDelayEnd = 0;
-    say("Montre ta main pour démarrer");
+    say("Lève la main pour démarrer");
   } else {
     waitingHand = false; armDelayEnd = performance.now() + cfg.delay * 1000;
     say(cfg.delay ? `Départ dans ${cfg.delay} secondes` : "Mets-toi en position");
