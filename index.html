@@ -564,11 +564,12 @@
   .star{font-size:11px;font-weight:800;color:#052e16;background:#4ade80;border-radius:6px;padding:1px 5px;margin-left:5px;vertical-align:2px;font-family:Inter,sans-serif;letter-spacing:0}
   .pchip2.on .star{background:#16a34a;color:#fff}
   /* ===== Onglets Exercice / Programme ===== */
-  .segtab{display:flex;background:#ffffff0a;border:1px solid #ffffff14;border-radius:14px;padding:4px;flex:1;max-width:260px}
-  .segtab button{flex:1;border:none;background:none;color:#a1a1aa;font:inherit;font-size:14.5px;font-weight:700;padding:9px 6px;border-radius:10px}
+  .segtab{display:flex;background:#ffffff0a;border:1px solid #ffffff14;border-radius:14px;padding:4px;flex:1;max-width:300px}
+  .segtab button{flex:1;border:none;background:none;color:#a1a1aa;font:inherit;font-size:13.5px;font-weight:700;padding:9px 4px;border-radius:10px}
   .segtab button.on{background:#fafafa;color:#09090b}
   #pickExo,#pickProg{display:flex;flex-direction:column;gap:12px}
-  #pickProg[hidden],#pickExo[hidden]{display:none}
+  #pickProg[hidden],#pickExo[hidden],#pickGuided[hidden]{display:none}
+  #pickGuided{display:flex;flex-direction:column;gap:12px}
   .pcard2{padding:12px}
   .pcard2 .pc-h{display:flex;align-items:center;gap:10px}
   .pcard2 .pc-h .exo-ic{width:42px;height:42px;border-radius:13px;margin:0;flex:none}
@@ -618,6 +619,49 @@
   .chips7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
   .chips5{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
   .chips7 .pchip2,.chips5 .pchip2{padding:12px 4px!important}
+
+  /* ===== Séances guidées (sans caméra) ===== */
+  #guided{background:radial-gradient(120% 60% at 50% 0%,var(--gpc,#14281d) 0%,#09090b 62%);font-family:Inter,system-ui,sans-serif;transition:background .4s;position:relative}
+  #guided.ph-work{--gpc:#17361f}#guided.ph-rest{--gpc:#10233a}#guided.ph-prep{--gpc:#3a2a0c}
+  .gp-top{display:flex;align-items:center;gap:8px;padding:max(14px, env(safe-area-inset-top)) 16px 0}
+  .gp-top #gpName{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+  .gp-main{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:10px 18px}
+  .gp-ringwrap{position:relative;width:min(70vw,300px);aspect-ratio:1}
+  .gp-ring{width:100%;height:100%;transform:rotate(-90deg)}
+  .gp-ring circle{fill:none;stroke-width:7}
+  .gp-ring .rb{stroke:#ffffff12}
+  .gp-ring .rf{stroke:var(--acc2,#4ade80);stroke-linecap:round;stroke-dasharray:339.29;transition:stroke-dashoffset .25s linear;filter:drop-shadow(0 0 8px var(--acc2,#4ade80))}
+  #guided.ph-rest{--acc2:#60a5fa}#guided.ph-prep{--acc2:#fbbf24}
+  .gp-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gp-phase{font-size:13px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;color:var(--acc2,#4ade80)}
+  .gp-sec{font-size:min(28vw,120px);line-height:.9;margin:4px 0}
+  .gp-round{font-size:13px;color:#a1a1aa;font-weight:600}
+  .gp-info{width:100%;max-width:420px;text-align:center;display:flex;flex-direction:column;gap:6px}
+  .gp-move{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .gp-cue{font-size:15px;color:#a1a1aa;min-height:20px}
+  .gp-next{margin-top:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-size:14px;text-align:left}
+  .gp-next small{color:#71717a;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;display:block}
+  .gp-next:empty{display:none}
+  .gp-ctrl{display:flex;justify-content:center;align-items:center;gap:26px;padding:10px 16px calc(18px + env(safe-area-inset-bottom))}
+  .gp-ctrl .rbtn .ic{width:22px;height:22px}
+  .gp-ctrl .rbig .ic{width:30px;height:30px}
+  .gp-ov{position:absolute;inset:0;z-index:8;display:none;align-items:center;justify-content:center;padding:24px;background:#09090bdd;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .gp-ov.on{display:flex}
+  .lockov{background:#09090bf0}
+  .lockic{display:grid;place-items:center;margin:0 auto 6px;width:64px;height:64px;border-radius:50%;background:#ffffff0d;color:#a1a1aa}
+  .lockic .ic{width:30px;height:30px}
+  /* catalogue */
+  .gcard{display:flex;flex-direction:column;gap:10px}
+  .gcard .pc-h .exo-ic{background:var(--gc,#4ade80);color:#052e16}
+  .gcard .gmeta{display:flex;gap:6px;flex-wrap:wrap}
+  .gcard .gmeta span{font-size:12px;background:#ffffff0d;border-radius:8px;padding:4px 8px;color:#d4d4d8}
+  .gnote{font-size:12.5px;color:#71717a;text-align:center;line-height:1.45}
+  @media (orientation: landscape){
+    .gp-main{flex-direction:row;gap:5vw}
+    .gp-ringwrap{width:min(62vh,300px)}
+    .gp-info{text-align:left;max-width:380px}
+    .gp-ctrl{position:absolute;right:18px;top:50%;transform:translateY(-50%);flex-direction:column;gap:14px;padding:0}
+  }
 </style>
 </head>
 <body>
@@ -649,7 +693,7 @@
 <section id="pick" class="screen">
   <div class="page">
     <header class="top">
-      <div class="segtab" id="pickTabs"><button data-t="exo" class="on">Exercice</button><button data-t="prog">Programme</button></div>
+      <div class="segtab" id="pickTabs"><button data-t="exo" class="on">Exercice</button><button data-t="prog">Programme</button><button data-t="guided">Guidée</button></div>
       <div class="row"><button class="iconbtn" id="tipsBtn" aria-label="Conseils"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button><button class="iconbtn" id="pickClose" aria-label="Fermer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
     </header>
     <div id="pickExo">
@@ -662,6 +706,7 @@
     </div>
     </div>
     <div id="pickProg" hidden></div>
+    <div id="pickGuided" hidden></div>
   </div>
   <footer class="pick-foot">
     <div class="recap" id="recap"></div>
@@ -756,6 +801,32 @@
     <button class="tab on" data-go="hist" id="histBtn"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg><span>Progrès</span></button>
   </nav>
 </section>
+<section id="guided" class="screen">
+  <div class="gp-top"><div class="pill pill-strong" id="gpName">Séance</div><div class="pill pill-mono" id="gpLeft">0:00</div><button class="iconbtn" id="gpLock" aria-label="Verrouiller l'écran"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button></div>
+  <div class="gp-main">
+    <div class="gp-ringwrap">
+      <svg viewBox="0 0 120 120" class="gp-ring"><circle cx="60" cy="60" r="54" class="rb"/><circle cx="60" cy="60" r="54" class="rf" id="gpRing"/></svg>
+      <div class="gp-center"><div class="gp-phase" id="gpPhase">Prêt</div><div class="gp-sec num" id="gpSec">0</div><div class="gp-round" id="gpRound"></div></div>
+    </div>
+    <div class="gp-info">
+      <div class="gp-move" id="gpMove">—</div>
+      <div class="gp-cue" id="gpCue"></div>
+      <div class="gp-next card" id="gpNext"></div>
+    </div>
+  </div>
+  <div class="gp-ctrl">
+    <button class="rbtn" id="gpPrev" aria-label="Précédent"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="19 20 9 12 19 4 19 20" fill="currentColor" stroke="none"/><line x1="5" x2="5" y1="19" y2="5"/></svg></button>
+    <button class="rbtn rbig" id="gpPlay" aria-label="Pause"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/></svg></button>
+    <button class="rbtn" id="gpNextBtn" aria-label="Suivant"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4" fill="currentColor" stroke="none"/><line x1="19" x2="19" y1="5" y2="19"/></svg></button>
+  </div>
+  <div id="gpPause" class="gp-ov">
+    <div class="po-box"><div class="po-k">En pause</div><div class="po-time num" id="gpPauseTime">0:00</div>
+      <button class="go" id="gpResume"><svg class="ic go-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="7 4 20 12 7 20" fill="currentColor" stroke="none"/></svg><span>Reprendre</span></button>
+      <button class="gbtn gbtn-red po-b hold" id="gpStop"><i class="hold-fill"></i><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="16" x="4" y="4" rx="2"/></svg><span>Maintenir pour terminer</span></button></div>
+  </div>
+  <div id="gpLockOv" class="gp-ov lockov"><div class="po-box"><div class="lockic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="po-k">Écran verrouillé</div><p class="mut">Les appuis sont ignorés pour ne rien toucher par erreur (téléphone dans la poche, en courant…).</p>
+    <button class="gbtn po-b hold" id="gpUnlock"><i class="hold-fill" style="background:#4ade8055"></i><span>Maintenir pour déverrouiller</span></button></div></div>
+</section>
 <section id="done" class="screen">
   <div class="done-wrap">
     <div class="trophy"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
@@ -817,7 +888,7 @@
       <p><b>Démarrage « Main » :</b> montre ta main ouverte face à l'écran, 5 doigts écartés vers le haut, assez près de la caméra, et garde-la immobile un peu plus d'une seconde. Le délai de départ démarre ensuite. Le même geste pendant une pause lance la série suivante.</p>
       <p class="disclaimer">Repères généraux inspirés des recommandations de l’ACSM (American College of Sports Medicine). Ils ne remplacent ni un coach ni un avis médical : arrête-toi en cas de douleur, et demande conseil à un professionnel de santé si tu as un problème de santé ou une blessure.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 18.11 · 04h00</p>
+      <p class="ver">Version 18.11 · 05h00</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -875,6 +946,15 @@
       <h2>Ajouter un exercice</h2>
       <div class="exo-grid" id="exoPickGrid"></div>
       <button class="gbtn" id="exoPickClose" style="width:100%;margin-top:10px">Annuler</button>
+    </div>
+  </div>
+  <div class="sheet" id="gdCustom">
+    <div class="sheet-box">
+      <h2 id="gdcTitle">Personnaliser</h2>
+      <p class="sheet-sub" id="gdcDesc"></p>
+      <div class="card params-card" id="gdcRows"></div>
+      <p class="pe-sum" id="gdcSum"></p>
+      <div class="pe-foot"><button class="gbtn" id="gdcClose">Annuler</button><button class="go" id="gdcStart"><span>Démarrer</span></button></div>
     </div>
   </div>
 <script type="module">
@@ -1748,6 +1828,7 @@ function endWorkout() {
   const cnt = {};
   $("summary").innerHTML = history.map(r => { cnt[r.exo] = (cnt[r.exo] || 0) + 1; return `<div class="sum-row"><span>${exos.length > 1 ? exoName(r.exo) + " · " : ""}Série ${cnt[r.exo]}</span><b>${r.txt}${EXOS[r.exo]?.timed ? " s" : ""}</b></div>`; }).join("");
   $("statTotal").textContent = total; $("statUnit").textContent = unit;
+  $("statTotal").parentElement.querySelector(".stat-lab").lastChild.textContent = " Total";
   $("statSets").textContent = history.length;
   const dur = workoutStart ? Date.now() - workoutStart : 0;
   const kcal = kcalOf(history, dur, cfg.weight), ton = history.reduce((a, h) => a + (h.ton || 0), 0);
@@ -1863,9 +1944,10 @@ function renderHist() {
   }
   $("histList").innerHTML = S.slice().reverse().slice(0, 30).map(s => {
     const per = {}; for (const x of s.sets) per[x.exo] = (per[x.exo] || 0) + x.n;
+    if (s.guided) per["§" + s.guided.name] = fmtClock((s.guided.work || 0) * 1000) + " d'effort";
     for (const e in per) if (EXOS[e]?.timed) per[e] = per[e] + " s";
     const d = new Date(s.t);
-    return `<div class="sess"><div class="sess-top"><b>${d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · ${d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</b><span>${Math.max(1, Math.round((s.dur || 0) / 60000))} min · ${s.sets.length} série${s.sets.length > 1 ? "s" : ""}${s.kcal ? ` · ≈${s.kcal} kcal` : ""}</span></div><div class="sess-exos">${Object.entries(per).map(([e, n]) => `<span>${exoName(e)}<b>${n}</b></span>`).join("")}${s.ton ? `<span>Tonnage<b>${s.ton.toLocaleString("fr-FR")} kg</b></span>` : ""}</div></div>`;
+    return `<div class="sess"><div class="sess-top"><b>${d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · ${d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</b><span>${Math.max(1, Math.round((s.dur || 0) / 60000))} min · ${s.sets.length} série${s.sets.length > 1 ? "s" : ""}${s.kcal ? ` · ≈${s.kcal} kcal` : ""}</span></div><div class="sess-exos">${Object.entries(per).map(([e, n]) => `<span>${e.startsWith("§") ? e.slice(1) : exoName(e)}<b>${n}</b></span>`).join("")}${s.ton ? `<span>Tonnage<b>${s.ton.toLocaleString("fr-FR")} kg</b></span>` : ""}</div></div>`;
   }).join("");
   $("histClear").style.display = S.length ? "" : "none";
   $("histClear").querySelector("span").textContent = "Effacer l'historique"; clearArmed = false;
@@ -2054,12 +2136,15 @@ function renderHome() {
       const obj = m.sets == null ? "Derniers réglages" : m.reps ? `${m.sets} × ${m.reps}${X.timed ? " s" : ""}` : `${m.sets} × max`;
       return `<div class="card rcard"><span class="exo-ic on">${svgIc(X.icon)}</span><div class="rc-t"><b>${X.name}</b><small>${obj} · pause ${fmtRest(m.rest || cfg.rest)}</small></div><button class="playbtn" data-q="${e}" aria-label="Démarrer ${X.name}">${IC_PLAY}</button></div>`; });
   const progCards = (cfg.saved || []).map((p, i) => [p, i]).sort((a, b) => (b[0].plan ? 1 : 0) - (a[0].plan ? 1 : 0)).slice(0, 2).map(([p, i]) => `<div class="card rcard"><span class="exo-ic${p.plan ? " on" : ""}">${svgIc("list")}</span><div class="rc-t"><b>${p.name.replace(/</g, "&lt;")}</b><small>${p.plan && p.minutes ? `≈ ${p.minutes} min · ` : ""}${p.blocks.map(b => exoName(b.exo)).join(" › ")}</small></div><button class="playbtn${p.plan ? "" : " ghost2"}" data-p="${i}" aria-label="Démarrer le programme">${IC_PLAY}</button></div>`);
-  const cards = progCards.concat(exoCards);
+  const gk = (cfg.profile?.guided || [])[0];
+  const guidedCards = gk && GUIDED[gk] ? [`<div class="card rcard"><span class="exo-ic" style="background:${GUIDED[gk].color};color:#052e16"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${GUIDED[gk].icon}</svg></span><div class="rc-t"><b>${GUIDED[gk].name}</b><small>Sans caméra · ≈ ${fmtDur(stepsDur(gdSteps(gk)))} · coach vocal</small></div><button class="playbtn" data-g="${gk}" aria-label="Démarrer">${IC_PLAY}</button></div>`] : [];
+  const cards = progCards.concat(guidedCards, exoCards).slice(0, 4);
   $("resumeK").style.display = cards.length ? "" : "none";
   $("resumeK").textContent = S.length ? "Reprendre" : "Ton plan";
   $("resumeList").innerHTML = cards.join("") || "";
   $("resumeList").querySelectorAll("[data-q]").forEach(b => b.onclick = () => quickStart(b.dataset.q));
   $("resumeList").querySelectorAll("[data-p]").forEach(b => b.onclick = () => quickProgram(+b.dataset.p));
+  $("resumeList").querySelectorAll("[data-g]").forEach(b => b.onclick = () => startGuided(b.dataset.g));
   // dernière séance
   const L = S[S.length - 1];
   if (!L) {
@@ -2070,9 +2155,9 @@ function renderHome() {
     $("lastK").style.display = "";
     const d = new Date(L.t), days = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(L.t).setHours(0, 0, 0, 0)) / 864e5);
     const when = days === 0 ? "Aujourd'hui" : days === 1 ? "Hier" : d.toLocaleDateString("fr-FR", { weekday: "long" });
-    const exos = [...new Set(L.sets.map(x => exoName(x.exo)))].join(", ");
+    const exos = L.guided ? L.guided.name : [...new Set(L.sets.map(x => exoName(x.exo)))].join(", ");
     $("lastCard").innerHTML = `<div class="card"><div class="row" style="justify-content:space-between"><b>${when} · ${exos}</b><span class="mut">${Math.max(1, Math.round((L.dur || 0) / 60000))} min</span></div>
-      <div class="stats3"><div><b class="num">${sessReps(L) || L.sets.reduce((a, x) => a + x.n, 0)}</b><span>${sessReps(L) ? "reps" : "secondes"}</span></div><div><b class="num">${L.sets.length}</b><span>séries</span></div><div><b class="num">${L.kcal ? "≈" + L.kcal : "—"}</b><span>kcal</span></div></div></div>`;
+      <div class="stats3">${L.guided ? `<div><b class="num">${fmtClock((L.guided.work || 0) * 1000)}</b><span>effort</span></div>` : `<div><b class="num">${sessReps(L) || L.sets.reduce((a, x) => a + x.n, 0)}</b><span>${sessReps(L) ? "reps" : "secondes"}</span></div>`}<div><b class="num">${L.guided ? Math.max(1, Math.round((L.dur || 0) / 60000)) : L.sets.length}</b><span>${L.guided ? "minutes" : "séries"}</span></div><div><b class="num">${L.kcal ? "≈" + L.kcal : "—"}</b><span>kcal</span></div></div></div>`;
     $("lastCard").firstElementChild.onclick = () => goTo("hist");
   }
 }
@@ -2141,7 +2226,7 @@ function applyProfile() {
   cfg.goalSessions = p.perWeek || weeklySessionsFor(p);
   cfg.goal = planWeeklyReps(progs, cfg.goalSessions) || weeklyGoalFor(p);
   cfg.weight = p.weight || cfg.weight;
-  cfg.exo = p.exos[0] || cfg.exo;
+  cfg.exo = p.exos[0] || cfg.exo || "pompes";
   const m = cfg.perExo[cfg.exo]; if (m) { cfg.sets = m.sets; cfg.reps = m.reps; cfg.rest = m.rest; }
 }
 function renderProfileRow() {
@@ -2192,15 +2277,21 @@ function renderOnb() {
       <div class="sec-k">Temps par séance</div>
       <div class="chips5">${[10, 15, 20, 30, 45, 60].map(n => `<button class="pchip2${op.minutes === n ? " on" : ""}" data-mn="${n}">${n} min</button>`).join("")}</div>`;
   } else if (onbStep === 4) {
-    html = `<h1>Tes exercices</h1><p class="lead">Choisis ceux que tu veux pratiquer. Tu pourras en faire d'autres quand tu veux.</p>
-      <div class="exo-grid">${Object.entries(EXOS).map(([k, x]) => `<button class="exo${op.exos.includes(k) ? " on" : ""}" data-ex="${k}"><span class="exo-ic">${svgIc(x.icon)}</span><b>${x.name}</b><small>${x.muscle}</small></button>`).join("")}</div>`;
-    next = op.exos.length ? `Continuer (${op.exos.length})` : "Choisis au moins un exercice";
+    op.guided = op.guided || [];
+    html = `<h1>Tes activités</h1><p class="lead">Choisis ce que tu veux pratiquer. Tu pourras faire le reste quand tu veux.</p>
+      <div class="sec-k">Avec la caméra · comptage automatique</div>
+      <div class="exo-grid">${Object.entries(EXOS).map(([k, x]) => `<button class="exo${op.exos.includes(k) ? " on" : ""}" data-ex="${k}"><span class="exo-ic">${svgIc(x.icon)}</span><b>${x.name}</b><small>${x.muscle}</small></button>`).join("")}</div>
+      <div class="sec-k">Sans caméra · chrono et coach vocal</div>
+      <div class="exo-grid">${Object.entries(GUIDED).map(([k, g]) => `<button class="exo${op.guided.includes(k) ? " on" : ""}" data-gg="${k}"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${g.icon}</svg></span><b>${g.name}</b><small>≈ ${fmtDur(stepsDur(gdSteps(k)))}</small></button>`).join("")}</div>`;
+    const nSel = op.exos.length + op.guided.length;
+    next = nSel ? `Continuer (${nSel})` : "Choisis au moins une activité";
   } else {
     const progs = buildPlanPrograms(op), wg = planWeeklyReps(progs, op.perWeek) || weeklyGoalFor(op);
     html = `<h1>Ton plan${op.name ? ", " + op.name.replace(/</g, "") : ""}</h1><p class="lead">${LEVELS[op.level - 1].n} · ${GOALS.find(g => g.k === op.goal).n}</p>
       <div class="card goal-card" style="cursor:default"><div class="ring"><svg viewBox="0 0 86 86"><circle cx="43" cy="43" r="36" class="rb"/><circle cx="43" cy="43" r="36" class="rf" style="stroke-dasharray:226;stroke-dashoffset:${226 * (1 - Math.min(1, op.perWeek / 7))}"/></svg><b class="num">${op.perWeek}×</b></div><div class="goal-txt2"><div class="sec-k" style="margin:0">Par semaine</div><div class="num big2">${op.perWeek}<small> séance${op.perWeek > 1 ? "s" : ""} · ${op.minutes} min</small></div><div class="mut" style="font-size:12.5px">≈ ${wg} répétitions par semaine</div></div></div>
       ${progs.map(pr => `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><b>${pr.name}</b><span class="mut">≈ ${pr.minutes} min · repos ${fmtRest(pr.rest)}</span></div>${pr.blocks.map(b => `<div class="plan-row"><span class="exo-ic">${svgIc(EXOS[b.exo].icon)}</span><span>${EXOS[b.exo].name}</span><b>${b.sets} × ${b.reps}${EXOS[b.exo].timed ? " s" : ""}</b></div>`).join("")}${progs.length > 1 ? "" : ""}</div>`).join("")}
       ${progs.length > 1 ? `<p class="mut" style="text-align:center;font-size:12.5px">Alterne A et B d'une séance à l'autre.</p>` : ""}
+      ${(op.guided || []).length ? `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><b>Sans caméra</b><span class="mut">coach vocal</span></div>${op.guided.map(k => `<div class="plan-row"><span class="exo-ic" style="background:${GUIDED[k].color};color:#052e16"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${GUIDED[k].icon}</svg></span><span>${GUIDED[k].name}</span><b>≈ ${fmtDur(stepsDur(gdSteps(k)))}</b></div>`).join("")}</div>` : ""}
       ${(() => { const used = new Set(progs.flatMap(pr => pr.blocks.map(b => b.exo))), left = op.exos.filter(e => !used.has(e)); return left.length ? `<p class="mut" style="text-align:center;font-size:12.5px">Pas assez de temps pour ${left.map(e => EXOS[e].name).join(", ")} : augmente la durée ou fais-les à part.</p>` : ""; })()}
       <p class="mut" style="text-align:center">Modifiable à tout moment : Paramètres › Mon profil</p>
       <p class="disclaimer">Repères généraux inspirés des recommandations de l’ACSM (American College of Sports Medicine). Ils ne remplacent ni un coach ni un avis médical : arrête-toi en cas de douleur, et demande conseil à un professionnel de santé si tu as un problème de santé ou une blessure.</p>`;
@@ -2208,13 +2299,14 @@ function renderOnb() {
   }
   B.innerHTML = html; B.scrollTop = 0;
   $("onbNext").querySelector("span").textContent = next;
-  $("onbNext").disabled = onbStep === 4 && !op.exos.length;
+  $("onbNext").disabled = onbStep === 4 && !op.exos.length && !(op.guided || []).length;
   const nm = $("onbName"); if (nm) { nm.oninput = () => op.name = nm.value.trim(); if (!onbEdit) setTimeout(() => nm.focus(), 250); nm.onkeydown = e => { if (e.key === "Enter") $("onbNext").click(); }; }
   B.querySelectorAll("[data-ok]").forEach(b => b.onclick = () => { const k = b.dataset.ok, lim = k === "weight" ? [30, 250] : [120, 230]; op[k] = Math.min(lim[1], Math.max(lim[0], (op[k] || 0) + +b.dataset.od)); renderOnb(); });
   B.querySelectorAll("[data-lvl]").forEach(b => b.onclick = () => { op.level = +b.dataset.lvl; if (!op.rythmTouched) op.perWeek = 0; renderOnb(); });
   B.querySelectorAll("[data-pw]").forEach(b => b.onclick = () => { op.perWeek = +b.dataset.pw; op.rythmTouched = true; renderOnb(); });
   B.querySelectorAll("[data-mn]").forEach(b => b.onclick = () => { op.minutes = +b.dataset.mn; renderOnb(); });
   B.querySelectorAll("[data-goal]").forEach(b => b.onclick = () => { op.goal = b.dataset.goal; renderOnb(); });
+  B.querySelectorAll("[data-gg]").forEach(b => b.onclick = () => { const k = b.dataset.gg; op.guided = op.guided.includes(k) ? op.guided.filter(x => x !== k) : [...op.guided, k]; renderOnb(); });
   B.querySelectorAll("[data-ex]").forEach(b => b.onclick = () => { const k = b.dataset.ex; op.exos = op.exos.includes(k) ? op.exos.filter(x => x !== k) : [...op.exos, k]; renderOnb(); });
 }
 function finishOnb() {
@@ -2276,9 +2368,10 @@ function startProgram(p) {
 }
 function setPickTab(t) {
   document.querySelectorAll("#pickTabs button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
-  $("pickExo").hidden = t !== "exo"; $("pickProg").hidden = t !== "prog";
+  $("pickExo").hidden = t !== "exo"; $("pickProg").hidden = t !== "prog"; $("pickGuided").hidden = t !== "guided";
   document.querySelector("#pick .pick-foot").style.display = t === "exo" ? "" : "none";
   if (t === "prog") renderProgTab();
+  if (t === "guided") renderGuidedTab();
 }
 document.querySelectorAll("#pickTabs button").forEach(b => b.onclick = () => setPickTab(b.dataset.t));
 
@@ -2328,6 +2421,206 @@ if (cfg.prog?.length) {
   cfg.saved = cfg.saved || [];
   if (!cfg.saved.some(p => JSON.stringify(p.blocks) === JSON.stringify(cfg.prog))) cfg.saved.push({ name: "Mon programme", rest: cfg.rest, blocks: cfg.prog });
   cfg.prog = []; try { localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {}
+}
+
+/* ===================== Séances guidées (sans caméra) : chrono + coach vocal ===================== */
+const MOVES = {
+  jj: ["Jumping jacks", "Écarte bras et jambes en rythme"], burpee: ["Burpees", "Accroupi, planche, saut, bras en l'air"],
+  mc: ["Mountain climbers", "En planche, ramène les genoux vers la poitrine, vite"], ssaut: ["Squats sautés", "Descends, puis saute ; réception souple"],
+  genoux: ["Montées de genoux", "Cours sur place, genoux à hauteur des hanches"], sq: ["Squats", "Pieds largeur d'épaules, dos droit"],
+  pompes: ["Pompes", "Sur les genoux si besoin, corps gainé"], fentesA: ["Fentes alternées", "Grand pas, genou arrière vers le sol"],
+  skater: ["Pas du patineur", "Bonds latéraux, comme un patineur"], talons: ["Talons-fesses", "Cours sur place, talons vers les fesses"],
+  planche: ["Planche", "Sur les avant-bras, corps bien droit, abdos serrés"], plG: ["Planche latérale gauche", "Hanches hautes, corps aligné"],
+  plD: ["Planche latérale droite", "Hanches hautes, corps aligné"], superman: ["Superman", "Allongé sur le ventre, lève bras et jambes"],
+  hollow: ["Hollow hold", "Sur le dos, bas du dos plaqué au sol, jambes tendues"], crunch: ["Crunchs", "Enroule le haut du dos, sans tirer sur la nuque"],
+  pont: ["Pont fessier", "Sur le dos, pousse les hanches vers le haut"], bird: ["Bird dog", "À quatre pattes, bras et jambe opposés tendus"],
+  corde: ["Corde à sauter", "Petits sauts, poignets souples, sur l'avant du pied"],
+  vite: ["Allure rapide", "Accélère : tu peux encore dire quelques mots"], lent: ["Récupération", "Trottine ou marche, respire calmement"],
+  echauf: ["Échauffement", "Trottine tranquillement, augmente peu à peu"], retour: ["Retour au calme", "Ralentis progressivement"],
+  ischios: ["Ischio-jambiers", "Jambe tendue, penche-toi doucement vers l'avant"], quadG: ["Quadriceps gauche", "Talon vers la fesse, genoux serrés"],
+  quadD: ["Quadriceps droit", "Talon vers la fesse, genoux serrés"], fessG: ["Fessier gauche", "Sur le dos, cheville sur le genou opposé"],
+  fessD: ["Fessier droit", "Sur le dos, cheville sur le genou opposé"], mollets: ["Mollets", "Mains au mur, talon arrière au sol"],
+  pecs: ["Pectoraux", "Mains jointes dans le dos, ouvre la poitrine"], epG: ["Épaule gauche", "Bras tendu contre la poitrine"],
+  epD: ["Épaule droite", "Bras tendu contre la poitrine"], chat: ["Chat-vache", "À quatre pattes, arrondis puis creuse le dos"],
+  enfant: ["Posture de l'enfant", "Assis sur les talons, bras devant, relâche le dos"], cou: ["Nuque", "Penche doucement la tête de chaque côté"],
+};
+const lvlIdx = () => (cfg.profile?.level || 2) - 1;
+const GUIDED = {
+  hiit: { name: "HIIT circuit", color: "#4ade80", met: 8, icon: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+    desc: "Cardio intense : 5 exercices enchaînés, plusieurs tours.", params: () => ({ rounds: [2, 3, 4][lvlIdx()], work: [30, 40, 45][lvlIdx()], rest: [30, 20, 15][lvlIdx()] }),
+    labels: { rounds: "Tours", work: "Effort (s)", rest: "Repos (s)" },
+    build: p => circuit(lvlIdx() ? ["jj", "burpee", "mc", "ssaut", "genoux"] : ["jj", "sq", "genoux", "pompes", "talons"], p, 60) },
+  tabata: { name: "Tabata", color: "#f97316", met: 8.5, icon: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+    desc: "Le classique : 20 s à fond, 10 s de repos, 8 fois. 4 minutes qui comptent.", params: () => ({ rounds: 8, work: 20, rest: 10 }),
+    labels: { rounds: "Répétitions", work: "Effort (s)", rest: "Repos (s)" },
+    build: p => circuit(lvlIdx() ? ["burpee", "mc"] : ["jj", "sq"], { ...p, rounds: 1, perMove: p.rounds }, 0) },
+  gainage: { name: "Gainage", color: "#a78bfa", met: 3.8, icon: '<rect x="3" y="10" width="18" height="4" rx="2"/><path d="M7 14v4"/><path d="M17 14v4"/>',
+    desc: "Abdos et dos : planches, superman, hollow. Idéal en fin de séance.", params: () => ({ rounds: [2, 3, 3][lvlIdx()], work: [20, 30, 45][lvlIdx()], rest: [20, 15, 10][lvlIdx()] }),
+    labels: { rounds: "Tours", work: "Maintien (s)", rest: "Repos (s)" },
+    build: p => circuit(["planche", "plG", "plD", "superman", lvlIdx() ? "hollow" : "pont", "bird"], p, 45) },
+  etirements: { name: "Étirements", color: "#22d3ee", met: 2.3, icon: '<path d="M12 22c4-4 8-7.5 8-12a8 8 0 1 0-16 0c0 4.5 4 8 8 12z"/>',
+    desc: "10 minutes de récupération, tout le corps. Respire, ne force jamais.", params: () => ({ work: 30 }),
+    labels: { work: "Maintien (s)" },
+    build: p => ["chat", "ischios", "quadG", "quadD", "fessG", "fessD", "mollets", "pecs", "epG", "epD", "cou", "enfant"].map((m, i, a) => ({ kind: "work", m, sec: p.work, i: i + 1, n: a.length })) },
+  corde: { name: "Corde à sauter", color: "#fbbf24", met: 11, icon: '<path d="M6 4v6a6 6 0 0 0 12 0V4"/><circle cx="6" cy="3" r="1"/><circle cx="18" cy="3" r="1"/>',
+    desc: "Intervalles de corde : excellent pour le cardio et la coordination.", params: () => ({ rounds: [6, 8, 10][lvlIdx()], work: [30, 60, 90][lvlIdx()], rest: [30, 30, 30][lvlIdx()] }),
+    labels: { rounds: "Intervalles", work: "Sauts (s)", rest: "Repos (s)" },
+    build: p => circuit(["corde"], { ...p, perMove: p.rounds, rounds: 1 }, 0) },
+  course: { name: "Course fractionnée", color: "#60a5fa", met: 9, icon: '<circle cx="13" cy="4" r="2"/><path d="m7 21 3-6 3 2 2 5"/><path d="M5 12l3-3 4 1 3 3 3 1"/>',
+    desc: "Échauffement, alternance rapide / lent, retour au calme. Le coach te guide à la voix.", params: () => ({ rounds: [5, 6, 8][lvlIdx()], work: [60, 60, 90][lvlIdx()], rest: [120, 90, 90][lvlIdx()], warm: 300 }),
+    labels: { rounds: "Fractions", work: "Rapide (s)", rest: "Lent (s)", warm: "Échauffement (s)" },
+    build: p => [{ kind: "work", m: "echauf", sec: p.warm, soft: 1 },
+      ...Array.from({ length: p.rounds }, (_, i) => [{ kind: "work", m: "vite", sec: p.work, i: i + 1, n: p.rounds }, { kind: "rest", m: "lent", sec: p.rest, i: i + 1, n: p.rounds, active: 1 }]).flat(),
+      { kind: "work", m: "retour", sec: p.warm, soft: 1 }] },
+};
+// circuit : chaque tour enchaîne les mouvements ; repos entre exercices et pause plus longue entre les tours
+function circuit(moves, p, roundRest) {
+  const out = [], per = p.perMove || 1;
+  for (let r = 1; r <= p.rounds; r++) {
+    moves.forEach((m, mi) => {
+      for (let k = 1; k <= per; k++) {
+        out.push({ kind: "work", m, sec: p.work, i: per > 1 ? k : mi + 1, n: per > 1 ? per : moves.length, r, rn: p.rounds });
+        const last = r === p.rounds && mi === moves.length - 1 && k === per;
+        if (!last) out.push({ kind: "rest", m: null, sec: (mi === moves.length - 1 && k === per && roundRest) ? Math.max(p.rest, roundRest) : p.rest, r, rn: p.rounds });
+      }
+    });
+  }
+  return out.filter(x => x.sec > 0);
+}
+const gdParams = {};
+function gdP(key) { return { ...GUIDED[key].params(), ...((cfg.guidedP || {})[key] || {}), ...(gdParams[key] || {}) }; }
+function gdSteps(key, p = gdP(key)) { return [{ kind: "prep", m: null, sec: 10 }, ...GUIDED[key].build(p)]; }
+const stepsDur = st => st.reduce((a, x) => a + x.sec, 0);
+function fmtDur(sec) { const m = Math.round(sec / 60); return m < 1 ? `${sec} s` : `${m} min`; }
+
+/* ---------- Catalogue (onglet Guidée) ---------- */
+function renderGuidedTab() {
+  const mine = cfg.profile?.guided || [];
+  const keys = Object.keys(GUIDED).sort((a, b) => (mine.includes(b) ? 1 : 0) - (mine.includes(a) ? 1 : 0));
+  $("pickGuided").innerHTML = `<p class="gnote">Pas de caméra : un coach vocal annonce chaque exercice, le temps restant et les pauses. Pose le téléphone où tu l'entends bien.</p>` +
+    keys.map(k => { const G = GUIDED[k], p = gdP(k), st = gdSteps(k, p);
+      return `<div class="card pcard2 gcard" style="--gc:${G.color}"><div class="pc-h"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${G.icon}</svg></span><div class="pc-t"><b>${G.name}</b><small>${G.desc}</small></div></div>
+        <div class="gmeta"><span>≈ ${fmtDur(stepsDur(st))}</span>${p.rounds ? `<span>${p.rounds} × ${p.work} s${p.rest ? " / " + p.rest + " s" : ""}</span>` : `<span>${p.work} s par étirement</span>`}${mine.includes(k) ? "<span>★ dans ton profil</span>" : ""}</div>
+        <div class="pc-actions"><button class="gbtn" data-gc="${k}">Personnaliser</button><button class="go" data-gs="${k}"><span>Démarrer</span></button></div></div>`; }).join("");
+  $("pickGuided").querySelectorAll("[data-gs]").forEach(b => b.onclick = () => startGuided(b.dataset.gs));
+  $("pickGuided").querySelectorAll("[data-gc]").forEach(b => b.onclick = () => openGdCustom(b.dataset.gc));
+}
+let gdcKey = null, gdcP = null;
+function openGdCustom(key) { gdcKey = key; gdcP = gdP(key); renderGdCustom(); $("gdCustom").classList.add("on"); }
+function renderGdCustom() {
+  const G = GUIDED[gdcKey];
+  $("gdcTitle").textContent = G.name; $("gdcDesc").textContent = G.desc;
+  const step = { rounds: 1, work: 5, rest: 5, warm: 60 }, lim = { rounds: [1, 20], work: [5, 600], rest: [0, 600], warm: [0, 900] };
+  $("gdcRows").innerHTML = Object.keys(G.labels).map(k => `<div class="line"><span class="pl">${G.labels[k]}</span><div class="stepper wstep"><button data-gk="${k}" data-gd="${-step[k]}">−</button><b class="num">${k === "warm" ? fmtRest(gdcP[k]) : gdcP[k]}</b><button data-gk="${k}" data-gd="${step[k]}">+</button></div></div>`).join("");
+  $("gdcRows").querySelectorAll("[data-gk]").forEach(b => b.onclick = () => { const k = b.dataset.gk; gdcP[k] = Math.min(lim[k][1], Math.max(lim[k][0], gdcP[k] + +b.dataset.gd)); renderGdCustom(); });
+  $("gdcSum").textContent = `Durée totale ≈ ${fmtDur(stepsDur(gdSteps(gdcKey, gdcP)))} · réglages mémorisés`;
+}
+$("gdcClose").onclick = () => $("gdCustom").classList.remove("on");
+$("gdCustom").onclick = e => { if (e.target.id === "gdCustom") $("gdCustom").classList.remove("on"); };
+$("gdcStart").onclick = () => { cfg.guidedP = { ...(cfg.guidedP || {}), [gdcKey]: gdcP }; save(); $("gdCustom").classList.remove("on"); startGuided(gdcKey); };
+
+/* ---------- Lecteur ---------- */
+const G2 = { key: null, steps: [], i: 0, endAt: 0, left: 0, paused: false, start: 0, pausedMs: 0, pauseAt: 0, timer: null, said: {}, workSec: 0 };
+const C2 = 339.29;
+function stepTitle(st) { return st.kind === "prep" ? "Prépare-toi" : st.kind === "rest" && !st.m ? "Repos" : MOVES[st.m]?.[0] || ""; }
+function nextWork(i) { for (let j = i + 1; j < G2.steps.length; j++) if (G2.steps[j].kind === "work" || G2.steps[j].m) return G2.steps[j]; return null; }
+function startGuided(key) {
+  beep(1, 0.01, 0.001); say(" ");                 // déverrouille l'audio (geste utilisateur)
+  keepAwake();
+  Object.assign(G2, { key, steps: gdSteps(key), i: -1, paused: false, start: Date.now(), pausedMs: 0, said: {}, workSec: 0 });
+  $("gpName").textContent = GUIDED[key].name;
+  $("gpPause").classList.remove("on"); $("gpLockOv").classList.remove("on");
+  show("guided");
+  say(`${GUIDED[key].name}. ${fmtDur(stepsDur(G2.steps))}. C'est parti dans 10 secondes`);
+  gotoStep(0, true);
+  clearInterval(G2.timer); G2.timer = setInterval(gdTick, 200);
+}
+function gotoStep(i, silent) {
+  if (i >= G2.steps.length) return finishGuided();
+  G2.i = Math.max(0, i); const st = G2.steps[G2.i];
+  G2.endAt = performance.now() + st.sec * 1000; G2.left = st.sec * 1000; G2.said = {};
+  const ph = st.kind === "prep" ? "prep" : st.kind === "rest" ? "rest" : "work";
+  $("guided").className = "screen on ph-" + ph;
+  $("gpPhase").textContent = ph === "prep" ? "Préparation" : ph === "rest" ? (st.active ? "Récupération" : "Repos") : "Effort";
+  $("gpMove").textContent = stepTitle(st);
+  $("gpCue").textContent = st.m ? MOVES[st.m][1] : ph === "prep" ? "Mets-toi en place" : "Respire, récupère";
+  const tag = st.rn && st.rn > 1 ? `Tour ${st.r}/${st.rn}` : "", sub = st.n ? `${st.i}/${st.n}` : "";
+  $("gpRound").textContent = [tag, sub].filter(Boolean).join(" · ");
+  const nx = nextWork(G2.i);
+  $("gpNext").innerHTML = nx ? `<span><small>Ensuite</small>${stepTitle(nx)}</span><b class="num">${nx.sec} s</b>` : `<span><small>Ensuite</small>Fin de la séance</span>`;
+  if (!silent) {
+    if (st.kind === "work") { goBeep(); say(`${stepTitle(st)}. ${st.sec} secondes${st.soft ? "" : ". Allez !"}`); }
+    else if (st.kind === "rest") say(st.active ? `${stepTitle(st)}, ${st.sec} secondes` : `Repos${nx ? ". Ensuite : " + stepTitle(nx) : ""}`);
+  }
+  gdTick();
+}
+function gdTick() {
+  if (G2.paused || !G2.steps.length) return;
+  const st = G2.steps[G2.i], now = performance.now(), left = Math.max(0, G2.endAt - now), sec = Math.ceil(left / 1000);
+  $("gpSec").textContent = sec >= 60 ? fmtClock(left + 999) : sec;
+  $("gpRing").style.strokeDashoffset = C2 * (1 - left / (st.sec * 1000));
+  // temps restant total
+  const rest = left / 1000 + G2.steps.slice(G2.i + 1).reduce((a, x) => a + x.sec, 0);
+  $("gpLeft").textContent = "−" + fmtClock(rest * 1000);
+  // annonces
+  const say1 = (k, f) => { if (!G2.said[k]) { G2.said[k] = 1; f(); } };
+  if (st.sec >= 30 && sec === Math.ceil(st.sec / 2) && st.kind === "work") say1("half", () => say(st.soft ? "La moitié" : "La moitié, tiens bon", false));
+  if (st.sec >= 20 && sec === 10) say1("ten", () => say("10 secondes", false));
+  if (sec <= 3 && sec >= 1) say1("c" + sec, () => tick());
+  if (left <= 0) {
+    if (st.kind === "work") G2.workSec += st.sec;
+    gotoStep(G2.i + 1);
+  }
+}
+function gdPause() {
+  if (G2.paused) return; G2.paused = true; G2.pauseAt = performance.now(); G2.left = G2.endAt - G2.pauseAt;
+  $("gpPauseTime").textContent = $("gpLeft").textContent.replace("−", "") ; $("gpPause").classList.add("on"); say("Pause");
+  $("gpPlay").innerHTML = '<svg class="ic" viewBox="0 0 24 24"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg>';
+}
+function gdResume() {
+  if (!G2.paused) return; G2.paused = false; G2.pausedMs += performance.now() - G2.pauseAt; G2.endAt = performance.now() + G2.left;
+  $("gpPause").classList.remove("on"); say("C'est reparti");
+  $("gpPlay").innerHTML = '<svg class="ic" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>';
+}
+$("gpPlay").onclick = () => G2.paused ? gdResume() : gdPause();
+$("gpResume").onclick = gdResume;
+$("gpNextBtn").onclick = () => { if (!G2.paused) gotoStep(G2.i + 1); };
+$("gpPrev").onclick = () => { if (!G2.paused) gotoStep(performance.now() - (G2.endAt - G2.steps[G2.i].sec * 1000) > 3000 ? G2.i : G2.i - 1); };
+function holdBtn(b, ms, fn) {
+  let t = null;
+  b.addEventListener("pointerdown", e => { e.preventDefault(); b.classList.add("pressing"); t = setTimeout(() => { b.classList.remove("pressing"); fn(); }, ms); });
+  ["pointerup", "pointerleave", "pointercancel"].forEach(ev => b.addEventListener(ev, () => { clearTimeout(t); b.classList.remove("pressing"); }));
+  b.addEventListener("contextmenu", e => e.preventDefault());
+}
+holdBtn($("gpStop"), 900, () => finishGuided(true));
+$("gpLock").onclick = () => $("gpLockOv").classList.add("on");
+holdBtn($("gpUnlock"), 900, () => $("gpLockOv").classList.remove("on"));
+function finishGuided(stopped) {
+  clearInterval(G2.timer); G2.timer = null;
+  const G = GUIDED[G2.key], st = G2.steps[G2.i];
+  if (stopped && st?.kind === "work") G2.workSec += Math.round((st.sec * 1000 - Math.max(0, (G2.paused ? G2.left : G2.endAt - performance.now()))) / 1000);
+  G2.paused = false; releaseWake();
+  const dur = Date.now() - G2.start - G2.pausedMs, w = cfg.weight || cfg.profile?.weight || 0;
+  const kcal = w ? Math.round(G.met * w * (G2.workSec / 3600) + 1.5 * w * Math.max(0, dur / 1000 - G2.workSec) / 3600) : 0;
+  const S = loadSessions(), t = G2.start;
+  if (G2.workSec > 5) { S.push({ t, dur, kcal, guided: { key: G2.key, name: G.name, work: G2.workSec }, sets: [] }); saveSessions(S); lastSessT = t; } else lastSessT = 0;
+  say(stopped ? "Séance arrêtée. Bien joué quand même" : `Bravo ! ${G.name} terminé`);
+  // résumé (même écran que les séances avec caméra)
+  $("doneDate").textContent = new Date(t).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  $("doneTitle").textContent = G.name;
+  $("statTotal").textContent = fmtClock(G2.workSec * 1000); $("statUnit").textContent = "d'effort";
+  $("statTotal").parentElement.querySelector(".stat-lab").lastChild.textContent = " Effort";
+  $("statTime").textContent = fmtClock(dur); $("statKcal").textContent = w ? "≈" + kcal : "—";
+  $("kcalHint").textContent = w ? "" : "Indique ton poids de corps dans Paramètres pour estimer les calories.";
+  $("doneRecs").innerHTML = ""; $("doneSub").textContent = "";
+  const St = loadSessions(), stk = streakOf(St);
+  $("doneBadges").innerHTML = stk ? `<span>🔥 ${stk} jour${stk > 1 ? "s" : ""} d'affilée</span>` : "";
+  const works = G2.steps.filter(x => x.kind === "work").length, done = Math.min(works, G2.steps.slice(0, G2.i + (stopped ? 0 : 1)).filter(x => x.kind === "work").length);
+  $("summary").innerHTML = `<div class="setbar"><span>Exercices</span><div class="bar"><i style="width:${works ? done / works * 100 : 0}%"></i></div><b>${done}<small style="color:#71717a;font-size:13px">/${works}</small></b></div>`;
+  document.querySelectorAll("#rpe button").forEach(b => b.classList.remove("on")); $("progTip").hidden = true;
+  $("deleteBtn").textContent = "Supprimer"; delArmed = false; $("deleteBtn").style.display = lastSessT ? "" : "none";
+  lastShare = { kcal, ton: 0, date: new Date(t), total: Math.round(G2.workSec / 60) || G2.workSec, unit: G2.workSec >= 60 ? "minutes d'effort" : "secondes d'effort", sets: works, mins: Math.max(1, Math.round(dur / 60000)), history: [], streak: stk };
+  show("done");
 }
 
 /* ---------- Démarrage ---------- */
