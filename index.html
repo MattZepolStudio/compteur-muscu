@@ -59,6 +59,8 @@
   #setInfo{font-size:15px;font-weight:600}
   #status{font-size:13px;color:var(--mut);margin-top:2px}
   #angle{font-size:13px;color:var(--mut);text-align:right}
+  #count.split{font-size:64px}
+  #count.split .done{color:var(--acc)}
   #count{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:120px;font-weight:800;line-height:1;text-shadow:0 4px 20px #000;pointer-events:none}
   #count small{font-size:36px;color:#fffa;font-weight:600}
   #phaseBar{position:absolute;left:14px;right:14px;bottom:6px;height:6px;border-radius:3px;background:#ffffff22;overflow:hidden}
@@ -115,6 +117,8 @@
       <button class="switch" id="voiceBtn" role="switch"><i></i></button></div>
     <div class="line"><span>Caméra</span>
       <div class="seg" id="camSeg"><button data-f="user">Avant</button><button data-f="environment">Arrière</button></div></div>
+    <div class="line" id="armsLine"><span>Bras</span>
+      <div class="seg" id="armsSeg"><button data-a="sep">Gauche / Droite</button><button data-a="both">Ensemble</button></div></div>
     <div class="line"><span>Démarrage</span>
       <div class="seg" id="trigSeg"><button data-t="timer">Chrono</button><button data-t="hand">Main ✋</button></div></div>
   </div>
@@ -184,7 +188,7 @@ const EXOS = {
     joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆",
     tip: "Pose le téléphone à 2–3 m, <b>de profil</b> (idéal) ou <b>face à toi</b>, à hauteur de taille si possible (sur une chaise, contre un mur). Tout ton corps, des épaules aux pieds, doit être visible." }
 };
-const DEF = { trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
+const DEF = { arms: "sep", trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
 let cfg = DEF;
 try { cfg = { ...DEF, ...JSON.parse(localStorage.getItem("pompesCfg") || "{}") }; } catch {}
 const save = () => { try { localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {} };
@@ -201,17 +205,22 @@ function renderCfg() {
   document.querySelectorAll("#exoChips .chip[data-exo]").forEach(b => b.onclick = () => { cfg.exo = b.dataset.exo; save(); renderCfg(); });
 document.querySelectorAll("#camSeg button").forEach(b => b.classList.toggle("on", b.dataset.f === cfg.facing));
   document.querySelectorAll("#trigSeg button").forEach(b => b.classList.toggle("on", b.dataset.t === cfg.trigger));
+  document.querySelectorAll("#armsSeg button").forEach(b => b.classList.toggle("on", b.dataset.a === cfg.arms));
+  $("armsLine").style.display = cfg.exo === "curls" ? "" : "none";
   const tot = cfg.reps * cfg.sets;
   if (!EXOS[cfg.exo]) cfg.exo = "pompes";
   document.querySelectorAll("#exoChips .chip[data-exo]").forEach(b => b.classList.toggle("on", b.dataset.exo === cfg.exo));
   $("tipPlace").innerHTML = EXOS[cfg.exo].tip;
-  $("recap").innerHTML = `<b>${cfg.sets} × ${cfg.reps}</b> ${EXOS[cfg.exo].unit} · <b>${tot}</b> au total · pause <b>${cfg.rest} s</b>`;
+  const perArm = cfg.exo === "curls" && cfg.arms === "sep" ? " par bras" : "";
+  const totAll = perArm ? tot * 2 : tot;
+  $("recap").innerHTML = `<b>${cfg.sets} × ${cfg.reps}</b> ${EXOS[cfg.exo].unit}${perArm} · <b>${totAll}</b> au total · pause <b>${cfg.rest} s</b>`;
 }
 document.querySelectorAll(".stepper button[data-k]").forEach(b => b.onclick = () => {
   const k = b.dataset.k, [mn, mx] = LIM[k];
   cfg[k] = Math.min(mx, Math.max(mn, cfg[k] + +b.dataset.d)); save(); renderCfg();
 });
 $("voiceBtn").onclick = () => { cfg.voice = !cfg.voice; save(); renderCfg(); };
+document.querySelectorAll("#armsSeg button").forEach(b => b.onclick = () => { cfg.arms = b.dataset.a; save(); renderCfg(); });
 document.querySelectorAll("#trigSeg button").forEach(b => b.onclick = () => { cfg.trigger = b.dataset.t; save(); renderCfg(); });
 document.querySelectorAll("#camSeg button").forEach(b => b.onclick = () => { cfg.facing = b.dataset.f; save(); renderCfg(); });
 renderCfg();
@@ -363,15 +372,71 @@ function analyse(lm) {
 }
 
 function setStatus(t) { if (t !== lastStatus) { $("status").textContent = t; lastStatus = t; } }
-function updateCount() { $("count").innerHTML = `${reps}<small>/${cfg.reps}</small>`; }
+const isSplit = () => cfg.exo === "curls" && cfg.arms === "sep";
+let armReps = { L: 0, R: 0 }, lastArm = "L";
+function updateCount() {
+  const c = $("count");
+  c.classList.toggle("split", isSplit());
+  if (isSplit()) {
+    const f = k => `<span class="${armReps[k] >= cfg.reps ? "done" : ""}">${k === "L" ? "G" : "D"} ${armReps[k]}</span>`;
+    c.innerHTML = `${f("L")} · ${f("R")}<small>/${cfg.reps}</small>`;
+  } else c.innerHTML = `${reps}<small>/${cfg.reps}</small>`;
+}
+function addArmRep(k, auto = true) {
+  if (armReps[k] >= cfg.reps) { if (!auto) beep(300, 0.1, 0.2); return; }
+  armReps[k]++; reps = armReps.L + armReps.R; lastArm = k; updateCount();
+  const name = k === "L" ? "gauche" : "droite", n = armReps[k];
+  if (armReps.L >= cfg.reps && armReps.R >= cfg.reps) { say(`${n} ${name}. Série terminée !`); beep(1200, 0.4); finishSet(); return; }
+  if (n >= cfg.reps) { say(`${n}. Bras ${name} terminé, change de bras`); beep(1000, 0.25); return; }
+  const left = cfg.reps - n;
+  say(left <= 3 ? `${n} ${name}. Encore ${left}` : `${n} ${name}`);
+  if (!auto) beep(700, 0.08, 0.2);
+}
 function updateSet() { $("setInfo").textContent = `Série ${setIdx} / ${cfg.sets}`; }
 
 function addRep(auto = true) {
+  if (isSplit()) return addArmRep(lastArm, auto);
   reps++; updateCount();
   if (reps >= cfg.reps) { say(`${reps}. Série terminée !`); beep(1200, 0.4); finishSet(); return; }
   const left = cfg.reps - reps;
   say(left <= 3 && left > 0 ? `${reps}. Encore ${left}` : String(reps));
   if (!auto) beep(700, 0.08, 0.2);
+}
+
+// Curls gauche / droite : un suivi complet par bras
+const newArm = ids => ({ ids, sm: null, sH: null, dRef: null, A: { phase: "up", hi: 0, downAt: 0 }, H: { phase: "up", hi: 0, downAt: 0 }, last: 0 });
+let armsT = { L: newArm([11, 13, 15]), R: newArm([12, 14, 16]) };
+function stepDet(D, val, ok, now, minRep) {
+  if (!ok) { D.hi = 0; return false; }
+  if (D.phase === "up") {
+    if (val >= 0.85) { D.hi ||= now; if (now - D.hi >= 200) { D.phase = "down"; D.downAt = D.hi; } }
+    else D.hi = 0;
+  } else if (val <= 0.25) { D.phase = "up"; D.hi = 0; return now - D.downAt >= minRep; }
+  return false;
+}
+function armsStep(lm, now, X) {
+  const ar = video.videoWidth / video.videoHeight || 1;
+  let anyDown = false, seen = 0;
+  for (const k of ["L", "R"]) {
+    const T = armsT[k], [s, e, w] = T.ids.map(i => lm[i]);
+    if (vis(s, e, w) < 0.6) { T.A.hi = T.H.hi = 0; continue; }
+    seen++;
+    const ang = angle({ x: s.x * ar, y: s.y }, { x: e.x * ar, y: e.y }, { x: w.x * ar, y: w.y });
+    T.sm = T.sm == null ? ang : T.sm * 0.75 + ang * 0.25;
+    const pA = clamp((X.angUp - T.sm) / (X.angUp - X.angDown));
+    const d = w.y - s.y;
+    T.sH = T.sH == null ? d : T.sH * 0.75 + d * 0.25;
+    if (T.dRef == null) T.dRef = T.sH; else T.dRef += (T.sH - T.dRef) * (T.sH > T.dRef ? 0.03 : 0.002);
+    const pH = T.dRef > 0.04 ? clamp((1 - T.sH / T.dRef) / X.drop) : 0;
+    const dA = stepDet(T.A, pA, true, now, X.minRep), dH = stepDet(T.H, pH, true, now, X.minRep);
+    if ((dA || dH) && now - T.last >= X.minGap) { T.last = now; T.A.phase = T.H.phase = "up"; T.A.hi = T.H.hi = 0; addArmRep(k); }
+    if (T.A.phase === "down" || T.H.phase === "down") anyDown = true;
+  }
+  if (!seen) { setStatus(X.hidden); return; }
+  const wasDown = phase === "down";
+  phase = anyDown ? "down" : "up";
+  if (!wasDown && phase === "down") beep(520, 0.05, 0.12);
+  setStatus(phase === "up" ? X.go : X.push);
 }
 
 // Deux détecteurs indépendants : angle du coude (vue de profil) et descente des épaules
@@ -456,9 +521,11 @@ function process(res) {
     setStatus(X.ready);
     if (now - stillSince > 700 || now - armStart > 4000) {
       armed = true; dRef = sH; updateCount(); beep(1200, 0.25); say("C'est parti");
+      armsT = { L: newArm([11, 13, 15]), R: newArm([12, 14, 16]) };
     }
     return;
   }
+  if (isSplit()) { armsStep(lm, now, X); return; }
 
   // Une répétition = rester en bas au moins 0,2 s, puis remonter ; durée et écart minimum entre deux reps
   const step = (D, val, ok) => {
@@ -530,7 +597,7 @@ function loop() {
 
 /* ---------- Séries et pauses ---------- */
 function finishSet() {
-  history.push(reps);
+  history.push(isSplit() ? { n: reps, txt: `G ${armReps.L} · D ${armReps.R}` } : { n: reps, txt: `${reps}` });
   if (setIdx >= cfg.sets) { endWorkout(); return; }
   startRest();
 }
@@ -552,7 +619,7 @@ function renderRest() {
 }
 function nextSet() {
   clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
-  setIdx++; reps = 0; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null; lastCd = -1;
+  setIdx++; reps = 0; armReps = { L: 0, R: 0 }; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null; lastCd = -1;
   updateCount(); updateSet(); beep(1200, 0.35); say(`Série ${setIdx}, mets-toi en position`);
 }
 $("restSkip").onclick = nextSet;
@@ -560,15 +627,18 @@ $("restPlus").onclick = () => { restLeft += 15; renderRest(); };
 $("restMinus").onclick = () => { restLeft = Math.max(1, restLeft - 15); renderRest(); };
 
 $("plusBtn").onclick = () => addRep(false);
-$("minusBtn").onclick = () => { if (reps > 0) { reps--; updateCount(); beep(400, 0.08, 0.2); } };
+$("minusBtn").onclick = () => {
+  if (isSplit()) { if (armReps[lastArm] > 0) { armReps[lastArm]--; reps = armReps.L + armReps.R; updateCount(); beep(400, 0.08, 0.2); } return; }
+  if (reps > 0) { reps--; updateCount(); beep(400, 0.08, 0.2); }
+};
 $("endSetBtn").onclick = () => { say("Série terminée"); finishSet(); };
-$("stopBtn").onclick = () => { if (reps > 0) history.push(reps); endWorkout(); };
+$("stopBtn").onclick = () => { if (reps > 0) history.push(isSplit() ? { n: reps, txt: `G ${armReps.L} · D ${armReps.R}` } : { n: reps, txt: `${reps}` }); endWorkout(); };
 
 function endWorkout() {
   running = false; waitingHand = false; clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
   stopCamera(); try { wakeLock?.release(); } catch {}
-  const total = history.reduce((a, b) => a + b, 0);
-  $("summary").innerHTML = history.map((r, i) => `Série ${i + 1} : <b>${r}</b> répétitions`).join("<br>") +
+  const total = history.reduce((a, b) => a + b.n, 0);
+  $("summary").innerHTML = history.map((r, i) => `Série ${i + 1} : <b>${r.txt}</b>`).join("<br>") +
     `<hr style="border:none;border-top:1px solid #333;margin:8px 0">Total : <b>${total}</b> ${EXOS[cfg.exo].unit}`;
   say(`Bravo ! ${total} ${EXOS[cfg.exo].unit} au total`);
   show("done");
@@ -577,7 +647,7 @@ function endWorkout() {
 /* ---------- Démarrage ---------- */
 $("startBtn").onclick = async () => {
   beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
-  reps = 0; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null;
+  reps = 0; armReps = { L: 0, R: 0 }; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null;
   updateCount(); updateSet(); show("workout");
   $("loading").style.display = "flex";
   try {
