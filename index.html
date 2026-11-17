@@ -70,6 +70,8 @@
     <div class="step"><button data-k="sets" data-d="-1">−</button><span id="v-sets"></span><button data-k="sets" data-d="1">+</button></div></div>
   <div class="field"><label>Pause (secondes)</label>
     <div class="step"><button data-k="rest" data-d="-15">−</button><span id="v-rest"></span><button data-k="rest" data-d="15">+</button></div></div>
+  <div class="field"><label>Délai de départ (s)</label>
+    <div class="step"><button data-k="delay" data-d="-5">−</button><span id="v-delay"></span><button data-k="delay" data-d="5">+</button></div></div>
   <div class="field"><label>Annonce vocale</label>
     <div class="step"><button class="ghost" id="voiceBtn"></button></div></div>
   <div class="field"><label>Caméra</label>
@@ -126,17 +128,18 @@
 import { PoseLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
 
 /* ---------- Réglages ---------- */
-const DEF = { reps: 12, sets: 4, rest: 90, voice: true, facing: "user" };
+const DEF = { reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
 let cfg = DEF;
 try { cfg = { ...DEF, ...JSON.parse(localStorage.getItem("pompesCfg") || "{}") }; } catch {}
 const save = () => { try { localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {} };
-const LIM = { reps: [1, 100], sets: [1, 20], rest: [15, 600] };
+const LIM = { reps: [1, 100], sets: [1, 20], rest: [15, 600], delay: [0, 30] };
 const $ = id => document.getElementById(id);
 
 function renderCfg() {
   $("v-reps").textContent = cfg.reps;
   $("v-sets").textContent = cfg.sets;
   $("v-rest").textContent = cfg.rest;
+  $("v-delay").textContent = cfg.delay;
   $("voiceBtn").textContent = cfg.voice ? "Activée" : "Coupée";
   $("camBtn").textContent = cfg.facing === "user" ? "Avant" : "Arrière";
 }
@@ -249,6 +252,7 @@ function addRep(auto = true) {
 // Deux détecteurs indépendants : angle du coude (vue de profil) et descente des épaules
 // vers les mains (marche aussi de face). Le premier qui valide une répétition la compte.
 let dRef = null, sH = null, phaseA = "up", phaseH = "up";
+let armed = false, armDelayEnd = 0, stillSince = 0, anchorY = null, lastCd = -1;
 const clamp = x => Math.max(0, Math.min(1, x));
 function avgY(lm, ids) {
   const ok = ids.map(i => lm[i]).filter(p => (p.visibility ?? 0) > 0.3);
@@ -260,6 +264,16 @@ function countRep() {
   if (now - lastRepAt > 400) { lastRepAt = now; addRep(); }
 }
 function process(res) {
+  const now = performance.now();
+  if (!armed && now < armDelayEnd) {           // compte à rebours : le temps de poser le téléphone
+    const sec = Math.ceil((armDelayEnd - now) / 1000);
+    setStatus("Pose le téléphone et mets-toi en position");
+    $("count").innerHTML = `${sec}<small>s</small>`;
+    if (sec !== lastCd) { lastCd = sec; if (sec <= 3) beep(660, 0.1, 0.2); }
+    dRef = sH = smooth = null; anchorY = null; stillSince = now;
+    $("phaseFill").style.width = "0%"; $("angle").textContent = "";
+    return;
+  }
   const lm = res.landmarks?.[0];
   if (!lm) { setStatus("Je ne te vois pas : recule un peu"); $("angle").textContent = ""; return; }
   const ar = video.videoWidth / video.videoHeight || 1;
@@ -289,6 +303,16 @@ function process(res) {
   $("phaseFill").style.background = p >= 0.85 ? "var(--acc)" : "var(--warn)";
   $("angle").textContent = `${smooth != null ? "Coude " + Math.round(smooth) + "° · " : ""}Descente ${Math.round(p * 100)}%`;
 
+  if (!armed) {                                  // attend 1 s immobile, bras tendus
+    phaseA = phaseH = phase = "up";
+    if (shY == null || anchorY == null || Math.abs(shY - anchorY) > 0.03) { anchorY = shY; stillSince = now; }
+    if (p > 0.3 || sides[0].v < 0.3) stillSince = now;
+    setStatus("Bras tendus, ne bouge plus…");
+    if (now - stillSince > 1000) {
+      armed = true; dRef = sH; updateCount(); beep(1200, 0.25); say("C'est parti");
+    }
+    return;
+  }
   if (phaseA === "up" && pA >= 0.85) { phaseA = "down"; }
   if (phaseH === "up" && pH >= 0.85) { phaseH = "down"; }
   const wasDown = phase === "down";
@@ -358,8 +382,8 @@ function renderRest() {
 }
 function nextSet() {
   clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
-  setIdx++; reps = 0; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up";
-  updateCount(); updateSet(); beep(1200, 0.35); say(`C'est reparti, série ${setIdx}`);
+  setIdx++; reps = 0; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null;
+  updateCount(); updateSet(); beep(1200, 0.35); say(`Série ${setIdx}, mets-toi en position`);
 }
 $("restSkip").onclick = nextSet;
 $("restPlus").onclick = () => { restLeft += 15; renderRest(); };
@@ -383,7 +407,7 @@ function endWorkout() {
 /* ---------- Démarrage ---------- */
 $("startBtn").onclick = async () => {
   beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
-  reps = 0; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up";
+  reps = 0; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null;
   updateCount(); updateSet(); show("workout");
   $("loading").style.display = "flex";
   try {
@@ -394,7 +418,8 @@ $("startBtn").onclick = async () => {
     return;
   }
   $("loading").style.display = "none";
-  running = true; keepAwake(); say("Prêt. Mets-toi en position.");
+  running = true; keepAwake(); armed = false; lastCd = -1; armDelayEnd = performance.now() + cfg.delay * 1000;
+  say(cfg.delay ? `Départ dans ${cfg.delay} secondes` : "Mets-toi en position");
   requestAnimationFrame(loop);
 };
 $("exoBtn").onclick = () => {}; // d'autres exercices arriveront ici
