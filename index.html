@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#0e0f12">
+<title>Compteur de musculation</title>
+<style>
+  :root{--bg:#0e0f12;--card:#181a20;--txt:#f2f3f5;--mut:#8b8f99;--acc:#3ddc84;--warn:#ffb020;--red:#ff5a5a}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  body{display:flex;flex-direction:column;overflow:hidden}
+  .screen{display:none;flex:1;flex-direction:column;min-height:0}
+  .screen.on{display:flex}
+  /* Réglages */
+  #setup{padding:24px 20px;gap:18px;overflow:auto}
+  h1{font-size:26px}
+  .sub{color:var(--mut);font-size:14px;line-height:1.4}
+  .field{background:var(--card);border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+  .field label{font-size:16px}
+  .step{display:flex;align-items:center;gap:12px}
+  .step button{width:40px;height:40px;border-radius:50%;border:none;background:#2a2d36;color:var(--txt);font-size:22px}
+  .step span{min-width:48px;text-align:center;font-size:20px;font-weight:600}
+  .big{border:none;border-radius:16px;padding:18px;font-size:19px;font-weight:700;background:var(--acc);color:#04150b;width:100%}
+  .ghost{border:1px solid #333743;background:transparent;color:var(--txt);border-radius:12px;padding:10px 14px;font-size:15px}
+  .tips{font-size:13px;color:var(--mut);line-height:1.5;background:var(--card);border-radius:14px;padding:14px 16px}
+  .tips b{color:var(--txt)}
+  /* Séance */
+  #workout{position:relative}
+  #stage{position:relative;flex:1;min-height:0;background:#000;overflow:hidden}
+  video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .mirror{transform:scaleX(-1)}
+  #hud{position:absolute;top:0;left:0;right:0;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;background:linear-gradient(#000a,#0000);pointer-events:none}
+  #setInfo{font-size:15px;font-weight:600}
+  #status{font-size:13px;color:var(--mut);margin-top:2px}
+  #angle{font-size:13px;color:var(--mut);text-align:right}
+  #count{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:120px;font-weight:800;line-height:1;text-shadow:0 4px 20px #000;pointer-events:none}
+  #count small{font-size:36px;color:#fffa;font-weight:600}
+  #phaseBar{position:absolute;left:14px;right:14px;bottom:6px;height:6px;border-radius:3px;background:#ffffff22;overflow:hidden}
+  #phaseFill{height:100%;width:0;background:var(--acc);transition:width .08s}
+  #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:#000c;font-size:16px;text-align:center;padding:20px}
+  #controls{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--bg)}
+  #controls button{flex:1;border:none;border-radius:12px;padding:14px 4px;font-size:15px;font-weight:600;background:var(--card);color:var(--txt)}
+  /* Pause */
+  #rest{position:absolute;inset:0;background:#0e0f12f2;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;text-align:center}
+  #rest.on{display:flex}
+  #restTitle{font-size:20px;color:var(--mut)}
+  #restTime{font-size:110px;font-weight:800;font-variant-numeric:tabular-nums}
+  #restNext{font-size:16px;color:var(--mut)}
+  .row{display:flex;gap:10px}
+  /* Fin */
+  #done{align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
+  #summary{background:var(--card);border-radius:14px;padding:16px;width:100%;max-width:360px;text-align:left;line-height:1.8}
+</style>
+</head>
+<body>
+
+<!-- ÉCRAN 1 : réglages -->
+<section id="setup" class="screen on">
+  <div>
+    <h1>Compteur de musculation</h1>
+    <p class="sub">La caméra compte tes répétitions, les annonce à voix haute et lance la pause automatiquement.</p>
+  </div>
+
+  <div class="field"><label>Exercice</label>
+    <div class="step"><button class="ghost" id="exoBtn">Pompes</button></div></div>
+  <div class="field"><label>Répétitions / série</label>
+    <div class="step"><button data-k="reps" data-d="-1">−</button><span id="v-reps"></span><button data-k="reps" data-d="1">+</button></div></div>
+  <div class="field"><label>Nombre de séries</label>
+    <div class="step"><button data-k="sets" data-d="-1">−</button><span id="v-sets"></span><button data-k="sets" data-d="1">+</button></div></div>
+  <div class="field"><label>Pause (secondes)</label>
+    <div class="step"><button data-k="rest" data-d="-15">−</button><span id="v-rest"></span><button data-k="rest" data-d="15">+</button></div></div>
+  <div class="field"><label>Annonce vocale</label>
+    <div class="step"><button class="ghost" id="voiceBtn"></button></div></div>
+  <div class="field"><label>Caméra</label>
+    <div class="step"><button class="ghost" id="camBtn"></button></div></div>
+
+  <button class="big" id="startBtn">Commencer</button>
+
+  <div class="tips">
+    <b>Placement du téléphone :</b> pose-le au sol à 1,5–2 m, <b>de profil</b> par rapport à toi, à hauteur d'épaule si possible. Tout ton corps (de la tête aux pieds) doit être visible.<br><br>
+    <b>Comment ça compte :</b> une répétition = coudes pliés (≈ 90°) puis bras tendus. Les demi-pompes ne comptent pas.<br><br>
+    Les boutons <b>+1 / −1</b> permettent de corriger à la main si besoin.
+  </div>
+</section>
+
+<!-- ÉCRAN 2 : séance -->
+<section id="workout" class="screen">
+  <div id="stage">
+    <video id="video" playsinline muted></video>
+    <canvas id="canvas"></canvas>
+    <div id="hud">
+      <div><div id="setInfo"></div><div id="status">Mets-toi en position</div></div>
+      <div id="angle"></div>
+    </div>
+    <div id="count">0<small>/12</small></div>
+    <div id="phaseBar"><div id="phaseFill"></div></div>
+    <div id="loading">Chargement du modèle de détection…<br><span class="sub">(quelques secondes la première fois)</span></div>
+    <div id="rest">
+      <div id="restTitle">Pause</div>
+      <div id="restTime">90</div>
+      <div id="restNext"></div>
+      <div class="row">
+        <button class="ghost" id="restMinus">−15 s</button>
+        <button class="ghost" id="restPlus">+15 s</button>
+        <button class="ghost" id="restSkip">Passer</button>
+      </div>
+    </div>
+  </div>
+  <div id="controls">
+    <button id="minusBtn">−1</button>
+    <button id="plusBtn">+1</button>
+    <button id="endSetBtn">Fin de série</button>
+    <button id="stopBtn">Arrêter</button>
+  </div>
+</section>
+
+<!-- ÉCRAN 3 : fin -->
+<section id="done" class="screen">
+  <h1>Séance terminée 💪</h1>
+  <div id="summary"></div>
+  <button class="big" id="againBtn" style="max-width:360px">Nouvelle séance</button>
+</section>
+
+<script type="module">
+import { PoseLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+
+/* ---------- Réglages ---------- */
+const DEF = { reps: 12, sets: 4, rest: 90, voice: true, facing: "user" };
+let cfg = DEF;
+try { cfg = { ...DEF, ...JSON.parse(localStorage.getItem("pompesCfg") || "{}") }; } catch {}
+const save = () => { try { localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {} };
+const LIM = { reps: [1, 100], sets: [1, 20], rest: [15, 600] };
+const $ = id => document.getElementById(id);
+
+function renderCfg() {
+  $("v-reps").textContent = cfg.reps;
+  $("v-sets").textContent = cfg.sets;
+  $("v-rest").textContent = cfg.rest;
+  $("voiceBtn").textContent = cfg.voice ? "Activée" : "Coupée";
+  $("camBtn").textContent = cfg.facing === "user" ? "Avant" : "Arrière";
+}
+document.querySelectorAll(".step button[data-k]").forEach(b => b.onclick = () => {
+  const k = b.dataset.k, [mn, mx] = LIM[k];
+  cfg[k] = Math.min(mx, Math.max(mn, cfg[k] + +b.dataset.d)); save(); renderCfg();
+});
+$("voiceBtn").onclick = () => { cfg.voice = !cfg.voice; save(); renderCfg(); };
+$("camBtn").onclick = () => { cfg.facing = cfg.facing === "user" ? "environment" : "user"; save(); renderCfg(); };
+renderCfg();
+
+const show = id => document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+
+/* ---------- Son et voix ---------- */
+let actx;
+function beep(freq = 880, dur = 0.15, vol = 0.3) {
+  try {
+    actx ||= new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.frequency.value = freq; o.connect(g); g.connect(actx.destination);
+    g.gain.setValueAtTime(vol, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+    o.start(); o.stop(actx.currentTime + dur);
+  } catch {}
+}
+let frVoice = null;
+function pickVoice() {
+  const v = speechSynthesis.getVoices();
+  frVoice = v.find(x => x.lang?.startsWith("fr") && /google|amélie|thomas|audrey/i.test(x.name)) || v.find(x => x.lang?.startsWith("fr")) || null;
+}
+if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(txt, interrupt = true) {
+  if (!cfg.voice || !("speechSynthesis" in window)) return;
+  if (interrupt) speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang = "fr-FR"; if (frVoice) u.voice = frVoice; u.rate = 1.15;
+  speechSynthesis.speak(u);
+}
+
+/* ---------- Écran toujours allumé ---------- */
+let wakeLock = null;
+async function keepAwake() { try { wakeLock = await navigator.wakeLock?.request("screen"); } catch {} }
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && running) keepAwake(); });
+
+/* ---------- Caméra + modèle ---------- */
+const video = $("video"), canvas = $("canvas"), ctx = canvas.getContext("2d");
+let landmarker = null, stream = null, running = false;
+
+async function loadModel() {
+  if (landmarker) return;
+  const files = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  const opts = model => ({
+    baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/pose_landmarker/${model}/float16/1/${model}.task` },
+    runningMode: "VIDEO", numPoses: 1,
+    minPoseDetectionConfidence: 0.5, minPosePresenceConfidence: 0.5, minTrackingConfidence: 0.5
+  });
+  try {
+    landmarker = await PoseLandmarker.createFromOptions(files, { ...opts("pose_landmarker_full"), baseOptions: { ...opts("pose_landmarker_full").baseOptions, delegate: "GPU" } });
+  } catch {
+    landmarker = await PoseLandmarker.createFromOptions(files, opts("pose_landmarker_lite"));
+  }
+}
+async function startCamera() {
+  stopCamera();
+  stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: cfg.facing, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+  video.srcObject = stream; await video.play();
+  const m = cfg.facing === "user";
+  video.classList.toggle("mirror", m); canvas.classList.toggle("mirror", m);
+}
+function stopCamera() { stream?.getTracks().forEach(t => t.stop()); stream = null; }
+
+/* ---------- Logique de comptage ---------- */
+// Repères MediaPipe : 11/12 épaules, 13/14 coudes, 15/16 poignets, 23/24 hanches, 27/28 chevilles
+const DOWN_ANGLE = 95, UP_ANGLE = 150;
+let reps = 0, setIdx = 1, phase = "up", minAngleInRep = 180, smooth = null, lastRepAt = 0, history = [];
+let restTimer = null, restLeft = 0, posOkFrames = 0, lastStatus = "";
+
+function angle(a, b, c) {
+  const ab = Math.atan2(a.y - b.y, a.x - b.x), cb = Math.atan2(c.y - b.y, c.x - b.x);
+  let d = Math.abs((ab - cb) * 180 / Math.PI); return d > 180 ? 360 - d : d;
+}
+function vis(...p) { return Math.min(...p.map(x => x.visibility ?? 0)); }
+
+function analyse(lm) {
+  const L = [lm[11], lm[13], lm[15], lm[23], lm[27]], R = [lm[12], lm[14], lm[16], lm[24], lm[28]];
+  const vL = vis(...L.slice(0, 3)), vR = vis(...R.slice(0, 3));
+  const S = vL >= vR ? L : R, v = Math.max(vL, vR);
+  if (v < 0.5) return { ok: false, msg: "Bras non visible : place-toi de profil" };
+  const elbow = angle(S[0], S[1], S[2]);
+  // corps à l'horizontale ? (épaule → cheville, ou épaule → hanche)
+  const end = (S[4].visibility ?? 0) > 0.4 ? S[4] : S[3];
+  const ar = video.videoWidth / video.videoHeight || 1;
+  const dx = Math.abs(end.x - S[0].x) * ar, dy = Math.abs(end.y - S[0].y);
+  const tilt = Math.atan2(dy, dx) * 180 / Math.PI; // 0 = horizontal
+  return { ok: true, elbow, horizontal: tilt < 50 };
+}
+
+function setStatus(t) { if (t !== lastStatus) { $("status").textContent = t; lastStatus = t; } }
+function updateCount() { $("count").innerHTML = `${reps}<small>/${cfg.reps}</small>`; }
+function updateSet() { $("setInfo").textContent = `Série ${setIdx} / ${cfg.sets}`; }
+
+function addRep(auto = true) {
+  reps++; updateCount();
+  if (reps >= cfg.reps) { say(`${reps}. Série terminée !`); beep(1200, 0.4); finishSet(); return; }
+  const left = cfg.reps - reps;
+  say(left <= 3 && left > 0 ? `${reps}. Encore ${left}` : String(reps));
+  if (!auto) beep(700, 0.08, 0.2);
+}
+
+function process(res) {
+  const lm = res.landmarks?.[0];
+  if (!lm) { setStatus("Personne détectée ? Recule un peu"); posOkFrames = 0; return; }
+  const a = analyse(lm);
+  if (!a.ok) { setStatus(a.msg); posOkFrames = 0; return; }
+  smooth = smooth == null ? a.elbow : smooth * 0.6 + a.elbow * 0.4;
+  $("angle").textContent = `Coude ${Math.round(smooth)}°`;
+  const pct = Math.max(0, Math.min(1, (UP_ANGLE - smooth) / (UP_ANGLE - DOWN_ANGLE + 10)));
+  $("phaseFill").style.width = (pct * 100) + "%";
+  $("phaseFill").style.background = smooth <= DOWN_ANGLE ? "var(--acc)" : "var(--warn)";
+
+  if (!a.horizontal) { setStatus("Mets-toi en position de pompe"); posOkFrames = 0; return; }
+  posOkFrames++;
+  if (posOkFrames < 5) return;
+  setStatus(phase === "up" ? "Descends ⬇" : "Pousse ⬆");
+
+  if (phase === "up") {
+    if (smooth < DOWN_ANGLE) { phase = "down"; minAngleInRep = smooth; beep(520, 0.05, 0.12); }
+  } else {
+    minAngleInRep = Math.min(minAngleInRep, smooth);
+    if (smooth > UP_ANGLE) {
+      phase = "up";
+      const now = performance.now();
+      if (now - lastRepAt > 450) { lastRepAt = now; addRep(); }
+    }
+  }
+}
+
+const SKEL = [[11,13],[13,15],[12,14],[14,16],[11,12],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
+function draw(lm) {
+  canvas.width = canvas.clientWidth * devicePixelRatio; canvas.height = canvas.clientHeight * devicePixelRatio;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!lm) return;
+  // correspondance object-fit: cover
+  const vw = video.videoWidth, vh = video.videoHeight, cw = canvas.width, ch = canvas.height;
+  const s = Math.max(cw / vw, ch / vh), ox = (cw - vw * s) / 2, oy = (ch - vh * s) / 2;
+  const P = p => [p.x * vw * s + ox, p.y * vh * s + oy];
+  ctx.lineWidth = 4 * devicePixelRatio; ctx.strokeStyle = "#3ddc84cc"; ctx.fillStyle = "#fff";
+  for (const [i, j] of SKEL) {
+    if ((lm[i].visibility ?? 0) < 0.4 || (lm[j].visibility ?? 0) < 0.4) continue;
+    const [x1, y1] = P(lm[i]), [x2, y2] = P(lm[j]);
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  }
+  for (const k of [11,12,13,14,15,16,23,24,25,26,27,28]) {
+    if ((lm[k].visibility ?? 0) < 0.4) continue;
+    const [x, y] = P(lm[k]); ctx.beginPath(); ctx.arc(x, y, 5 * devicePixelRatio, 0, 7); ctx.fill();
+  }
+}
+
+let lastTs = -1;
+function loop() {
+  if (!running) return;
+  if (video.readyState >= 2 && !restTimer) {
+    const ts = performance.now();
+    if (ts > lastTs) {
+      lastTs = ts;
+      const res = landmarker.detectForVideo(video, ts);
+      process(res); draw(res.landmarks?.[0]);
+    }
+  }
+  requestAnimationFrame(loop);
+}
+
+/* ---------- Séries et pauses ---------- */
+function finishSet() {
+  history.push(reps);
+  if (setIdx >= cfg.sets) { endWorkout(); return; }
+  startRest();
+}
+function startRest() {
+  restLeft = cfg.rest; $("rest").classList.add("on");
+  $("restNext").textContent = `Prochaine : série ${setIdx + 1} / ${cfg.sets} — ${cfg.reps} répétitions`;
+  renderRest();
+  restTimer = setInterval(() => {
+    restLeft--; renderRest();
+    if (restLeft === 10) { say("Dix secondes"); beep(660, 0.15); }
+    if (restLeft > 0 && restLeft <= 3) beep(880, 0.12);
+    if (restLeft <= 0) nextSet();
+  }, 1000);
+  setTimeout(() => say(`Pause, ${cfg.rest} secondes`, false), 900);
+}
+function renderRest() {
+  const m = Math.floor(restLeft / 60), s = restLeft % 60;
+  $("restTime").textContent = m ? `${m}:${String(s).padStart(2, "0")}` : s;
+}
+function nextSet() {
+  clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
+  setIdx++; reps = 0; phase = "up"; smooth = null; posOkFrames = 0;
+  updateCount(); updateSet(); beep(1200, 0.35); say(`C'est reparti, série ${setIdx}`);
+}
+$("restSkip").onclick = nextSet;
+$("restPlus").onclick = () => { restLeft += 15; renderRest(); };
+$("restMinus").onclick = () => { restLeft = Math.max(1, restLeft - 15); renderRest(); };
+
+$("plusBtn").onclick = () => addRep(false);
+$("minusBtn").onclick = () => { if (reps > 0) { reps--; updateCount(); beep(400, 0.08, 0.2); } };
+$("endSetBtn").onclick = () => { say("Série terminée"); finishSet(); };
+$("stopBtn").onclick = () => { if (reps > 0) history.push(reps); endWorkout(); };
+
+function endWorkout() {
+  running = false; clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
+  stopCamera(); try { wakeLock?.release(); } catch {}
+  const total = history.reduce((a, b) => a + b, 0);
+  $("summary").innerHTML = history.map((r, i) => `Série ${i + 1} : <b>${r}</b> répétitions`).join("<br>") +
+    `<hr style="border:none;border-top:1px solid #333;margin:8px 0">Total : <b>${total}</b> pompes`;
+  say(`Bravo ! ${total} pompes au total`);
+  show("done");
+}
+
+/* ---------- Démarrage ---------- */
+$("startBtn").onclick = async () => {
+  beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
+  reps = 0; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0;
+  updateCount(); updateSet(); show("workout");
+  $("loading").style.display = "flex";
+  try {
+    if (!navigator.mediaDevices?.getUserMedia) throw new Error("Caméra indisponible : ouvre la page en https.");
+    await Promise.all([startCamera(), loadModel()]);
+  } catch (e) {
+    $("loading").innerHTML = `Impossible de démarrer :<br>${e.message || e}<br><br><button class="ghost" onclick="location.reload()">Retour</button>`;
+    return;
+  }
+  $("loading").style.display = "none";
+  running = true; keepAwake(); say("Prêt. Mets-toi en position.");
+  requestAnimationFrame(loop);
+};
+$("exoBtn").onclick = () => {}; // d'autres exercices arriveront ici
+$("againBtn").onclick = () => show("setup");
+</script>
+</body>
+</html>
