@@ -13,17 +13,42 @@
   .screen{display:none;flex:1;flex-direction:column;min-height:0}
   .screen.on{display:flex}
   /* Réglages */
-  #setup{padding:24px 20px;gap:18px;overflow:auto}
-  h1{font-size:26px}
-  .sub{color:var(--mut);font-size:14px;line-height:1.4}
-  .field{background:var(--card);border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
-  .field label{font-size:16px}
-  .step{display:flex;align-items:center;gap:12px}
-  .step button{width:40px;height:40px;border-radius:50%;border:none;background:#2a2d36;color:var(--txt);font-size:22px}
-  .step span{min-width:48px;text-align:center;font-size:20px;font-weight:600}
+  #setup{padding:20px 18px calc(24px + env(safe-area-inset-bottom));gap:10px;overflow:auto}
+  #setup>*{flex-shrink:0}
+  .hero{display:flex;align-items:center;gap:14px;margin:6px 0 10px}
+  .logo{width:52px;height:52px;flex:none;border-radius:16px;background:linear-gradient(135deg,#3ddc84,#1fa463);display:grid;place-items:center;font-size:26px}
+  h1{font-size:22px;line-height:1.15}
+  .sub{color:var(--mut);font-size:14px;line-height:1.4;margin-top:3px}
+  .label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:12px 4px 0}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+  .chip{flex:none;border:1px solid #2c303a;background:var(--card);color:var(--txt);border-radius:999px;padding:10px 16px;font-size:15px;font-weight:600}
+  .chip.on{background:var(--acc);border-color:var(--acc);color:#04150b}
+  .chip.soon{color:var(--mut)}
+  .chip em{font-style:normal;font-size:11px;font-weight:600;margin-left:4px;padding:2px 6px;border-radius:6px;background:#262a33}
+  .card{background:var(--card);border-radius:16px;overflow:hidden}
+  .line{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px 12px 16px;min-height:60px}
+  .line+.line{border-top:1px solid #23262e}
+  .line>span{font-size:16px}
+  .stepper{display:flex;align-items:center;background:#22252d;border-radius:12px;padding:3px}
+  .stepper button{width:38px;height:38px;border:none;border-radius:10px;background:transparent;color:var(--txt);font-size:22px;line-height:1}
+  .stepper button:active{background:#2f333d}
+  .stepper b{min-width:52px;text-align:center;font-size:18px;font-variant-numeric:tabular-nums}
+  .stepper i{font-style:normal;font-size:13px;color:var(--mut);margin-left:2px;font-weight:500}
+  .switch{width:52px;height:32px;border:none;border-radius:999px;background:#3a3e48;position:relative;transition:background .2s}
+  .switch i{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:transform .2s}
+  .switch.on{background:var(--acc)}
+  .switch.on i{transform:translateX(20px)}
+  .seg{display:flex;background:#22252d;border-radius:12px;padding:3px}
+  .seg button{border:none;background:transparent;color:var(--mut);font-size:14px;font-weight:600;padding:9px 14px;border-radius:10px}
+  .seg button.on{background:#3a3e48;color:var(--txt)}
+  .recap{text-align:center;color:var(--mut);font-size:14px;margin:14px 0 2px}
+  .recap b{color:var(--txt)}
   .big{border:none;border-radius:16px;padding:18px;font-size:19px;font-weight:700;background:var(--acc);color:#04150b;width:100%}
+  .big:active{filter:brightness(.92)}
   .ghost{border:1px solid #333743;background:transparent;color:var(--txt);border-radius:12px;padding:10px 14px;font-size:15px}
-  .tips{font-size:13px;color:var(--mut);line-height:1.5;background:var(--card);border-radius:14px;padding:14px 16px}
+  .tips{font-size:14px;color:var(--mut);line-height:1.5;background:var(--card);border-radius:16px;padding:14px 16px;margin-top:6px}
+  .tips summary{color:var(--txt);font-weight:600;cursor:pointer}
+  .tips p{margin-top:8px}
   .tips b{color:var(--txt)}
   /* Séance */
   #workout{position:relative}
@@ -57,33 +82,50 @@
 
 <!-- ÉCRAN 1 : réglages -->
 <section id="setup" class="screen on">
-  <div>
-    <h1>Compteur de musculation</h1>
-    <p class="sub">La caméra compte tes répétitions, les annonce à voix haute et lance la pause automatiquement.</p>
+  <header class="hero">
+    <div class="logo">💪</div>
+    <div>
+      <h1>Compteur de musculation</h1>
+      <p class="sub">La caméra compte, tu te concentres sur l'effort.</p>
+    </div>
+  </header>
+
+  <div class="label">Exercice</div>
+  <div class="chips" id="exoChips">
+    <button class="chip on" data-exo="pompes">Pompes</button>
+    <button class="chip soon" disabled>Squats <em>bientôt</em></button>
+    <button class="chip soon" disabled>Curls <em>bientôt</em></button>
   </div>
 
-  <div class="field"><label>Exercice</label>
-    <div class="step"><button class="ghost" id="exoBtn">Pompes</button></div></div>
-  <div class="field"><label>Répétitions / série</label>
-    <div class="step"><button data-k="reps" data-d="-1">−</button><span id="v-reps"></span><button data-k="reps" data-d="1">+</button></div></div>
-  <div class="field"><label>Nombre de séries</label>
-    <div class="step"><button data-k="sets" data-d="-1">−</button><span id="v-sets"></span><button data-k="sets" data-d="1">+</button></div></div>
-  <div class="field"><label>Pause (secondes)</label>
-    <div class="step"><button data-k="rest" data-d="-15">−</button><span id="v-rest"></span><button data-k="rest" data-d="15">+</button></div></div>
-  <div class="field"><label>Délai de départ (s)</label>
-    <div class="step"><button data-k="delay" data-d="-5">−</button><span id="v-delay"></span><button data-k="delay" data-d="5">+</button></div></div>
-  <div class="field"><label>Annonce vocale</label>
-    <div class="step"><button class="ghost" id="voiceBtn"></button></div></div>
-  <div class="field"><label>Caméra</label>
-    <div class="step"><button class="ghost" id="camBtn"></button></div></div>
+  <div class="label">Séance</div>
+  <div class="card">
+    <div class="line"><span>Répétitions</span>
+      <div class="stepper"><button data-k="reps" data-d="-1">−</button><b id="v-reps"></b><button data-k="reps" data-d="1">+</button></div></div>
+    <div class="line"><span>Séries</span>
+      <div class="stepper"><button data-k="sets" data-d="-1">−</button><b id="v-sets"></b><button data-k="sets" data-d="1">+</button></div></div>
+    <div class="line"><span>Pause</span>
+      <div class="stepper"><button data-k="rest" data-d="-15">−</button><b><span id="v-rest"></span><i>s</i></b><button data-k="rest" data-d="15">+</button></div></div>
+    <div class="line"><span>Délai de départ</span>
+      <div class="stepper"><button data-k="delay" data-d="-5">−</button><b><span id="v-delay"></span><i>s</i></b><button data-k="delay" data-d="5">+</button></div></div>
+  </div>
 
+  <div class="label">Options</div>
+  <div class="card">
+    <div class="line"><span>Annonce vocale</span>
+      <button class="switch" id="voiceBtn" role="switch"><i></i></button></div>
+    <div class="line"><span>Caméra</span>
+      <div class="seg" id="camSeg"><button data-f="user">Avant</button><button data-f="environment">Arrière</button></div></div>
+  </div>
+
+  <div class="recap" id="recap"></div>
   <button class="big" id="startBtn">Commencer</button>
 
-  <div class="tips">
-    <b>Placement du téléphone :</b> pose-le au sol à 1,5–2 m, <b>de profil</b> (idéal) ou <b>face à toi</b>. Tes épaules, coudes et mains doivent être bien visibles.<br><br>
-    <b>Comment ça compte :</b> une répétition = descente (coudes pliés, épaules vers le sol) puis bras tendus. La barre en bas montre ta descente : elle doit passer au vert. Les demi-pompes ne comptent pas.<br><br>
-    Les boutons <b>+1 / −1</b> permettent de corriger à la main si besoin.
-  </div>
+  <details class="tips">
+    <summary>Conseils de placement</summary>
+    <p>Pose le téléphone au sol à 1,5–2 m, <b>de profil</b> (idéal) ou <b>face à toi</b>. Épaules, coudes et mains doivent être visibles.</p>
+    <p>Une répétition = descente puis bras tendus. La barre en bas de l'écran passe au vert quand tu es assez bas.</p>
+    <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
+  </details>
 </section>
 
 <!-- ÉCRAN 2 : séance -->
@@ -140,15 +182,18 @@ function renderCfg() {
   $("v-sets").textContent = cfg.sets;
   $("v-rest").textContent = cfg.rest;
   $("v-delay").textContent = cfg.delay;
-  $("voiceBtn").textContent = cfg.voice ? "Activée" : "Coupée";
-  $("camBtn").textContent = cfg.facing === "user" ? "Avant" : "Arrière";
+  $("voiceBtn").classList.toggle("on", cfg.voice);
+  $("voiceBtn").setAttribute("aria-checked", cfg.voice);
+  document.querySelectorAll("#camSeg button").forEach(b => b.classList.toggle("on", b.dataset.f === cfg.facing));
+  const tot = cfg.reps * cfg.sets;
+  $("recap").innerHTML = `<b>${cfg.sets} × ${cfg.reps}</b> pompes · <b>${tot}</b> au total · pause <b>${cfg.rest} s</b>`;
 }
-document.querySelectorAll(".step button[data-k]").forEach(b => b.onclick = () => {
+document.querySelectorAll(".stepper button[data-k]").forEach(b => b.onclick = () => {
   const k = b.dataset.k, [mn, mx] = LIM[k];
   cfg[k] = Math.min(mx, Math.max(mn, cfg[k] + +b.dataset.d)); save(); renderCfg();
 });
 $("voiceBtn").onclick = () => { cfg.voice = !cfg.voice; save(); renderCfg(); };
-$("camBtn").onclick = () => { cfg.facing = cfg.facing === "user" ? "environment" : "user"; save(); renderCfg(); };
+document.querySelectorAll("#camSeg button").forEach(b => b.onclick = () => { cfg.facing = b.dataset.f; save(); renderCfg(); });
 renderCfg();
 
 const show = id => document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
@@ -422,7 +467,6 @@ $("startBtn").onclick = async () => {
   say(cfg.delay ? `Départ dans ${cfg.delay} secondes` : "Mets-toi en position");
   requestAnimationFrame(loop);
 };
-$("exoBtn").onclick = () => {}; // d'autres exercices arriveront ici
 $("againBtn").onclick = () => show("setup");
 </script>
 </body>
