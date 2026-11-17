@@ -115,6 +115,8 @@
       <button class="switch" id="voiceBtn" role="switch"><i></i></button></div>
     <div class="line"><span>Caméra</span>
       <div class="seg" id="camSeg"><button data-f="user">Avant</button><button data-f="environment">Arrière</button></div></div>
+    <div class="line"><span>Démarrage</span>
+      <div class="seg" id="trigSeg"><button data-t="timer">Chrono</button><button data-t="hand">Main ✋</button></div></div>
   </div>
 
   <div class="recap" id="recap"></div>
@@ -124,6 +126,7 @@
     <summary>Conseils de placement</summary>
     <p id="tipPlace"></p>
     <p>Une répétition = descente puis bras tendus. La barre en bas de l'écran passe au vert quand tu es assez bas.</p>
+    <p><b>Démarrage « Main ✋ » :</b> pose le téléphone, montre ta main ouverte (5 doigts écartés) face à la caméra, de près. Le délai de départ démarre, le temps de te mettre en place.</p>
     <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
   </details>
 </section>
@@ -167,7 +170,7 @@
 </section>
 
 <script type="module">
-import { PoseLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+import { PoseLandmarker, HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
 
 /* ---------- Réglages ---------- */
 const EXOS = {
@@ -178,7 +181,7 @@ const EXOS = {
     joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆",
     tip: "Pose le téléphone à 2–3 m, <b>de profil</b> (idéal) ou <b>face à toi</b>, à hauteur de taille si possible (sur une chaise, contre un mur). Tout ton corps, des épaules aux pieds, doit être visible." }
 };
-const DEF = { exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
+const DEF = { trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
 let cfg = DEF;
 try { cfg = { ...DEF, ...JSON.parse(localStorage.getItem("pompesCfg") || "{}") }; } catch {}
 const save = () => { try { localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {} };
@@ -194,6 +197,7 @@ function renderCfg() {
   $("voiceBtn").setAttribute("aria-checked", cfg.voice);
   document.querySelectorAll("#exoChips .chip[data-exo]").forEach(b => b.onclick = () => { cfg.exo = b.dataset.exo; save(); renderCfg(); });
 document.querySelectorAll("#camSeg button").forEach(b => b.classList.toggle("on", b.dataset.f === cfg.facing));
+  document.querySelectorAll("#trigSeg button").forEach(b => b.classList.toggle("on", b.dataset.t === cfg.trigger));
   const tot = cfg.reps * cfg.sets;
   if (!EXOS[cfg.exo]) cfg.exo = "pompes";
   document.querySelectorAll("#exoChips .chip[data-exo]").forEach(b => b.classList.toggle("on", b.dataset.exo === cfg.exo));
@@ -205,6 +209,7 @@ document.querySelectorAll(".stepper button[data-k]").forEach(b => b.onclick = ()
   cfg[k] = Math.min(mx, Math.max(mn, cfg[k] + +b.dataset.d)); save(); renderCfg();
 });
 $("voiceBtn").onclick = () => { cfg.voice = !cfg.voice; save(); renderCfg(); };
+document.querySelectorAll("#trigSeg button").forEach(b => b.onclick = () => { cfg.trigger = b.dataset.t; save(); renderCfg(); });
 document.querySelectorAll("#camSeg button").forEach(b => b.onclick = () => { cfg.facing = b.dataset.f; save(); renderCfg(); });
 renderCfg();
 
@@ -258,6 +263,54 @@ async function loadModel() {
   } catch {
     landmarker = await PoseLandmarker.createFromOptions(files, opts("pose_landmarker_lite"));
   }
+}
+let handLm = null;
+async function loadHandModel() {
+  if (handLm) return;
+  const files = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  const base = { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task" };
+  const o = d => ({ baseOptions: { ...base, delegate: d }, runningMode: "VIDEO", numHands: 2, minHandDetectionConfidence: 0.5, minHandPresenceConfidence: 0.5, minTrackingConfidence: 0.5 });
+  try { handLm = await HandLandmarker.createFromOptions(files, o("GPU")); }
+  catch { handLm = await HandLandmarker.createFromOptions(files, o("CPU")); }
+}
+// Main ouverte : 4 doigts tendus + pouce écarté
+function isOpenPalm(h) {
+  const ar = video.videoWidth / video.videoHeight || 1;
+  const d = (a, b) => Math.hypot((h[a].x - h[b].x) * ar, h[a].y - h[b].y);
+  const palm = d(0, 9);
+  if (palm < 0.015) return false;
+  const fingers = [[8, 6], [12, 10], [16, 14], [20, 18]].every(([t, p]) => d(0, t) > d(0, p) * 1.15);
+  const thumb = d(0, 4) > d(0, 3) && d(4, 5) > palm * 0.5;
+  return fingers && thumb;
+}
+let waitingHand = false, openSince = 0;
+function handStep(ts) {
+  const hr = handLm.detectForVideo(video, ts);
+  const hands = hr.landmarks || [];
+  const open = hands.some(isOpenPalm);
+  drawPoints(hands.flat(), open ? "#3ddc84" : "#ffb020");
+  $("count").innerHTML = "✋";
+  $("angle").textContent = hands.length ? (open ? "Main ouverte ✔" : "Ouvre bien la main") : "";
+  if (open) {
+    openSince ||= ts;
+    const prog = Math.min(1, (ts - openSince) / 600);
+    $("phaseFill").style.width = (prog * 100) + "%"; $("phaseFill").style.background = "var(--acc)";
+    if (prog >= 1) {                             // signal validé : on lance le délai de départ
+      waitingHand = false; openSince = 0; lastCd = -1;
+      armDelayEnd = ts + cfg.delay * 1000; anchorY = null;
+      beep(1200, 0.25); say(cfg.delay ? `Go ! Départ dans ${cfg.delay} secondes` : "Go !");
+      $("phaseFill").style.width = "0%";
+    }
+  } else { openSince = 0; $("phaseFill").style.width = "0%"; }
+  setStatus("Montre ta main ouverte ✋ pour démarrer");
+}
+function drawPoints(pts, color) {
+  canvas.width = canvas.clientWidth * devicePixelRatio; canvas.height = canvas.clientHeight * devicePixelRatio;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const vw = video.videoWidth, vh = video.videoHeight, cw = canvas.width, ch = canvas.height;
+  const s = Math.max(cw / vw, ch / vh), ox = (cw - vw * s) / 2, oy = (ch - vh * s) / 2;
+  ctx.fillStyle = color;
+  for (const p of pts) { ctx.beginPath(); ctx.arc(p.x * vw * s + ox, p.y * vh * s + oy, 5 * devicePixelRatio, 0, 7); ctx.fill(); }
 }
 async function startCamera() {
   stopCamera();
@@ -432,6 +485,7 @@ function loop() {
     const ts = performance.now();
     if (ts > lastTs) {
       lastTs = ts;
+      if (waitingHand) { handStep(ts); requestAnimationFrame(loop); return; }
       const res = landmarker.detectForVideo(video, ts);
       // lissage des points pour éviter que le squelette tremble
       const cur = res.landmarks?.[0];
@@ -485,7 +539,7 @@ $("endSetBtn").onclick = () => { say("Série terminée"); finishSet(); };
 $("stopBtn").onclick = () => { if (reps > 0) history.push(reps); endWorkout(); };
 
 function endWorkout() {
-  running = false; clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
+  running = false; waitingHand = false; clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
   stopCamera(); try { wakeLock?.release(); } catch {}
   const total = history.reduce((a, b) => a + b, 0);
   $("summary").innerHTML = history.map((r, i) => `Série ${i + 1} : <b>${r}</b> répétitions`).join("<br>") +
@@ -502,14 +556,20 @@ $("startBtn").onclick = async () => {
   $("loading").style.display = "flex";
   try {
     if (!navigator.mediaDevices?.getUserMedia) throw new Error("Caméra indisponible : ouvre la page en https.");
-    await Promise.all([startCamera(), loadModel()]);
+    await Promise.all([startCamera(), loadModel(), cfg.trigger === "hand" ? loadHandModel().catch(() => { cfg.trigger = "timer"; }) : null]);
   } catch (e) {
     $("loading").innerHTML = `Impossible de démarrer :<br>${e.message || e}<br><br><button class="ghost" onclick="location.reload()">Retour</button>`;
     return;
   }
   $("loading").style.display = "none";
-  running = true; keepAwake(); armed = false; lastCd = -1; armDelayEnd = performance.now() + cfg.delay * 1000;
-  say(cfg.delay ? `Départ dans ${cfg.delay} secondes` : "Mets-toi en position");
+  running = true; keepAwake(); armed = false; lastCd = -1;
+  if (cfg.trigger === "hand") {
+    waitingHand = true; openSince = 0; armDelayEnd = 0;
+    say("Montre ta main pour démarrer");
+  } else {
+    waitingHand = false; armDelayEnd = performance.now() + cfg.delay * 1000;
+    say(cfg.delay ? `Départ dans ${cfg.delay} secondes` : "Mets-toi en position");
+  }
   requestAnimationFrame(loop);
 };
 $("againBtn").onclick = () => show("setup");
