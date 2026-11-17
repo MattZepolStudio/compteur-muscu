@@ -171,10 +171,10 @@ import { PoseLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@m
 
 /* ---------- Réglages ---------- */
 const EXOS = {
-  pompes: { unit: "pompes", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.4,
+  pompes: { unit: "pompes", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.4, minRep: 300, minGap: 500,
     joint: "Coude", ready: "Bras tendus, ne bouge plus…", hidden: "Bras et épaules non visibles", push: "Pousse ⬆",
     tip: "Pose le téléphone au sol à 1,5–2 m, <b>de profil</b> (idéal) ou <b>face à toi</b>. Épaules, coudes et mains doivent être visibles." },
-  squats: { unit: "squats", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 105, drop: 0.3,
+  squats: { unit: "squats", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 105, drop: 0.3, minRep: 500, minGap: 900,
     joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆",
     tip: "Pose le téléphone à 2–3 m, <b>de profil</b> (idéal) ou <b>face à toi</b>, à hauteur de taille si possible (sur une chaise, contre un mur). Tout ton corps, des épaules aux pieds, doit être visible." }
 };
@@ -310,6 +310,7 @@ function addRep(auto = true) {
 // vers les mains (marche aussi de face). Le premier qui valide une répétition la compte.
 let dRef = null, sH = null, phaseA = "up", phaseH = "up";
 let armStart = 0, prevLm = null;
+const det = { A: { phase: "up", hi: 0, downAt: 0 }, H: { phase: "up", hi: 0, downAt: 0 } };
 let armed = false, armDelayEnd = 0, stillSince = 0, anchorY = null, lastCd = -1;
 const clamp = x => Math.max(0, Math.min(1, x));
 function avgY(lm, ids) {
@@ -336,54 +337,71 @@ function process(res) {
   if (!lm) { setStatus("Je ne te vois pas : recule un peu"); $("angle").textContent = ""; return; }
   const ar = video.videoWidth / video.videoHeight || 1;
   const X = EXOS[cfg.exo];
+  const MINV = 0.6;                              // points peu fiables ignorés
   const sides = X.joints.map(ix => ({ ix, v: vis(...ix.map(i => lm[i])) })).sort((a, b) => b.v - a.v);
-  const shY = avgY(lm, X.top), wrY = avgY(lm, X.bottom);
-  if (sides[0].v < 0.3 && (shY == null || wrY == null)) { setStatus(X.hidden); return; }
+  const goodY = ids => { const ok = ids.map(i => lm[i]).filter(q => (q.visibility ?? 0) >= MINV); return ok.length ? ok.reduce((t, q) => t + q.y, 0) / ok.length : null; };
+  const shY = goodY(X.top), wrY = goodY(X.bottom);
+  const angOk = sides[0].v >= MINV, hOk = shY != null && wrY != null;
+  if (!angOk && !hOk) { setStatus(X.hidden); $("angle").textContent = ""; return; }   // on garde l'état, on ne compte rien
 
-  // Détecteur 1 : angle du coude (corrigé du format de l'image)
+  // Détecteur 1 : angle de l'articulation (corrigé du format de l'image)
   let pA = 0;
-  if (sides[0].v >= 0.3) {
+  if (angOk) {
     const [S, E, W] = sides[0].ix.map(i => ({ x: lm[i].x * ar, y: lm[i].y }));
     const ang = angle(S, E, W);
-    smooth = smooth == null ? ang : smooth * 0.6 + ang * 0.4;
+    smooth = smooth == null ? ang : smooth * 0.75 + ang * 0.25;
     pA = clamp((X.angUp - smooth) / (X.angUp - X.angDown));
   }
-  // Détecteur 2 : hauteur des épaules au-dessus des poignets, comparée à la position bras tendus
+  // Détecteur 2 : descente du haut du corps vers le bas, comparée à la position de départ
   let pH = 0;
-  if (shY != null && wrY != null) {
+  if (hOk) {
     const d = wrY - shY;
-    sH = sH == null ? d : sH * 0.6 + d * 0.4;
-    if (dRef == null || sH > dRef) dRef = sH; else dRef = dRef * 0.998 + sH * 0.002;
+    sH = sH == null ? d : sH * 0.75 + d * 0.25;
+    if (dRef == null) dRef = sH;
+    else dRef += (sH - dRef) * (sH > dRef ? 0.03 : 0.002);   // référence lente : un saut parasite ne la fausse pas
     if (dRef > 0.04) pH = clamp((1 - sH / dRef) / X.drop);
   }
 
   const p = Math.max(pA, pH);
   $("phaseFill").style.width = (p * 100) + "%";
   $("phaseFill").style.background = p >= 0.85 ? "var(--acc)" : "var(--warn)";
-  $("angle").textContent = `${smooth != null ? X.joint + " " + Math.round(smooth) + "° · " : ""}Descente ${Math.round(p * 100)}%`;
+  $("angle").textContent = `${angOk && smooth != null ? X.joint + " " + Math.round(smooth) + "° · " : ""}Descente ${Math.round(p * 100)}%`;
 
-  if (!armed) {                                  // attend 1 s immobile, bras tendus
-    phaseA = phaseH = phase = "up";
+  if (!armed) {                                  // attend une position stable
+    det.A.phase = det.H.phase = phase = "up"; det.A.hi = det.H.hi = 0;
     if (lastCd !== 0) {                          // fin du compte à rebours : on affiche 0 et on prévient
       lastCd = 0; armStart = now; updateCount(); say(X.ready.replace("…", ""));
     }
     if (shY == null || anchorY == null || Math.abs(shY - anchorY) > 0.05) { anchorY = shY; stillSince = now; }
     if (p > 0.4) stillSince = now;
     setStatus(X.ready);
-    // immobile 0,7 s… ou au plus tard 4 s après la fin du compte à rebours
     if (now - stillSince > 700 || now - armStart > 4000) {
       armed = true; dRef = sH; updateCount(); beep(1200, 0.25); say("C'est parti");
     }
     return;
   }
-  if (phaseA === "up" && pA >= 0.85) { phaseA = "down"; }
-  if (phaseH === "up" && pH >= 0.85) { phaseH = "down"; }
+
+  // Une répétition = rester en bas au moins 0,2 s, puis remonter ; durée et écart minimum entre deux reps
+  const step = (D, val, ok) => {
+    if (!ok) { D.hi = 0; return false; }
+    if (D.phase === "up") {
+      if (val >= 0.85) { D.hi ||= now; if (now - D.hi >= 200) { D.phase = "down"; D.downAt = D.hi; } }
+      else D.hi = 0;
+    } else if (val <= 0.25) {
+      D.phase = "up"; D.hi = 0;
+      return now - D.downAt >= X.minRep;
+    }
+    return false;
+  };
+  const doneA = step(det.A, pA, angOk), doneH = step(det.H, pH, hOk);
   const wasDown = phase === "down";
-  phase = (phaseA === "down" || phaseH === "down") ? "down" : "up";
+  phase = (det.A.phase === "down" || det.H.phase === "down") ? "down" : "up";
   if (!wasDown && phase === "down") beep(520, 0.05, 0.12);
   setStatus(phase === "up" ? "Descends ⬇" : X.push);
-
-  if ((phaseA === "down" && pA <= 0.25) || (phaseH === "down" && pH <= 0.25)) countRep();
+  if ((doneA || doneH) && now - lastRepAt >= X.minGap) {
+    lastRepAt = now; det.A.phase = det.H.phase = phase = "up"; det.A.hi = det.H.hi = 0;
+    addRep();
+  }
 }
 
 const SKEL = [[11,13],[13,15],[12,14],[14,16],[11,12],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
@@ -419,8 +437,8 @@ function loop() {
       const cur = res.landmarks?.[0];
       if (cur && prevLm) {
         for (let i = 0; i < cur.length; i++) {
-          cur[i].x = prevLm[i].x * 0.5 + cur[i].x * 0.5;
-          cur[i].y = prevLm[i].y * 0.5 + cur[i].y * 0.5;
+          cur[i].x = prevLm[i].x * 0.6 + cur[i].x * 0.4;
+          cur[i].y = prevLm[i].y * 0.6 + cur[i].y * 0.4;
         }
       }
       prevLm = cur ? cur.map(p => ({ x: p.x, y: p.y })) : null;
