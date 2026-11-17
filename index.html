@@ -3,24 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#09090b">
+<meta name="theme-color" content="#09090B">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Compteur muscu">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <title>Compteur de musculation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#09090b;--card:#181a20;--txt:#f2f3f5;--mut:#8b8f99;--acc:#3ddc84;--warn:#ffb020;--red:#ff5a5a}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  html,body{height:100%;height:100dvh;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
   body{display:flex;flex-direction:column;overflow:hidden}
   .screen{display:none;flex:1;flex-direction:column;min-height:0}
   .screen.on{display:flex}
   /* Réglages — look premium */
-  #setup{position:relative;background:radial-gradient(120% 60% at 50% -10%,#14281d 0%,#09090b 55%);font-family:Inter,system-ui,sans-serif}
+  #setup{position:relative;min-height:100dvh;height:100dvh;background:radial-gradient(120% 60% at 50% -10%,#14281d 0%,#09090b 55%);font-family:Inter,system-ui,sans-serif}
   .num,.stepper b,.mc-x,.go span{font-family:"Barlow Condensed",Inter,system-ui,sans-serif}
   .ic{width:20px;height:20px;flex:none}
   .ic.xs{width:13px;height:13px}
   .ic.sm{width:17px;height:17px}
-  #setup .scroll{flex:1;min-height:0;overflow:auto;padding:max(14px, env(safe-area-inset-top)) 16px 8px;display:flex;flex-direction:column;gap:10px}
+  #setup .scroll{flex:1;min-height:0;overflow-y:auto;padding:max(14px, env(safe-area-inset-top)) 16px 4px;display:flex;flex-direction:column;justify-content:space-between;gap:clamp(10px, 1.8dvh, 18px)}
+  #setup .main-card{flex:1 1 auto;min-height:230px;max-height:290px;justify-content:center}
   #setup .scroll>*{flex-shrink:0}
   .glass{background:linear-gradient(160deg,#ffffff0d,#ffffff03);border:1px solid #ffffff1a}
   .hero{display:flex;align-items:center;gap:12px;margin-bottom:2px}
@@ -38,21 +46,21 @@
   .exo.on{border-color:#4ade80;background:linear-gradient(160deg,#22c55e26,#22c55e08);box-shadow:0 0 0 1px #4ade8033,0 8px 24px #22c55e1f}
   .exo.on .exo-ic{background:#4ade80;color:#052e16}
   .exo.on small{color:#86efac}
-  .main-card{display:flex;align-items:stretch;gap:6px;padding:14px 12px 12px;border-radius:22px;border:1px solid #ffffff1a;background:linear-gradient(165deg,#ffffff12,#ffffff03 70%)}
-  .mc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+  .main-card{display:flex;align-items:center;gap:6px;padding:14px 12px 12px;border-radius:22px;border:1px solid #ffffff1a;background:linear-gradient(165deg,#ffffff12,#ffffff03 70%)}
+  .mc-col{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-width:0;text-align:center}
+  .mc-lab{justify-content:center}
   .mc-lab,.mini-lab{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#71717a}
-  .mc-x{align-self:center;font-size:30px;color:#3f3f46;font-weight:600;margin-top:-30px}
+  .mc-x{flex:none;align-self:center;font-size:30px;color:#3f3f46;font-weight:600;line-height:1}
   .stepper{display:flex;align-items:center;justify-content:space-between;width:100%}
   .stepper button{width:34px;height:34px;flex:none;border-radius:50%;border:1px solid #ffffff1a;background:#ffffff0a;color:#e4e4e7;display:grid;place-items:center;padding:0}
   .stepper button .ic{width:16px;height:16px}
   .stepper button:active{background:#ffffff1f}
   .stepper b{flex:1;text-align:center;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
   .stepper i{font-style:normal;font-size:14px;color:#71717a;margin-left:1px;font-weight:600}
-  .bigstep{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"num num" "mn pl";justify-items:center;row-gap:8px;max-width:150px}
-  .bigstep b{grid-area:num;font-size:72px;font-weight:800;letter-spacing:-.01em;color:#fafafa;line-height:.9}
-  .bigstep button:first-child{grid-area:mn}
-  .bigstep button:last-child{grid-area:pl}
-  .bigstep button{width:44px;height:36px;border-radius:12px}
+  .bigstep{display:flex;flex-direction:column;align-items:center;gap:12px;width:auto}
+  .bigstep b{display:block;font-size:76px;font-weight:800;letter-spacing:-.01em;color:#fafafa;line-height:.85;text-align:center;min-width:2ch}
+  .bigstep .pm{display:flex;justify-content:center;gap:12px}
+  .bigstep button{width:46px;height:38px;border-radius:12px}
   .mini-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .mini{padding:9px 10px;border-radius:16px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff0b,#ffffff02);display:flex;flex-direction:column;gap:6px}
   .mini .stepper button{width:30px;height:30px}
@@ -145,12 +153,12 @@
     <div class="main-card">
       <div class="mc-col">
         <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg> Séries</div>
-        <div class="stepper bigstep"><button data-k="sets" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b id="v-sets"></b><button data-k="sets" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div>
+        <div class="stepper bigstep"><b id="v-sets"></b><div class="pm"><button data-k="sets" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button data-k="sets" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
       </div>
       <div class="mc-x">×</div>
       <div class="mc-col">
         <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Répétitions</div>
-        <div class="stepper bigstep"><button data-k="reps" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b id="v-reps"></b><button data-k="reps" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div>
+        <div class="stepper bigstep"><b id="v-reps"></b><div class="pm"><button data-k="reps" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button data-k="reps" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
       </div>
     </div>
 
