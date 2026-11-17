@@ -3,58 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#0e0f12">
+<meta name="theme-color" content="#09090b">
 <title>Compteur de musculation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0e0f12;--card:#181a20;--txt:#f2f3f5;--mut:#8b8f99;--acc:#3ddc84;--warn:#ffb020;--red:#ff5a5a}
+  :root{--bg:#09090b;--card:#181a20;--txt:#f2f3f5;--mut:#8b8f99;--acc:#3ddc84;--warn:#ffb020;--red:#ff5a5a}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
   body{display:flex;flex-direction:column;overflow:hidden}
   .screen{display:none;flex:1;flex-direction:column;min-height:0}
   .screen.on{display:flex}
-  /* Réglages */
-  #setup{position:relative}
-  #setup .scroll{flex:1;min-height:0;overflow:auto;padding:max(14px, env(safe-area-inset-top)) 16px 8px;display:flex;flex-direction:column;gap:12px}
+  /* Réglages — look premium */
+  #setup{position:relative;background:radial-gradient(120% 60% at 50% -10%,#14281d 0%,#09090b 55%);font-family:Inter,system-ui,sans-serif}
+  .num,.stepper b,.mc-x,.go span{font-family:"Barlow Condensed",Inter,system-ui,sans-serif}
+  .ic{width:20px;height:20px;flex:none}
+  .ic.xs{width:13px;height:13px}
+  .ic.sm{width:17px;height:17px}
+  #setup .scroll{flex:1;min-height:0;overflow:auto;padding:max(14px, env(safe-area-inset-top)) 16px 8px;display:flex;flex-direction:column;gap:10px}
   #setup .scroll>*{flex-shrink:0}
-  .hero{display:flex;align-items:center;gap:12px}
-  .logo{width:40px;height:40px;flex:none;border-radius:12px;background:linear-gradient(135deg,#3ddc84,#1fa463);display:grid;place-items:center;font-size:21px}
-  h1{font-size:21px;flex:1}
-  .help{width:36px;height:36px;border-radius:50%;border:1px solid #333743;background:transparent;color:var(--mut);font-size:17px;font-weight:700}
-  .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .chip{border:1px solid #2c303a;background:var(--card);color:var(--txt);border-radius:12px;padding:11px 4px;font-size:15px;font-weight:600}
-  .chip.on{background:var(--acc);border-color:var(--acc);color:#04150b}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .tile{background:var(--card);border-radius:14px;padding:10px 8px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
-  .tile>span{font-size:13px;color:var(--mut)}
-  .stepper{display:flex;align-items:center;background:#22252d;border-radius:11px;padding:2px;width:100%;justify-content:space-between}
-  .stepper button{width:40px;height:38px;border:none;border-radius:9px;background:transparent;color:var(--txt);font-size:22px;line-height:1}
-  .stepper button:active{background:#2f333d}
-  .stepper b{flex:1;text-align:center;font-size:19px;font-variant-numeric:tabular-nums}
-  .stepper i{font-style:normal;font-size:12px;color:var(--mut);margin-left:2px;font-weight:500}
-  .card{background:var(--card);border-radius:14px;overflow:hidden}
+  .glass{background:linear-gradient(160deg,#ffffff0d,#ffffff03);border:1px solid #ffffff1a}
+  .hero{display:flex;align-items:center;gap:12px;margin-bottom:2px}
+  .logo{width:40px;height:40px;flex:none;border-radius:12px;background:linear-gradient(135deg,#4ade80,#10b981);color:#04130a;display:grid;place-items:center;box-shadow:0 6px 20px #22c55e40}
+  .logo .ic{width:22px;height:22px;stroke-width:2.5}
+  .htxt{flex:1;min-width:0}
+  h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
+  .htxt p{font-size:11px;color:#71717a;text-transform:uppercase;letter-spacing:.12em;font-weight:600;margin-top:2px}
+  .help{width:38px;height:38px;border-radius:12px;border:1px solid #ffffff1a;background:#ffffff08;color:#a1a1aa;display:grid;place-items:center}
+  .exos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .exo{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:11px 10px 10px;border-radius:16px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff0d,#ffffff03);color:var(--txt);transition:border-color .2s,box-shadow .2s}
+  .exo-ic{width:32px;height:32px;border-radius:10px;background:#ffffff0f;display:grid;place-items:center;color:#a1a1aa;margin-bottom:4px}
+  .exo b{font-size:15px;font-weight:700}
+  .exo small{font-size:10.5px;color:#71717a;line-height:1.25}
+  .exo.on{border-color:#4ade80;background:linear-gradient(160deg,#22c55e26,#22c55e08);box-shadow:0 0 0 1px #4ade8033,0 8px 24px #22c55e1f}
+  .exo.on .exo-ic{background:#4ade80;color:#052e16}
+  .exo.on small{color:#86efac}
+  .main-card{display:flex;align-items:stretch;gap:6px;padding:14px 12px 12px;border-radius:22px;border:1px solid #ffffff1a;background:linear-gradient(165deg,#ffffff12,#ffffff03 70%)}
+  .mc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+  .mc-lab,.mini-lab{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#71717a}
+  .mc-x{align-self:center;font-size:30px;color:#3f3f46;font-weight:600;margin-top:-30px}
+  .stepper{display:flex;align-items:center;justify-content:space-between;width:100%}
+  .stepper button{width:34px;height:34px;flex:none;border-radius:50%;border:1px solid #ffffff1a;background:#ffffff0a;color:#e4e4e7;display:grid;place-items:center;padding:0}
+  .stepper button .ic{width:16px;height:16px}
+  .stepper button:active{background:#ffffff1f}
+  .stepper b{flex:1;text-align:center;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+  .stepper i{font-style:normal;font-size:14px;color:#71717a;margin-left:1px;font-weight:600}
+  .bigstep{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"num num" "mn pl";justify-items:center;row-gap:8px;max-width:150px}
+  .bigstep b{grid-area:num;font-size:72px;font-weight:800;letter-spacing:-.01em;color:#fafafa;line-height:.9}
+  .bigstep button:first-child{grid-area:mn}
+  .bigstep button:last-child{grid-area:pl}
+  .bigstep button{width:44px;height:36px;border-radius:12px}
+  .mini-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .mini{padding:9px 10px;border-radius:16px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff0b,#ffffff02);display:flex;flex-direction:column;gap:6px}
+  .mini .stepper button{width:30px;height:30px}
+  .pcard{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 8px 8px 14px;border-radius:16px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff0b,#ffffff02)}
+  .pl{display:flex;align-items:center;gap:8px;font-size:14px;color:#d4d4d8}
+  .pl .ic{color:#71717a}
+  .acc{border-radius:16px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff0b,#ffffff02);overflow:hidden}
+  .acc summary{list-style:none;display:flex;align-items:center;justify-content:space-between;padding:13px 14px;font-size:14px;font-weight:600;color:#d4d4d8;cursor:pointer}
+  .acc summary::-webkit-details-marker{display:none}
+  .acc summary>span{display:flex;align-items:center;gap:8px}
+  .acc summary>span .ic{color:#4ade80}
+  .chev{color:#71717a;transition:transform .2s}
+  .acc[open] .chev{transform:rotate(180deg)}
+  .acc-body{border-top:1px solid #ffffff12}
   .line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 8px 7px 14px;min-height:50px}
-  .line+.line{border-top:1px solid #23262e}
-  .line>span{font-size:15px}
-  .switch{width:50px;height:30px;border:none;border-radius:999px;background:#3a3e48;position:relative;transition:background .2s;margin-right:4px}
-  .switch i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
-  .switch.on{background:var(--acc)}
+  .line+.line{border-top:1px solid #ffffff0d}
+  .switch{width:48px;height:28px;border:none;border-radius:999px;background:#3f3f46;position:relative;transition:background .2s;margin-right:4px}
+  .switch i{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+  .switch.on{background:#22c55e}
   .switch.on i{transform:translateX(20px)}
-  .seg{display:flex;background:#22252d;border-radius:10px;padding:3px}
-  .seg button{border:none;background:transparent;color:var(--mut);font-size:13px;font-weight:600;padding:8px 11px;border-radius:8px}
-  .seg button.on{background:#3a3e48;color:var(--txt)}
-  .foot{padding:10px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(#0e0f1200,var(--bg) 30%);display:flex;flex-direction:column;gap:8px}
-  .recap{text-align:center;color:var(--mut);font-size:13px}
-  .recap b{color:var(--txt)}
-  .big{border:none;border-radius:14px;padding:16px;font-size:18px;font-weight:700;background:var(--acc);color:#04150b;width:100%}
-  .big:active{filter:brightness(.92)}
+  .seg{display:flex;background:#00000059;border:1px solid #ffffff12;border-radius:11px;padding:3px}
+  .seg button{border:none;background:transparent;color:#71717a;font-size:12.5px;font-weight:600;padding:7px 10px;border-radius:8px}
+  .seg button.on{background:#ffffff1a;color:#fafafa}
+  .foot{padding:10px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(#09090b00,#09090b 35%);display:flex;flex-direction:column;align-items:center;gap:10px}
+  .recap{display:inline-flex;align-items:center;gap:10px;padding:7px 14px;border-radius:999px;border:1px solid #ffffff1a;background:#ffffff0a;font-size:12.5px;color:#a1a1aa}
+  .recap b{color:#fafafa;font-weight:700}
+  .recap .dot{width:4px;height:4px;border-radius:50%;background:#52525b}
+  .recap .ic{width:14px;height:14px;color:#4ade80;vertical-align:-2px;margin-right:4px}
+  .go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:none;border-radius:18px;padding:16px;background:linear-gradient(135deg,#4ade80,#16a34a);color:#03140a;box-shadow:0 10px 30px #22c55e4d,inset 0 1px 0 #ffffff59}
+  .go span{font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+  .go .go-ic{width:20px;height:20px;fill:currentColor}
+  .go:active{transform:scale(.98);filter:brightness(.95)}
+  .big{border:none;border-radius:16px;padding:18px;font-size:19px;font-weight:700;background:var(--acc);color:#04150b;width:100%}
   .ghost{border:1px solid #333743;background:transparent;color:var(--txt);border-radius:12px;padding:10px 14px;font-size:15px}
-  .sheet{position:absolute;inset:0;background:#000a;display:none;align-items:flex-end;z-index:5}
+  .sheet{position:absolute;inset:0;background:#000b;backdrop-filter:blur(4px);display:none;align-items:flex-end;z-index:5}
   .sheet.on{display:flex}
-  .sheet-box{background:var(--card);width:100%;border-radius:20px 20px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom));font-size:14px;color:var(--mut);line-height:1.5}
-  .sheet-box h2{color:var(--txt);font-size:18px;margin-bottom:6px}
+  .sheet-box{background:#111113;border-top:1px solid #ffffff1a;width:100%;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom));font-size:14px;color:#a1a1aa;line-height:1.5}
+  .sheet-box h2{color:#fafafa;font-size:18px;margin-bottom:6px}
   .sheet-box p{margin:8px 0}
-  .sheet-box b{color:var(--txt)}
-  .sheet-box .big{margin-top:10px}
+  .sheet-box b{color:#fafafa}
+  .sheet-box .go{margin-top:12px;padding:13px}
+  .sheet-box .go span{font-size:20px}
   /* Séance */
   #workout{position:relative}
   #stage{position:relative;flex:1;min-height:0;background:#000;overflow:hidden}
@@ -91,43 +131,55 @@
 <section id="setup" class="screen on">
   <div class="scroll">
     <header class="hero">
-      <div class="logo">💪</div>
-      <h1>Compteur de muscu</h1>
-      <button class="help" id="tipsBtn" aria-label="Conseils">?</button>
+      <div class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="htxt"><h1>Compteur de muscu</h1><p>Comptage par caméra</p></div>
+      <button class="help" id="tipsBtn" aria-label="Conseils"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
     </header>
 
-    <div class="chips" id="exoChips">
-      <button class="chip" data-exo="pompes">Pompes</button>
-      <button class="chip" data-exo="squats">Squats</button>
-      <button class="chip" data-exo="curls">Curls</button>
+    <div class="exos" id="exoChips">
+      <button class="chip exo" data-exo="pompes"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg></span><b>Pompes</b><small>Pectoraux · Triceps</small></button>
+      <button class="chip exo" data-exo="squats"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></svg></span><b>Squats</b><small>Quadriceps · Fessiers</small></button>
+      <button class="chip exo" data-exo="curls"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg></span><b>Curls</b><small>Biceps</small></button>
     </div>
 
-    <div class="grid">
-      <div class="tile"><span>Répétitions</span>
-        <div class="stepper"><button data-k="reps" data-d="-1">−</button><b id="v-reps"></b><button data-k="reps" data-d="1">+</button></div></div>
-      <div class="tile"><span>Séries</span>
-        <div class="stepper"><button data-k="sets" data-d="-1">−</button><b id="v-sets"></b><button data-k="sets" data-d="1">+</button></div></div>
-      <div class="tile"><span>Pause</span>
-        <div class="stepper"><button data-k="rest" data-d="-15">−</button><b><span id="v-rest"></span><i>s</i></b><button data-k="rest" data-d="15">+</button></div></div>
-      <div class="tile"><span>Délai de départ</span>
-        <div class="stepper"><button data-k="delay" data-d="-5">−</button><b><span id="v-delay"></span><i>s</i></b><button data-k="delay" data-d="5">+</button></div></div>
+    <div class="main-card">
+      <div class="mc-col">
+        <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg> Séries</div>
+        <div class="stepper bigstep"><button data-k="sets" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b id="v-sets"></b><button data-k="sets" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div>
+      </div>
+      <div class="mc-x">×</div>
+      <div class="mc-col">
+        <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Répétitions</div>
+        <div class="stepper bigstep"><button data-k="reps" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b id="v-reps"></b><button data-k="reps" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="line" id="armsLine"><span>Bras</span>
-        <div class="seg" id="armsSeg"><button data-a="sep">Gauche / Droite</button><button data-a="both">Ensemble</button></div></div>
-      <div class="line"><span>Démarrage</span>
-        <div class="seg" id="trigSeg"><button data-t="timer">Chrono</button><button data-t="hand">Main ✋</button></div></div>
-      <div class="line"><span>Caméra</span>
-        <div class="seg" id="camSeg"><button data-f="user">Avant</button><button data-f="environment">Arrière</button></div></div>
-      <div class="line"><span>Annonce vocale</span>
-        <button class="switch" id="voiceBtn" role="switch"><i></i></button></div>
+    <div class="mini-row">
+      <div class="mini"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Pause</div><div class="stepper"><button data-k="rest" data-d="-15" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-rest"></span><i>s</i></b><button data-k="rest" data-d="15" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+      <div class="mini"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg> Délai</div><div class="stepper"><button data-k="delay" data-d="-5" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-delay"></span><i>s</i></b><button data-k="delay" data-d="5" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
     </div>
+
+    <div class="pcard" id="armsLine">
+      <span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></svg> Bras</span>
+      <div class="seg" id="armsSeg"><button data-a="sep">Gauche / Droite</button><button data-a="both">Ensemble</button></div>
+    </div>
+
+    <details class="acc">
+      <summary><span><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg> Paramètres de détection</span><svg class="ic sm chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <div class="acc-body">
+        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Démarrage</span>
+          <div class="seg" id="trigSeg"><button data-t="timer">Chrono</button><button data-t="hand">Main levée</button></div></div>
+        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg> Caméra</span>
+          <div class="seg" id="camSeg"><button data-f="user">Avant</button><button data-f="environment">Arrière</button></div></div>
+        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Annonce vocale</span>
+          <button class="switch" id="voiceBtn" role="switch"><i></i></button></div>
+      </div>
+    </details>
   </div>
 
   <footer class="foot">
     <div class="recap" id="recap"></div>
-    <button class="big" id="startBtn">Commencer</button>
+    <button class="go" id="startBtn"><svg class="ic go-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg><span>Commencer</span></button>
   </footer>
 
   <div class="sheet" id="tipsSheet">
@@ -135,9 +187,9 @@
       <h2>Conseils</h2>
       <p id="tipPlace"></p>
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
-      <p><b>Démarrage « Main ✋ » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
+      <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <button class="big" id="tipsClose">OK</button>
+      <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
 </section>
@@ -223,7 +275,8 @@ document.querySelectorAll("#armsSeg button").forEach(b => b.classList.toggle("on
   $("tipPlace").innerHTML = EXOS[cfg.exo].tip;
   const perArm = cfg.exo === "curls" && cfg.arms === "sep" ? " par bras" : "";
   const totAll = perArm ? tot * 2 : tot;
-  $("recap").innerHTML = `<b>${cfg.sets} × ${cfg.reps}</b> ${EXOS[cfg.exo].unit}${perArm} · <b>${totAll}</b> au total · pause <b>${cfg.rest} s</b>`;
+  const mins = Math.max(1, Math.round((totAll * 2.5 + (cfg.sets - 1) * cfg.rest + cfg.delay) / 60));
+  $("recap").innerHTML = `<span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><b>${totAll}</b> ${EXOS[cfg.exo].unit}${perArm ? " (G+D)" : ""}</span><i class="dot"></i><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>≈ <b>${mins} min</b></span>`;
 }
 document.querySelectorAll(".stepper button[data-k]").forEach(b => b.onclick = () => {
   const k = b.dataset.k, [mn, mx] = LIM[k];
