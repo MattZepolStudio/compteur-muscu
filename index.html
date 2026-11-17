@@ -104,33 +104,77 @@
   .sheet-box .go{margin-top:12px;padding:13px}
   .sheet-box .go span{font-size:20px}
   /* Séance */
-  #workout{position:relative}
+  #workout{position:relative;background:#09090b;font-family:Inter,system-ui,sans-serif}
   #stage{position:relative;flex:1;min-height:0;background:#000;overflow:hidden}
   video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .mirror{transform:scaleX(-1)}
-  #hud{position:absolute;top:0;left:0;right:0;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;background:linear-gradient(#000a,#0000);pointer-events:none}
-  #setInfo{font-size:15px;font-weight:600}
-  #status{font-size:13px;color:var(--mut);margin-top:2px}
-  #angle{font-size:13px;color:var(--mut);text-align:right}
-  #count.split{font-size:64px}
-  #count.split .done{color:var(--acc)}
-  #count{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:120px;font-weight:800;line-height:1;text-shadow:0 4px 20px #000;pointer-events:none}
-  #count small{font-size:36px;color:#fffa;font-weight:600}
-  #phaseBar{position:absolute;left:14px;right:14px;bottom:6px;height:6px;border-radius:3px;background:#ffffff22;overflow:hidden}
+  .shade{position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(#09090b00,#09090bb3 55%,#09090bf2);pointer-events:none}
+  #hud{position:absolute;top:0;left:0;right:0;padding:max(12px, env(safe-area-inset-top)) 12px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none}
+  .hud-l{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+  .pill{background:#000000a6;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid #ffffff1a;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;color:#e4e4e7;max-width:100%}
+  .pill:empty{display:none}
+  .pill-strong{font-weight:700;color:#fafafa;letter-spacing:.02em}
+  .pill-mono{font-variant-numeric:tabular-nums;color:#a1a1aa;font-size:12px;white-space:nowrap}
+  #count{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-family:"Barlow Condensed",Inter,system-ui,sans-serif;font-size:136px;font-weight:800;line-height:.9;color:#fafafa;text-shadow:0 4px 30px #000c;pointer-events:none}
+  #count small{font-size:40px;color:#a1a1aa;font-weight:700}
+  #count.split{font-size:72px}
+  #count.split .done{color:#4ade80}
+  #phaseBar{position:absolute;left:16px;right:16px;bottom:10px;height:5px;border-radius:3px;background:#ffffff1f;overflow:hidden}
   #phaseFill{height:100%;width:0;background:var(--acc);transition:width .08s}
-  #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:#000c;font-size:16px;text-align:center;padding:20px}
-  #controls{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--bg)}
-  #controls button{flex:1;border:none;border-radius:12px;padding:14px 4px;font-size:15px;font-weight:600;background:var(--card);color:var(--txt)}
+  #loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:#09090bf2;font-size:16px;font-weight:600;text-align:center;padding:20px}
+  #loading .sub{font-size:13px;color:#71717a;font-weight:500}
+  .spin{width:30px;height:30px;color:#4ade80;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #controls{display:flex;gap:8px;padding:10px 12px calc(12px + env(safe-area-inset-bottom));background:#09090b;border-top:1px solid #ffffff0f}
+  .gbtn{display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #ffffff1a;border-radius:14px;background:linear-gradient(160deg,#ffffff12,#ffffff05);color:#e4e4e7;font-size:14px;font-weight:600;padding:13px 6px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+  .gbtn .ic{width:16px;height:16px}
+  .gbtn:active{background:#ffffff1f}
+  #controls .gbtn{flex:1;white-space:nowrap;font-size:13px;padding:13px 4px}
+  #controls #endSetBtn{flex:1.6}
+  #controls #stopBtn{flex:1.4}
+  .gbtn-red{color:#f87171;border-color:#f8717140;background:linear-gradient(160deg,#ef44441f,#ef444408)}
+  .gbtn-acc{color:#052e16;border-color:transparent;background:linear-gradient(135deg,#4ade80,#16a34a)}
+  #workout:has(#rest.on) #controls .gbtn:not(#stopBtn){display:none}
   /* Pause */
-  #rest{position:absolute;inset:0;background:#0e0f12f2;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;text-align:center}
+  #rest{position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 0%,#14281df2 0%,#09090bf7 60%);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;text-align:center}
   #rest.on{display:flex}
-  #restTitle{font-size:20px;color:var(--mut)}
-  #restTime{font-size:110px;font-weight:800;font-variant-numeric:tabular-nums}
-  #restNext{font-size:16px;color:var(--mut)}
-  .row{display:flex;gap:10px}
+  .rest-tag{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#4ade80;background:#22c55e1a;border:1px solid #22c55e40;border-radius:999px;padding:5px 14px}
+  .ring{position:relative;width:min(62vw,240px);aspect-ratio:1}
+  .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .ring circle{fill:none;stroke-width:7}
+  .ring-bg{stroke:#ffffff14}
+  .ring-fg{stroke:#4ade80;stroke-linecap:round;stroke-dasharray:339.29;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear;filter:drop-shadow(0 0 6px #22c55e80)}
+  .ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  #restTime{font-family:"Barlow Condensed",Inter,system-ui,sans-serif;font-size:88px;font-weight:800;line-height:.9;font-variant-numeric:tabular-nums;color:#fafafa}
+  .ring-txt span{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#71717a;font-weight:600;margin-top:4px}
+  .next-card{width:100%;max-width:340px;display:flex;align-items:center;gap:14px;text-align:left;padding:14px 16px;border-radius:18px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff12,#ffffff03)}
+  .next-card .nc-k{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#71717a}
+  .next-card .nc-v{font-size:16px;font-weight:600;color:#fafafa;margin-top:2px}
+  .next-card .nc-n{margin-left:auto;font-family:"Barlow Condensed",Inter,system-ui,sans-serif;font-size:40px;font-weight:800;color:#fafafa;line-height:1}
+  .next-card .nc-n small{font-size:18px;color:#71717a;font-weight:700}
+  .rest-actions{display:flex;gap:8px;width:100%;max-width:340px}
+  .rest-actions .gbtn{flex:1}
   /* Fin */
-  #done{align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center}
-  #summary{background:var(--card);border-radius:14px;padding:16px;width:100%;max-width:360px;text-align:left;line-height:1.8}
+  #done{background:radial-gradient(120% 60% at 50% -5%,#14281d 0%,#09090b 55%);font-family:Inter,system-ui,sans-serif}
+  .done-wrap{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:max(24px, env(safe-area-inset-top)) 18px 10px;text-align:center}
+  .trophy{width:84px;height:84px;border-radius:26px;display:grid;place-items:center;background:linear-gradient(135deg,#4ade80,#16a34a);color:#052e16;box-shadow:0 0 0 8px #22c55e14,0 12px 40px #22c55e66}
+  .trophy .ic{width:42px;height:42px}
+  .done-title{font-size:26px;font-weight:800;letter-spacing:-.01em;margin-top:6px}
+  .done-sub{font-size:14px;color:#a1a1aa;margin-top:-6px}
+  .done-sub:empty{display:none}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:380px;margin-top:6px}
+  .stat{padding:12px 6px 10px;border-radius:18px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff12,#ffffff03);display:flex;flex-direction:column;align-items:center;gap:2px}
+  .stat-lab{display:flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#71717a}
+  .stat-num{font-family:"Barlow Condensed",Inter,system-ui,sans-serif;font-size:46px;font-weight:800;line-height:1;color:#fafafa;margin-top:4px}
+  .stat-unit{font-size:11.5px;color:#a1a1aa}
+  #summary{width:100%;max-width:380px;border-radius:18px;border:1px solid #ffffff1a;background:#ffffff06;overflow:hidden;text-align:left}
+  #summary:empty{display:none}
+  .sum-row{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;font-size:14px;color:#a1a1aa}
+  .sum-row+.sum-row{border-top:1px solid #ffffff0d}
+  .sum-row b{color:#fafafa;font-weight:700;font-variant-numeric:tabular-nums}
+  .done-foot{padding:10px 16px calc(14px + env(safe-area-inset-bottom))}
+  .done-foot .go{max-width:420px;margin:0 auto}
+  .go-ic2{width:20px;height:20px}
 </style>
 </head>
 <body>
@@ -207,37 +251,53 @@
   <div id="stage">
     <video id="video" playsinline muted></video>
     <canvas id="canvas"></canvas>
+    <div class="shade"></div>
     <div id="hud">
-      <div><div id="setInfo"></div><div id="status">Mets-toi en position</div></div>
-      <div id="angle"></div>
+      <div class="hud-l"><div id="setInfo" class="pill pill-strong"></div><div id="status" class="pill">Mets-toi en position</div></div>
+      <div id="angle" class="pill pill-mono"></div>
     </div>
     <div id="count">0<small>/12</small></div>
     <div id="phaseBar"><div id="phaseFill"></div></div>
-    <div id="loading">Chargement du modèle de détection…<br><span class="sub">(quelques secondes la première fois)</span></div>
+    <div id="loading"><svg class="ic spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><div>Chargement du modèle de détection…</div><span class="sub">Quelques secondes la première fois</span></div>
     <div id="rest">
-      <div id="restTitle">Pause</div>
-      <div id="restTime">90</div>
-      <div id="restNext"></div>
-      <div class="row">
-        <button class="ghost" id="restMinus">−15 s</button>
-        <button class="ghost" id="restPlus">+15 s</button>
-        <button class="ghost" id="restSkip">Passer</button>
+      <div class="rest-tag">Pause</div>
+      <div class="ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="ring-bg" cx="60" cy="60" r="54"/>
+          <circle class="ring-fg" id="restRing" cx="60" cy="60" r="54"/>
+        </svg>
+        <div class="ring-txt"><div id="restTime">90</div><span>secondes</span></div>
+      </div>
+      <div class="next-card" id="restNext"></div>
+      <div class="rest-actions">
+        <button class="gbtn" id="restMinus"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>15 s</button>
+        <button class="gbtn" id="restPlus"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>15 s</button>
+        <button class="gbtn gbtn-acc" id="restSkip"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/></svg>Passer</button>
       </div>
     </div>
   </div>
   <div id="controls">
-    <button id="minusBtn">−1</button>
-    <button id="plusBtn">+1</button>
-    <button id="endSetBtn">Fin de série</button>
-    <button id="stopBtn">Arrêter</button>
+    <button id="minusBtn" class="gbtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>1</button>
+    <button id="plusBtn" class="gbtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>1</button>
+    <button id="endSetBtn" class="gbtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>Fin de série</button>
+    <button id="stopBtn" class="gbtn gbtn-red"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>Arrêter</button>
   </div>
 </section>
-
-<!-- ÉCRAN 3 : fin -->
 <section id="done" class="screen">
-  <h1>Séance terminée 💪</h1>
-  <div id="summary"></div>
-  <button class="big" id="againBtn" style="max-width:360px">Nouvelle séance</button>
+  <div class="done-wrap">
+    <div class="trophy"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
+    <h1 class="done-title">Séance terminée</h1>
+    <p class="done-sub" id="doneSub"></p>
+    <div class="stats">
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Total</div><div class="stat-num" id="statTotal">0</div><div class="stat-unit" id="statUnit">répétitions</div></div>
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg> Séries</div><div class="stat-num" id="statSets">0</div><div class="stat-unit">validées</div></div>
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Durée</div><div class="stat-num" id="statTime">0</div><div class="stat-unit">minutes</div></div>
+    </div>
+    <div id="summary"></div>
+  </div>
+  <div class="done-foot">
+    <button class="go" id="againBtn"><svg class="ic go-ic2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span>Nouvelle séance</span></button>
+  </div>
 </section>
 
 <script type="module">
@@ -420,6 +480,7 @@ function stopCamera() { stream?.getTracks().forEach(t => t.stop()); stream = nul
 // Repères MediaPipe : 11/12 épaules, 13/14 coudes, 15/16 poignets, 23/24 hanches, 27/28 chevilles
 const DOWN_ANGLE = 95, UP_ANGLE = 150;
 let reps = 0, setIdx = 1, phase = "up", minAngleInRep = 180, smooth = null, lastRepAt = 0, history = [];
+let restTotal = 1, workoutStart = 0;
 let restTimer = null, restLeft = 0, posOkFrames = 0, lastStatus = "";
 
 function angle(a, b, c) {
@@ -673,8 +734,9 @@ function finishSet() {
   startRest();
 }
 function startRest() {
-  restLeft = cfg.rest; $("rest").classList.add("on");
-  $("restNext").textContent = `Prochaine : série ${setIdx + 1} / ${cfg.sets} — ${cfg.reps} répétitions`;
+  restLeft = cfg.rest; restTotal = cfg.rest; $("rest").classList.add("on");
+  const perArm = isSplit() ? " / bras" : "";
+  $("restNext").innerHTML = `<div><div class="nc-k">Prochaine série</div><div class="nc-v">${EXOS[cfg.exo].unit.charAt(0).toUpperCase() + EXOS[cfg.exo].unit.slice(1)} · ${cfg.reps} reps${perArm}</div></div><div class="nc-n">${setIdx + 1}<small>/${cfg.sets}</small></div>`;
   renderRest();
   restTimer = setInterval(() => {
     restLeft--; renderRest();
@@ -687,6 +749,8 @@ function startRest() {
 function renderRest() {
   const m = Math.floor(restLeft / 60), s = restLeft % 60;
   $("restTime").textContent = m ? `${m}:${String(s).padStart(2, "0")}` : s;
+  restTotal = Math.max(restTotal, restLeft);
+  $("restRing").style.strokeDashoffset = 339.29 * (1 - restLeft / restTotal);
 }
 function nextSet() {
   clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
@@ -709,8 +773,11 @@ function endWorkout() {
   running = false; waitingHand = false; clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
   stopCamera(); try { wakeLock?.release(); } catch {}
   const total = history.reduce((a, b) => a + b.n, 0);
-  $("summary").innerHTML = history.map((r, i) => `Série ${i + 1} : <b>${r.txt}</b>`).join("<br>") +
-    `<hr style="border:none;border-top:1px solid #333;margin:8px 0">Total : <b>${total}</b> ${EXOS[cfg.exo].unit}`;
+  $("summary").innerHTML = history.map((r, i) => `<div class="sum-row"><span>Série ${i + 1}</span><b>${r.txt}</b></div>`).join("");
+  $("statTotal").textContent = total; $("statUnit").textContent = EXOS[cfg.exo].unit;
+  $("statSets").textContent = history.length;
+  $("statTime").textContent = workoutStart ? Math.max(1, Math.round((Date.now() - workoutStart) / 60000)) : 0;
+  $("doneSub").textContent = total ? "Beau travail, continue comme ça." : "";
   say(`Bravo ! ${total} ${EXOS[cfg.exo].unit} au total`);
   show("done");
 }
@@ -719,7 +786,7 @@ function endWorkout() {
 $("startBtn").onclick = async () => {
   beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
   reps = 0; armReps = { L: 0, R: 0 }; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null;
-  updateCount(); updateSet(); show("workout");
+  updateCount(); updateSet(); show("workout"); workoutStart = Date.now();
   $("loading").style.display = "flex";
   try {
     if (!navigator.mediaDevices?.getUserMedia) throw new Error("Caméra indisponible : ouvre la page en https.");
