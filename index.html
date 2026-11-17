@@ -38,7 +38,9 @@
   h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
   .htxt p{font-size:11px;color:#71717a;text-transform:uppercase;letter-spacing:.12em;font-weight:600;margin-top:2px}
   .help{width:38px;height:38px;border-radius:12px;border:1px solid #ffffff1a;background:#ffffff08;color:#a1a1aa;display:grid;place-items:center}
-  .exos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .exos{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+  .exos::-webkit-scrollbar{display:none}
+  .exos .exo{flex:0 0 31%;min-width:104px;scroll-snap-align:start}
   .exo{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:11px 10px 10px;border-radius:16px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff0d,#ffffff03);color:var(--txt);transition:border-color .2s,box-shadow .2s}
   .exo-ic{width:32px;height:32px;border-radius:10px;background:#ffffff0f;display:grid;place-items:center;color:#a1a1aa;margin-bottom:4px}
   .exo b{font-size:15px;font-weight:700}
@@ -129,7 +131,7 @@
   .rec span{font-size:12px;color:#a1a1aa}
   .rec.none b{color:#3f3f46}
   #histChart svg{width:100%;height:auto;display:block}
-  .legend{display:flex;gap:12px;justify-content:center;margin-top:8px;font-size:11.5px;color:#a1a1aa}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;margin-top:8px;font-size:11.5px;color:#a1a1aa}
   .legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
   .empty{font-size:13px;color:#71717a;text-align:center;padding:14px 0}
   .sess{border-radius:16px;border:1px solid #ffffff14;background:#ffffff06;padding:11px 14px;display:flex;flex-direction:column;gap:4px}
@@ -160,6 +162,47 @@
   .acc summary{padding:11px 14px}
   .ver{font-size:11.5px;color:#52525b;text-align:center}
   #setup .scroll{gap:clamp(8px, 1.4dvh, 16px)}
+  /* Régularité, objectif, sauvegarde */
+  .reg-row{display:flex;align-items:center;gap:16px}
+  .streak{display:flex;flex-direction:column;align-items:center;min-width:74px}
+  .streak b{font-family:"Barlow Condensed",Inter,sans-serif;font-size:54px;font-weight:800;line-height:.9;color:#fb923c}
+  .streak span{font-size:11.5px;color:#a1a1aa;text-align:center}
+  .cal{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .cal i{aspect-ratio:1;border-radius:4px;background:#ffffff0d}
+  .cal i.l1{background:#22c55e55}.cal i.l2{background:#22c55e99}.cal i.l3{background:#4ade80}
+  .cal i.today{outline:1.5px solid #fafafa88;outline-offset:1px}
+  .cal i.fut{background:transparent}
+  .goal-row{display:flex;align-items:center;gap:12px}
+  .goal-main{flex:1}
+  .goal-txt{display:flex;align-items:baseline;gap:6px;margin-bottom:7px}
+  .goal-txt b{font-family:"Barlow Condensed",Inter,sans-serif;font-size:34px;font-weight:800;line-height:1}
+  .goal-txt span{font-size:13px;color:#a1a1aa}
+  .gbar{height:8px;border-radius:4px;background:#ffffff12;overflow:hidden}
+  .gbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#16a34a,#4ade80);border-radius:4px;transition:width .4s}
+  .goal-step{width:auto;gap:6px}
+  .row2{display:flex;gap:8px}.row2 .gbtn{flex:1}
+  .bk-msg{font-size:12.5px;color:#a1a1aa;margin-top:8px}
+  .bk-msg:empty{display:none}
+  .recs{grid-template-columns:repeat(4,1fr)!important;row-gap:12px}
+  .rec b{font-size:30px!important}
+  .rec b small{font-size:15px;color:#a1a1aa}
+  .donebadges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .donebadges:empty{display:none}
+  .donebadges span{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:#e4e4e7;background:#ffffff0d;border:1px solid #ffffff1a;border-radius:999px;padding:5px 11px}
+  .donebadges .ic{width:14px;height:14px}
+  .donebadges .fl{color:#fb923c}.donebadges .tg{color:#4ade80}
+  .prog-mine{margin-left:auto;width:32px;height:30px;border-radius:999px;border:1px solid #ffffff1a;background:#ffffff0a;color:#a1a1aa;display:grid;place-items:center}
+  .save-row{display:flex;gap:8px;margin-top:6px}
+  .save-row input{flex:1;min-width:0;background:#00000059;border:1px solid #ffffff1a;border-radius:12px;padding:11px 12px;color:#fafafa;font-size:15px;font-family:inherit}
+  .save-row .gbtn{padding:11px 12px}
+  .saved{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #ffffff0d}
+  .saved:first-child{border-top:none}
+  .saved div{flex:1;min-width:0}
+  .saved b{display:block;color:#fafafa;font-size:15px}
+  .saved small{display:block;color:#71717a;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .saved .gbtn{padding:8px 12px}
+  .saved .del{width:34px;padding:8px 0}
+  #savedList:empty::before{content:"Aucun programme enregistré pour l'instant.";font-size:13px;color:#71717a}
   /* Séance */
   #workout{position:relative;background:#09090b;font-family:Inter,system-ui,sans-serif}
   #stage{position:relative;flex:1;min-height:0;background:#000;overflow:hidden}
@@ -186,6 +229,7 @@
   .gbtn{display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #ffffff1a;border-radius:14px;background:linear-gradient(160deg,#ffffff12,#ffffff05);color:#e4e4e7;font-size:14px;font-weight:600;padding:13px 6px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
   .gbtn .ic{width:16px;height:16px}
   .gbtn:active{background:#ffffff1f}
+  .gbtn:disabled{opacity:.4}
   #controls .gbtn{flex:1;white-space:nowrap;font-size:13px;padding:13px 4px}
   #controls #endSetBtn{flex:1.6}
   #controls #stopBtn{flex:1.4}
@@ -209,6 +253,11 @@
   .next-card .nc-v{font-size:16px;font-weight:600;color:#fafafa;margin-top:2px}
   .next-card .nc-n{margin-left:auto;font-family:"Barlow Condensed",Inter,system-ui,sans-serif;font-size:40px;font-weight:800;color:#fafafa;line-height:1}
   .next-card .nc-n small{font-size:18px;color:#71717a;font-weight:700}
+  .rest-hand{display:none;position:relative;overflow:hidden;align-items:center;gap:8px;font-size:13px;color:#a1a1aa;border:1px dashed #ffffff26;border-radius:999px;padding:7px 14px}
+  .rest-hand .ic{width:16px;height:16px;color:#4ade80}
+  .rest-hand.on{display:flex}
+  .rest-hand.ok{color:#fafafa;border-style:solid;border-color:#4ade80}
+  .rest-hand i{position:absolute;left:0;bottom:0;height:2px;width:0;background:#4ade80}
   .rest-actions{display:flex;gap:8px;width:100%;max-width:340px}
   .rest-actions .gbtn{flex:1}
   /* Fin */
@@ -246,11 +295,7 @@
       <button class="help" id="tipsBtn" aria-label="Conseils"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
     </header>
 
-    <div class="exos" id="exoChips">
-      <button class="chip exo" data-exo="pompes"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg></span><b>Pompes</b><small>Pecs · Triceps</small></button>
-      <button class="chip exo" data-exo="squats"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></svg></span><b>Squats</b><small>Quadris · Fessiers</small></button>
-      <button class="chip exo" data-exo="curls"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg></span><b>Curls</b><small>Biceps</small></button>
-    </div>
+    <div class="exos" id="exoChips"></div>
 
     <div class="main-card">
       <div class="mc-col">
@@ -259,13 +304,14 @@
       </div>
       <div class="mc-x">×</div>
       <div class="mc-col">
-        <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Répétitions</div>
+        <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span id="repsLab">Répétitions</span></div>
         <div class="stepper bigstep"><b id="v-reps"></b><div class="pm"><button data-k="reps" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button data-k="reps" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
       </div>
     </div>
 
     <div class="prog" id="progCard">
       <div class="prog-head"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg> Programme</span><span class="prog-hint" id="progHint">Enchaîne des exercices</span>
+        <button class="prog-mine" id="progMine" aria-label="Mes programmes"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg></button>
         <button class="prog-add" id="progAdd"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Ajouter</button></div>
       <div class="prog-list" id="progList"></div>
     </div>
@@ -298,6 +344,15 @@
     <button class="go" id="startBtn"><svg class="ic go-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg><span id="startLbl">Commencer</span></button>
   </footer>
 
+  <div class="sheet" id="progSheet">
+    <div class="sheet-box">
+      <h2>Mes programmes</h2>
+      <div class="save-row"><input id="progName" maxlength="24" placeholder="Nom du programme actuel"><button class="gbtn gbtn-acc" id="progSave"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>Enregistrer</button></div>
+      <p class="bk-msg" id="progMsg"></p>
+      <div id="savedList"></div>
+      <button class="gbtn" id="progClose" style="width:100%;margin-top:12px">Fermer</button>
+    </div>
+  </div>
   <div class="sheet" id="tipsSheet">
     <div class="sheet-box">
       <h2>Conseils</h2>
@@ -305,7 +360,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 17.11 · 19h00</p>
+      <p class="ver">Version 17.11 · 20h00</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -334,6 +389,7 @@
         <div class="ring-txt"><div id="restTime">90</div><span>secondes</span></div>
       </div>
       <div class="next-card" id="restNext"></div>
+      <div class="rest-hand" id="restHand"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg><span>Lève la main ouverte pour enchaîner</span><i id="restHandBar"></i></div>
       <div class="rest-actions">
         <button class="gbtn" id="restMinus"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>15 s</button>
         <button class="gbtn" id="restPlus"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>15 s</button>
@@ -359,9 +415,26 @@
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> 7 jours</div><div class="stat-num" id="hsWeek">0</div><div class="stat-unit">répétitions</div></div>
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 7 jours</div><div class="stat-num" id="hsTime">0</div><div class="stat-unit">minutes</div></div>
     </div>
+    <div class="hcard reg">
+      <div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Régularité <span id="calLab">5 dernières semaines</span></div>
+      <div class="reg-row"><div class="streak"><b id="streakN">0</b><span id="streakLab">jour d'affilée</span></div><div class="cal" id="cal"></div></div>
+    </div>
+    <div class="hcard">
+      <div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Objectif de la semaine <span>toutes répétitions</span></div>
+      <div class="goal-row">
+        <div class="goal-main"><div class="goal-txt"><b id="goalDone">0</b><span id="goalOf"></span></div><div class="gbar"><i id="goalBar"></i></div></div>
+        <div class="stepper goal-step"><button id="goalMinus" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button id="goalPlus" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div>
+      </div>
+    </div>
     <div class="hcard"><div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> Records <span>meilleure série</span></div><div class="recs" id="histRecs"></div></div>
     <div class="hcard"><div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Dernières séances <span>répétitions</span></div><div id="histChart"></div></div>
     <div id="histList"></div>
+    <div class="hcard">
+      <div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg> Sauvegarde <span>historique + programmes</span></div>
+      <div class="row2"><button class="gbtn" id="backupBtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Sauvegarder</button><button class="gbtn" id="restoreBtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>Restaurer</button></div>
+      <p class="bk-msg" id="bkMsg"></p>
+      <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+    </div>
     <button class="gbtn gbtn-red" id="histClear"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg><span>Effacer l'historique</span></button>
   </div>
 </section>
@@ -371,6 +444,7 @@
     <h1 class="done-title">Séance terminée</h1>
     <p class="done-sub" id="doneSub"></p>
     <div class="recbadges" id="doneRecs"></div>
+    <div class="donebadges" id="doneBadges"></div>
     <div class="stats">
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Total</div><div class="stat-num" id="statTotal">0</div><div class="stat-unit" id="statUnit">répétitions</div></div>
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg> Séries</div><div class="stat-num" id="statSets">0</div><div class="stat-unit">validées</div></div>
@@ -379,6 +453,7 @@
     <div id="summary"></div>
   </div>
   <div class="done-foot">
+    <button class="gbtn hist-link" id="shareBtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>Partager ma séance</button>
     <button class="gbtn hist-link" id="doneHist"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>Voir l'historique</button>
     <button class="go" id="againBtn"><svg class="ic go-ic2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span>Nouvelle séance</span></button>
   </div>
@@ -389,25 +464,47 @@ import { PoseLandmarker, HandLandmarker, FilesetResolver } from "https://cdn.jsd
 
 /* ---------- Réglages ---------- */
 const EXOS = {
-  pompes: { unit: "pompes", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.4, minRep: 300, minGap: 500,
-    joint: "Coude", ready: "Bras tendus, ne bouge plus…", hidden: "Bras et épaules non visibles", push: "Pousse ⬆",
+  pompes: { name: "Pompes", muscle: "Pecs · Triceps", icon: "arrow-down-up", unit: "pompes", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.4, minRep: 300, minGap: 500,
+    joint: "Coude", ready: "Bras tendus, ne bouge plus…", hidden: "Bras et épaules non visibles", push: "Pousse ⬆", deeper: "Descends plus bas",
     tip: "Pose le téléphone au sol à 1,5–2 m, <b>de profil</b> (idéal) ou <b>face à toi</b>. Épaules, coudes et mains doivent être visibles." },
-  curls: { unit: "curls", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 145, angDown: 65, drop: 0.6, minRep: 300, minGap: 600, perSide: true,
-    joint: "Coude", ready: "Bras le long du corps, ne bouge plus…", hidden: "Bras non visibles : recule un peu", go: "Monte ⬆", push: "Redescends ⬇",
+  squats: { name: "Squats", muscle: "Quadris · Fessiers", icon: "person-standing", unit: "squats", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 105, drop: 0.3, minRep: 500, minGap: 900,
+    joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆", deeper: "Descends plus bas",
+    tip: "Pose le téléphone à 2–3 m, <b>de profil</b> (idéal) ou <b>face à toi</b>, à hauteur de taille si possible (sur une chaise, contre un mur). Tout ton corps, des épaules aux pieds, doit être visible." },
+  curls: { name: "Curls", muscle: "Biceps", icon: "dumbbell", unit: "curls", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 145, angDown: 65, drop: 0.6, minRep: 300, minGap: 600, perSide: true,
+    joint: "Coude", ready: "Bras le long du corps, ne bouge plus…", hidden: "Bras non visibles : recule un peu", go: "Monte ⬆", push: "Redescends ⬇", deeper: "Monte plus haut",
     tip: "Pose le téléphone à 1,5–2 m, <b>face à toi</b> ou <b>de profil</b>, à hauteur de poitrine si possible. Le haut du corps, des épaules aux mains, doit être visible. Les curls alternés comptent un curl par bras." },
-  squats: { unit: "squats", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 105, drop: 0.3, minRep: 500, minGap: 900,
-    joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆",
-    tip: "Pose le téléphone à 2–3 m, <b>de profil</b> (idéal) ou <b>face à toi</b>, à hauteur de taille si possible (sur une chaise, contre un mur). Tout ton corps, des épaules aux pieds, doit être visible." }
+  militaire: { name: "Militaire", muscle: "Épaules · Triceps", icon: "arrow-up-from-line", unit: "développés", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 90, angDown: 160, hMode: "rise", rise0: 0.15, rise1: 0.9, minRep: 400, minGap: 700, perSide: true,
+    joint: "Coude", ready: "Mains aux épaules, ne bouge plus…", hidden: "Bras et hanches non visibles : recule un peu", go: "Pousse ⬆", push: "Redescends ⬇", deeper: "Tends complètement les bras",
+    tip: "Développé militaire (haltères ou barre). Téléphone à 2 m, <b>face à toi</b>, à hauteur de poitrine. Le haut du corps jusqu'aux hanches et les mains bras tendus au-dessus de la tête doivent être visibles." },
+  elevations: { name: "Élévations", muscle: "Épaules", icon: "move-horizontal", unit: "élévations", joints: [[23,11,15],[24,12,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 25, angDown: 80, hMode: "rise", rise0: -0.85, rise1: -0.1, minRep: 400, minGap: 700, perSide: true,
+    joint: "Épaule", ready: "Bras le long du corps, ne bouge plus…", hidden: "Bras et hanches non visibles : recule un peu", go: "Monte ⬆", push: "Redescends ⬇", deeper: "Monte jusqu'aux épaules",
+    tip: "Élévations latérales. Téléphone à 2 m, <b>face à toi</b>, à hauteur de poitrine. Le haut du corps et les mains bras écartés doivent être visibles." },
+  fentes: { name: "Fentes", muscle: "Quadris · Fessiers", icon: "footprints", unit: "fentes", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 110, drop: 0.25, minRep: 500, minGap: 900, perSide: true,
+    joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆", deeper: "Descends plus bas",
+    tip: "Téléphone à 2–3 m, <b>de profil</b>, à hauteur de taille. Tout le corps doit être visible. Chaque fente compte, jambe gauche ou droite." },
+  dips: { name: "Dips", muscle: "Triceps · Pecs", icon: "chevrons-down", unit: "dips", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.35, minRep: 300, minGap: 600,
+    joint: "Coude", ready: "Bras tendus, ne bouge plus…", hidden: "Bras et épaules non visibles", push: "Pousse ⬆", deeper: "Descends plus bas",
+    tip: "Dips aux barres ou sur un banc. Téléphone à 2 m, <b>de profil</b>, à hauteur des barres ou du banc. Épaules, coudes et mains doivent être visibles." },
+  planche: { name: "Planche", muscle: "Abdos · Gainage", icon: "timer", unit: "secondes", timed: true,
+    hidden: "Corps non visible : recule un peu",
+    tip: "Gainage chronométré. Téléphone au sol à 2 m, <b>de profil</b>. Tout le corps, des épaules aux pieds, doit être visible. Le chrono n'avance que si ton corps est droit et à l'horizontale." }
 };
-const DEF = { prog: [], arms: "sep", trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
+const DEF = { goal: 0, saved: [], prog: [], arms: "sep", trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
 let cfg = DEF;
 try { cfg = { ...DEF, ...JSON.parse(localStorage.getItem("pompesCfg") || "{}") }; } catch {}
 const save = () => { try { localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {} };
-const LIM = { reps: [1, 100], sets: [1, 20], rest: [15, 600], delay: [0, 30] };
+const LIM = { reps: [0, 100], sets: [1, 20], rest: [15, 600], delay: [0, 30] };
 const $ = id => document.getElementById(id);
 
+/* ---------- Cartes d'exercice (générées) ---------- */
+const ICONS = {"arrow-down-up": "<path d=\"m3 16 4 4 4-4\"/><path d=\"M7 20V4\"/><path d=\"m21 8-4-4-4 4\"/><path d=\"M17 4v16\"/>", "person-standing": "<circle cx=\"12\" cy=\"5\" r=\"1\"/><path d=\"m9 20 3-6 3 6\"/><path d=\"m6 8 6 2 6-2\"/><path d=\"M12 10v4\"/>", "dumbbell": "<path d=\"m6.5 6.5 11 11\"/><path d=\"m21 21-1-1\"/><path d=\"m3 3 1 1\"/><path d=\"m18 22 4-4\"/><path d=\"m2 6 4-4\"/><path d=\"m3 10 7-7\"/><path d=\"m14 21 7-7\"/>", "arrow-up-from-line": "<path d=\"m18 9-6-6-6 6\"/><path d=\"M12 3v14\"/><path d=\"M5 21h14\"/>", "move-horizontal": "<path d=\"m18 8 4 4-4 4\"/><path d=\"M2 12h20\"/><path d=\"m6 8-4 4 4 4\"/>", "footprints": "<path d=\"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z\"/><path d=\"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z\"/><path d=\"M16 17h4\"/><path d=\"M4 13h4\"/>", "chevrons-down": "<path d=\"m7 6 5 5 5-5\"/><path d=\"m7 13 5 5 5-5\"/>", "timer": "<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>"};
+const svgIc = (n, c = "ic") => `<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ""}</svg>`;
+$("exoChips").innerHTML = Object.entries(EXOS).map(([k, x]) => `<button class="chip exo" data-exo="${k}"><span class="exo-ic">${svgIc(x.icon)}</span><b>${x.name}</b><small>${x.muscle}</small></button>`).join("");
+
 function renderCfg() {
-  $("v-reps").textContent = cfg.reps;
+  const TX = EXOS[cfg.exo] || EXOS.pompes;
+  $("v-reps").textContent = cfg.reps || "MAX";
+  $("repsLab").textContent = TX.timed ? "Secondes" : "Répétitions";
   $("v-sets").textContent = cfg.sets;
   $("v-rest").textContent = cfg.rest;
   $("v-delay").textContent = cfg.delay;
@@ -424,25 +521,28 @@ document.querySelectorAll("#armsSeg button").forEach(b => b.classList.toggle("on
   const tot = cfg.reps * cfg.sets;
   if (!EXOS[cfg.exo]) cfg.exo = "pompes";
   document.querySelectorAll("#exoChips .chip[data-exo]").forEach(b => b.classList.toggle("on", b.dataset.exo === cfg.exo));
+  const selCard = document.querySelector(`#exoChips [data-exo="${cfg.exo}"]`);
+  if (selCard && !renderCfg.done) { renderCfg.done = true; requestAnimationFrame(() => selCard.scrollIntoView({ inline: "center", block: "nearest" })); }
   $("tipPlace").innerHTML = EXOS[cfg.exo].tip;
   const perArm = cfg.exo === "curls" && cfg.arms === "sep" ? " par bras" : "";
-  const totAll = perArm ? tot * 2 : tot;
-  const mins = Math.max(1, Math.round((totAll * 2.5 + (cfg.sets - 1) * cfg.rest + cfg.delay) / 60));
-  $("recap").innerHTML = `<span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><b>${totAll}</b> ${EXOS[cfg.exo].unit}${perArm ? " (G+D)" : ""}</span><i class="dot"></i><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>≈ <b>${mins} min</b></span>`;
+  const totAll = TX.timed ? 0 : perArm ? tot * 2 : tot;
+  const mins = Math.max(1, Math.round(((TX.timed ? cfg.reps * cfg.sets : (totAll || cfg.sets * 15) * 2.5) + (cfg.sets - 1) * cfg.rest + cfg.delay) / 60));
+  $("recap").innerHTML = `<span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>${TX.timed ? `<b>${cfg.sets} × ${cfg.reps || "max"}</b> ${cfg.reps ? "s" : ""} de planche` : cfg.reps ? `<b>${totAll}</b> ${EXOS[cfg.exo].unit}${perArm ? " (G+D)" : ""}` : `<b>${cfg.sets}</b> séries max`}</span><i class="dot"></i><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>≈ <b>${mins} min</b></span>`;
   renderProg();
 }
 document.querySelectorAll(".stepper button[data-k]").forEach(b => b.onclick = () => {
-  const k = b.dataset.k, [mn, mx] = LIM[k];
-  cfg[k] = Math.min(mx, Math.max(mn, cfg[k] + +b.dataset.d)); save(); renderCfg();
+  const k = b.dataset.k, timedReps = k === "reps" && EXOS[cfg.exo]?.timed;
+  const [mn, mx] = timedReps ? [0, 600] : LIM[k], d = +b.dataset.d * (timedReps ? 5 : 1);
+  cfg[k] = Math.min(mx, Math.max(mn, cfg[k] + d)); save(); renderCfg();
 });
 $("voiceBtn").onclick = () => { cfg.voice = !cfg.voice; save(); renderCfg(); };
 document.querySelectorAll("#armsSeg button").forEach(b => b.onclick = () => { cfg.arms = b.dataset.a; save(); renderCfg(); });
 document.querySelectorAll("#trigSeg button").forEach(b => b.onclick = () => { cfg.trigger = b.dataset.t; save(); renderCfg(); });
 document.querySelectorAll("#camSeg button").forEach(b => b.onclick = () => { cfg.facing = b.dataset.f; save(); renderCfg(); });
 /* ---------- Programme (exercices enchaînés) ---------- */
-function exoName(e) { return { pompes: "Pompes", squats: "Squats", curls: "Curls" }[e] || e; }
+function exoName(e) { return EXOS[e]?.name || e; }
 function blockOf() { return { exo: cfg.exo, reps: cfg.reps, sets: cfg.sets, arms: cfg.arms }; }
-function blockReps(b) { return b.reps * b.sets * (b.exo === "curls" && b.arms === "sep" ? 2 : 1); }
+function blockReps(b) { return EXOS[b.exo]?.timed ? 0 : b.reps * b.sets * (b.exo === "curls" && b.arms === "sep" ? 2 : 1); }
 const IC_X = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
 function renderProg() {
   if (!Array.isArray(cfg.prog)) cfg.prog = [];
@@ -451,7 +551,7 @@ function renderProg() {
   $("progList").style.display = P.length ? "" : "none";
   $("progList").innerHTML = P.length
     ? P.map((b, i) => (i ? '<span class="pchip arrow">›</span>' : "") +
-        `<span class="pchip"><i>${i + 1}</i>${exoName(b.exo)} <small>${b.sets}×${b.reps}${b.exo === "curls" && b.arms === "sep" ? "/bras" : ""}</small><button data-rm="${i}" aria-label="Retirer">${IC_X}</button></span>`).join("")
+        `<span class="pchip"><i>${i + 1}</i>${exoName(b.exo)} <small>${b.sets}×${EXOS[b.exo]?.timed ? (b.reps || "max") + (b.reps ? "s" : "") : (b.reps || "max")}${b.exo === "curls" && b.arms === "sep" ? "/bras" : ""}</small><button data-rm="${i}" aria-label="Retirer">${IC_X}</button></span>`).join("")
     : "";
   $("progList").querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { cfg.prog.splice(+b.dataset.rm, 1); save(); renderCfg(); });
   $("startLbl").textContent = P.length ? "Démarrer" : "Commencer";
@@ -538,7 +638,7 @@ function isOpenPalm(h) {
   return fingers && thumb && facing && spread && upright;
 }
 let waitingHand = false, openSince = 0;
-function handStep(ts) {
+function raisedHand(ts) {
   const ar = video.videoWidth / video.videoHeight || 1;
   const pr = landmarker.detectForVideo(video, ts);
   const body = pr.landmarks?.[0];
@@ -548,6 +648,21 @@ function handStep(ts) {
   const raised = body ? [15, 16].map(i => body[i]).filter(w => (w.visibility ?? 0) > 0.5 && w.y < body[0].y) : [];
   const near = (h, w) => Math.hypot((h[0].x - w.x) * ar, h[0].y - w.y) < 0.12;
   const goodHand = hands.find(h => isOpenPalm(h) && raised.some(w => near(h, w)));
+  return { body, hands, raised, goodHand };
+}
+// Pendant la pause : main levée 1 s = on enchaîne la série suivante
+function restHandStep(ts) {
+  const { goodHand } = raisedHand(ts);
+  $("restHand").classList.toggle("ok", !!goodHand);
+  if (goodHand) {
+    openSince ||= ts;
+    const prog = Math.min(1, (ts - openSince) / 1000);
+    $("restHandBar").style.width = (prog * 100) + "%";
+    if (prog >= 1) { openSince = 0; $("restHandBar").style.width = "0%"; say("C'est reparti"); nextSet(); }
+  } else { openSince = 0; $("restHandBar").style.width = "0%"; }
+}
+function handStep(ts) {
+  const { body, hands, raised, goodHand } = raisedHand(ts);
   draw(body);
   drawPoints(hands.flat(), goodHand ? "#3ddc84" : "#ffb020", false);
   $("count").innerHTML = "✋";
@@ -618,14 +733,17 @@ function updateCount() {
   const c = $("count");
   c.classList.toggle("split", isSplit());
   if (isSplit()) {
-    const f = k => `<span class="${armReps[k] >= cfg.reps ? "done" : ""}">${k === "L" ? "G" : "D"} ${armReps[k]}</span>`;
-    c.innerHTML = `${f("L")} · ${f("R")}<small>/${cfg.reps}</small>`;
-  } else c.innerHTML = `${reps}<small>/${cfg.reps}</small>`;
+    const f = k => `<span class="${cfg.reps && armReps[k] >= cfg.reps ? "done" : ""}">${k === "L" ? "G" : "D"} ${armReps[k]}</span>`;
+    c.innerHTML = `${f("L")} · ${f("R")}<small>${cfg.reps ? "/" + cfg.reps : " max"}</small>`;
+  } else if (EXOS[cfg.exo].timed) c.innerHTML = `${reps}<small>${cfg.reps ? "/" + cfg.reps : ""} s</small>`;
+  else c.innerHTML = `${reps}<small>${cfg.reps ? "/" + cfg.reps : " max"}</small>`;
 }
 function addArmRep(k, auto = true) {
-  if (armReps[k] >= cfg.reps) { if (!auto) beep(300, 0.1, 0.2); return; }
+  if (cfg.reps && armReps[k] >= cfg.reps) { if (!auto) beep(300, 0.1, 0.2); return; }
   armReps[k]++; reps = armReps.L + armReps.R; lastArm = k; updateCount();
   const name = k === "L" ? "gauche" : "droite", n = armReps[k];
+  lastRepAt = performance.now();
+  if (!cfg.reps) { say(`${n} ${name}`); if (!auto) beep(700, 0.08, 0.2); return; }
   if (armReps.L >= cfg.reps && armReps.R >= cfg.reps) { say(`${n} ${name}. Série terminée !`); beep(1200, 0.4); finishSet(); return; }
   if (n >= cfg.reps) { say(`${n}. Bras ${name} terminé, change de bras`); beep(1000, 0.25); return; }
   const left = cfg.reps - n;
@@ -636,7 +754,8 @@ function updateSet() { $("setInfo").textContent = `${exoName(cfg.exo)} · Série
 
 function addRep(auto = true) {
   if (isSplit()) return addArmRep(lastArm, auto);
-  reps++; updateCount();
+  reps++; updateCount(); tempoCheck();
+  if (!cfg.reps) { say(String(reps)); if (!auto) beep(700, 0.08, 0.2); return; }
   if (reps >= cfg.reps) { say(`${reps}. Série terminée !`); beep(1200, 0.4); finishSet(); return; }
   const left = cfg.reps - reps;
   say(left <= 3 && left > 0 ? `${reps}. Encore ${left}` : String(reps));
@@ -710,12 +829,14 @@ function process(res) {
   if (!lm) { setStatus("Je ne te vois pas : recule un peu"); $("angle").textContent = ""; return; }
   const ar = video.videoWidth / video.videoHeight || 1;
   const X = EXOS[cfg.exo];
+  if (X.timed) { plankStep(lm, now, X); return; }
   const MINV = 0.6;                              // points peu fiables ignorés
   let sides = X.joints.map(ix => ({ ix, v: vis(...ix.map(i => lm[i])) })).sort((a, b) => b.v - a.v);
   if (X.perSide) {                               // curls : le bras le plus plié parmi les bras visibles
     const ar0 = video.videoWidth / video.videoHeight || 1;
+    const prog = a => clamp((X.angUp - a) / (X.angUp - X.angDown));
     const ok = sides.filter(sd => sd.v >= 0.6).map(sd => ({ ...sd, a: angle(...sd.ix.map(i => ({ x: lm[i].x * ar0, y: lm[i].y }))) }));
-    if (ok.length) sides = ok.sort((a, b) => a.a - b.a);
+    if (ok.length) sides = ok.sort((a, b) => prog(b.a) - prog(a.a));   // le côté le plus avancé dans le mouvement
   }
   const goodY = ids => { const ok = ids.map(i => lm[i]).filter(q => (q.visibility ?? 0) >= MINV); return ok.length ? ok.reduce((t, q) => t + q.y, 0) / ok.length : null; };
   let shY = goodY(X.top), wrY = goodY(X.bottom);
@@ -725,7 +846,14 @@ function process(res) {
       .map(([t, b]) => ({ t: lm[t].y, b: lm[b].y })).sort((a, b) => (a.b - a.t) - (b.b - b.t));
     if (ds.length) { shY = ds[0].t; wrY = ds[0].b; } else shY = wrY = null;
   }
-  const angOk = sides[0].v >= MINV, hOk = shY != null && wrY != null;
+  let torso = null;
+  if (X.hMode === "rise") {                      // échelle du corps : distance épaules–hanches
+    const avg = ids => { const ok = ids.map(i => lm[i]).filter(q => (q.visibility ?? 0) >= MINV); return ok.length ? { x: ok.reduce((t, q) => t + q.x, 0) / ok.length, y: ok.reduce((t, q) => t + q.y, 0) / ok.length } : null; };
+    const sh = avg(X.top), hp = avg(X.hips);
+    if (sh && hp) torso = Math.hypot((sh.x - hp.x) * ar, sh.y - hp.y);
+    if (!torso || torso < 0.05) torso = null;
+  }
+  const angOk = sides[0].v >= MINV, hOk = shY != null && wrY != null && (X.hMode !== "rise" || torso != null);
   if (!angOk && !hOk) { setStatus(X.hidden); $("angle").textContent = ""; return; }   // on garde l'état, on ne compte rien
 
   // Détecteur 1 : angle de l'articulation (corrigé du format de l'image)
@@ -738,7 +866,11 @@ function process(res) {
   }
   // Détecteur 2 : descente du haut du corps vers le bas, comparée à la position de départ
   let pH = 0;
-  if (hOk) {
+  if (hOk && X.hMode === "rise") {               // montée des mains par rapport aux épaules
+    const r = (shY - wrY) / torso;
+    sH = sH == null ? r : sH * 0.75 + r * 0.25;
+    pH = clamp((sH - X.rise0) / (X.rise1 - X.rise0));
+  } else if (hOk) {
     const d = wrY - shY;
     sH = sH == null ? d : sH * 0.75 + d * 0.25;
     if (dRef == null) dRef = sH;
@@ -749,7 +881,7 @@ function process(res) {
   const p = Math.max(pA, pH);
   $("phaseFill").style.width = (p * 100) + "%";
   $("phaseFill").style.background = p >= 0.85 ? "var(--acc)" : "var(--warn)";
-  $("angle").textContent = `${angOk && smooth != null ? X.joint + " " + Math.round(smooth) + "° · " : ""}Descente ${Math.round(p * 100)}%`;
+  $("angle").textContent = `${angOk && smooth != null ? X.joint + " " + Math.round(smooth) + "° · " : ""}Amplitude ${Math.round(p * 100)}%`;
 
   if (!armed) {                                  // attend une position stable
     det.A.phase = det.H.phase = phase = "up"; det.A.hi = det.H.hi = 0;
@@ -760,12 +892,20 @@ function process(res) {
     if (p > 0.4) stillSince = now;
     setStatus(X.ready);
     if (now - stillSince > 700 || now - armStart > 4000) {
-      armed = true; dRef = sH; updateCount(); beep(1200, 0.25); say("C'est parti");
+      armed = true; dRef = sH; updateCount(); beep(1200, 0.25); say("C'est parti"); coach = { max: 0, on: false, last: 0 };
       armsT = { L: newArm([11, 13, 15]), R: newArm([12, 14, 16]) };
     }
     return;
   }
+  if (!cfg.reps && reps > 0 && now - lastRepAt > 8000) { say("Série terminée"); beep(1200, 0.4); finishSet(); return; }   // mode max : 8 s sans répétition
   if (isSplit()) { armsStep(lm, now, X); return; }
+  // Coach : mouvement commencé mais pas assez ample
+  if (phase === "up" && p > 0.45) { coach.on = true; coach.max = Math.max(coach.max, p); }
+  if (phase === "down") { coach.on = false; coach.max = 0; }
+  if (coach.on && p < 0.2) {
+    if (coach.max < 0.85 && now - coach.last > 4000) { say(X.deeper, false); coach.last = now; }
+    coach.on = false; coach.max = 0;
+  }
 
   // Une répétition = rester en bas au moins 0,2 s, puis remonter ; durée et écart minimum entre deux reps
   const step = (D, val, ok) => {
@@ -814,7 +954,10 @@ function draw(lm) {
 let lastTs = -1;
 function loop() {
   if (!running) return;
-  if (video.readyState >= 2 && !restTimer) {
+  if (video.readyState >= 2 && restTimer && handLm && cfg.trigger === "hand") {
+    const ts = performance.now();
+    if (ts > lastTs) { lastTs = ts; restHandStep(ts); }
+  } else if (video.readyState >= 2 && !restTimer) {
     const ts = performance.now();
     if (ts > lastTs) {
       lastTs = ts;
@@ -836,21 +979,77 @@ function loop() {
 }
 
 /* ---------- Séries et pauses ---------- */
+let coach = { max: 0, on: false, last: 0 }, setDurs = [], prevRepAt = 0, tempoWarned = false;
+let holdMs = 0, lastTick = 0, inSince = 0, outSince = 0, outWarned = false;
+// Tempo : alerte si les répétitions deviennent nettement plus rapides qu'en début de série
+function tempoCheck() {
+  const now = performance.now();
+  if (prevRepAt) setDurs.push(now - prevRepAt);
+  prevRepAt = now;
+  if (setDurs.length >= 4 && !tempoWarned) {
+    const base = setDurs.slice(0, 3).sort((a, b) => a - b)[1], last = setDurs[setDurs.length - 1];
+    if (last < base * 0.55) { tempoWarned = true; setTimeout(() => say("Ralentis, contrôle le mouvement", false), 600); }
+  }
+}
+// Planche : corps droit (épaule–hanche–cheville) et à l'horizontale
+function plankPose(lm) {
+  const ar = video.videoWidth / video.videoHeight || 1;
+  const sides = [[11, 23, 27, 25], [12, 24, 28, 26]].map(ix => ({ ix, v: vis(lm[ix[0]], lm[ix[1]]) })).sort((a, b) => b.v - a.v);
+  const [s, h, a, k] = sides[0].ix.map(i => lm[i]);
+  if (sides[0].v < 0.5) return { vis: false };
+  const end = (a.visibility ?? 0) >= 0.5 ? a : (k.visibility ?? 0) >= 0.5 ? k : null;
+  if (!end) return { vis: false };
+  const P = q => ({ x: q.x * ar, y: q.y });
+  const straight = angle(P(s), P(h), P(end)) > 150;
+  const tilt = Math.atan2(Math.abs(end.y - s.y), Math.abs(end.x - s.x) * ar) * 180 / Math.PI;
+  return { vis: true, inPos: straight && tilt < 40 };
+}
+function plankStep(lm, now, X) {
+  const pos = plankPose(lm);
+  if (!armed) {
+    if (lastCd !== 0) { lastCd = 0; inSince = 0; updateCount(); say("Mets-toi en planche"); }
+    setStatus(pos.vis ? "Mets-toi en planche, corps droit" : X.hidden);
+    if (pos.vis && pos.inPos) { inSince ||= now; if (now - inSince > 800) { armed = true; holdMs = 0; lastTick = now; outSince = 0; outWarned = false; beep(1200, 0.25); say("C'est parti, tiens bon"); } }
+    else inSince = 0;
+    return;
+  }
+  const dt = Math.min(now - lastTick, 200); lastTick = now;
+  if (pos.vis && pos.inPos) { holdMs += dt; outSince = 0; outWarned = false; setStatus("Tiens la position"); }
+  else {
+    outSince ||= now;
+    setStatus(pos.vis ? "Corps pas droit : remets-toi en position" : X.hidden);
+    if (now - outSince > 1500 && !outWarned) { outWarned = true; say("Remets-toi en position"); }
+    if (!cfg.reps && reps > 0 && now - outSince > 3000) { say(`Terminé, ${reps} secondes`); beep(1200, 0.4); finishSet(); return; }
+  }
+  const sec = Math.floor(holdMs / 1000);
+  $("phaseFill").style.width = (cfg.reps ? Math.min(1, holdMs / (cfg.reps * 1000)) * 100 : 0) + "%";
+  $("phaseFill").style.background = "var(--acc)";
+  $("angle").textContent = pos.inPos ? "Position OK" : "Hors position";
+  if (sec !== reps) {
+    reps = sec; updateCount();
+    const left = cfg.reps - sec;
+    if (cfg.reps && sec >= cfg.reps) { say("Terminé !"); beep(1200, 0.4); finishSet(); return; }
+    if (cfg.reps && left <= 5) say(String(left));
+    else if (sec % 10 === 0) say(`${sec} secondes`);
+  }
+}
 let runList = [], blockIdx = 0, baseCfg = null, recs = {};
 function applyBlock(b) { cfg.exo = b.exo; cfg.reps = b.reps; cfg.sets = b.sets; cfg.arms = b.arms; }
 function pushSet() {
   const best = isSplit() ? Math.max(armReps.L, armReps.R) : reps;
   history.push({ exo: cfg.exo, n: reps, best, txt: isSplit() ? `G ${armReps.L} · D ${armReps.R}` : `${reps}` });
-  if (best > 0 && recs[cfg.exo] > 0 && best > recs[cfg.exo]) setTimeout(() => say("Nouveau record !", false), 1200);
+  if (best > 0 && recs[cfg.exo] > 0 && best > recs[cfg.exo]) { setTimeout(() => say("Nouveau record !", false), 1200); try { setTimeout(() => navigator.vibrate?.([80, 60, 80, 60, 300]), 1200); } catch {} }
   recs[cfg.exo] = Math.max(recs[cfg.exo] || 0, best);
 }
 function finishSet() {
+  try { navigator.vibrate?.([200, 100, 200]); } catch {}
   pushSet();
   if (setIdx >= cfg.sets && blockIdx >= runList.length - 1) { endWorkout(); return; }
   startRest();
 }
 function startRest() {
   restLeft = cfg.rest; restTotal = cfg.rest; $("rest").classList.add("on");
+  $("restHand").classList.toggle("on", !!handLm && cfg.trigger === "hand"); openSince = 0;
   const newBlock = setIdx >= cfg.sets, nb = newBlock ? runList[blockIdx + 1] : blockOf();
   const perArm = nb.exo === "curls" && nb.arms === "sep" ? " / bras" : "";
   $("restNext").innerHTML = `<div><div class="nc-k">${newBlock ? "Exercice suivant" : "Prochaine série"}</div><div class="nc-v">${exoName(nb.exo)} · ${nb.reps} reps${perArm}</div></div><div class="nc-n">${newBlock ? 1 : setIdx + 1}<small>/${nb.sets}</small></div>`;
@@ -873,6 +1072,7 @@ function nextSet() {
   clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
   const newBlock = setIdx >= cfg.sets;
   if (newBlock) { blockIdx++; applyBlock(runList[blockIdx]); setIdx = 1; } else setIdx++;
+  setDurs = []; prevRepAt = 0; tempoWarned = false;
   reps = 0; armReps = { L: 0, R: 0 }; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null; lastCd = -1;
   updateCount(); updateSet(); beep(1200, 0.35);
   say(newBlock ? `${exoName(cfg.exo)}, série 1, mets-toi en position` : `Série ${setIdx}, mets-toi en position`);
@@ -892,11 +1092,13 @@ $("stopBtn").onclick = () => { if (reps > 0 && !restTimer) pushSet(); endWorkout
 function endWorkout() {
   running = false; waitingHand = false; clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
   stopCamera(); try { wakeLock?.release(); } catch {}
-  const total = history.reduce((a, b) => a + b.n, 0);
   const exos = [...new Set(history.map(h => h.exo))];
-  const unit = exos.length === 1 ? EXOS[exos[0]].unit : "répétitions";
+  const onlyTimed = exos.length > 0 && exos.every(e => EXOS[e]?.timed);
+  const total = history.filter(h => onlyTimed || !EXOS[h.exo]?.timed).reduce((a, b) => a + b.n, 0);
+  const repExos = exos.filter(e => !EXOS[e]?.timed);
+  const unit = onlyTimed ? "secondes" : repExos.length === 1 ? EXOS[repExos[0]].unit : "répétitions";
   const cnt = {};
-  $("summary").innerHTML = history.map(r => { cnt[r.exo] = (cnt[r.exo] || 0) + 1; return `<div class="sum-row"><span>${exos.length > 1 ? exoName(r.exo) + " · " : ""}Série ${cnt[r.exo]}</span><b>${r.txt}</b></div>`; }).join("");
+  $("summary").innerHTML = history.map(r => { cnt[r.exo] = (cnt[r.exo] || 0) + 1; return `<div class="sum-row"><span>${exos.length > 1 ? exoName(r.exo) + " · " : ""}Série ${cnt[r.exo]}</span><b>${r.txt}${EXOS[r.exo]?.timed ? " s" : ""}</b></div>`; }).join("");
   $("statTotal").textContent = total; $("statUnit").textContent = unit;
   $("statSets").textContent = history.length;
   const dur = workoutStart ? Date.now() - workoutStart : 0;
@@ -905,10 +1107,17 @@ function endWorkout() {
   // records battus pendant la séance, puis sauvegarde
   const sessions = loadSessions(), before = computeRecords(sessions);
   const IC_T = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
-  $("doneRecs").innerHTML = exos.map(e => { const b = Math.max(...history.filter(h => h.exo === e).map(h => h.best)); return b > 0 && b > (before[e] || 0) ? `<span>${IC_T}Record ${exoName(e)} : ${b}</span>` : ""; }).join("");
-  if (total > 0) { sessions.push({ t: workoutStart || Date.now(), dur, sets: history.map(h => ({ exo: h.exo, n: h.n, best: h.best, txt: h.txt })) }); saveSessions(sessions); }
+  $("doneRecs").innerHTML = exos.map(e => { const b = Math.max(...history.filter(h => h.exo === e).map(h => h.best)); return b > 0 && b > (before[e] || 0) ? `<span>${IC_T}Record ${exoName(e)} : ${b}${EXOS[e]?.timed ? " s" : ""}</span>` : ""; }).join("");
+  if (history.some(h => h.n > 0)) { sessions.push({ t: workoutStart || Date.now(), dur, sets: history.map(h => ({ exo: h.exo, n: h.n, best: h.best, txt: h.txt })) }); saveSessions(sessions); }
   say(`Bravo ! ${total} ${unit} au total`);
   if (baseCfg) { Object.assign(cfg, baseCfg); baseCfg = null; renderCfg(); }
+  // série de jours + objectif hebdo
+  const S2 = loadSessions(), st = streakOf(S2), wkDone = weekReps(S2);
+  const IC_F = '<svg class="ic fl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>';
+  const IC_G = '<svg class="ic tg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
+  $("doneBadges").innerHTML = (st ? `<span>${IC_F}${st} jour${st > 1 ? "s" : ""} d'affilée</span>` : "") +
+    (cfg.goal ? `<span>${IC_G}Semaine : ${wkDone} / ${cfg.goal}${wkDone >= cfg.goal ? " ✓" : ""}</span>` : "");
+  lastShare = { date: new Date(workoutStart || Date.now()), total, unit, sets: history.length, mins: dur ? Math.max(1, Math.round(dur / 60000)) : 0, history: history.slice(), streak: st };
   show("done");
 }
 
@@ -922,27 +1131,56 @@ function computeRecords(sessions) {
   for (const s of sessions) for (const x of s.sets) r[x.exo] = Math.max(r[x.exo] || 0, x.best || 0);
   return r;
 }
-const EXO_COL = { pompes: "#4ade80", squats: "#22d3ee", curls: "#a78bfa" };
+const EXO_COL = { pompes: "#4ade80", squats: "#22d3ee", curls: "#a78bfa", militaire: "#fbbf24", elevations: "#fb923c", fentes: "#f472b6", dips: "#60a5fa", planche: "#fde047" };
+const REP_EXOS = Object.keys(EXOS).filter(e => !EXOS[e].timed);
+const dayKey = t => { const d = new Date(t); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; };
+const sessReps = s => s.sets.filter(x => !EXOS[x.exo]?.timed).reduce((u, x) => u + x.n, 0);
+function weekStart() { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); }
+function weekReps(S) { const w = weekStart(); return S.filter(s => s.t >= w).reduce((a, s) => a + sessReps(s), 0); }
+function streakOf(S) {
+  const days = new Set(S.map(s => dayKey(s.t)));
+  const d = new Date(); d.setHours(12, 0, 0, 0);
+  if (!days.has(dayKey(d))) d.setDate(d.getDate() - 1);    // la série tient encore si on s'est entraîné hier
+  let n = 0;
+  while (days.has(dayKey(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+let lastShare = null;
 function renderHist() {
   const S = loadSessions(), now = Date.now(), wk = S.filter(s => now - s.t < 7 * 864e5);
-  const sum = a => a.reduce((t, s) => t + s.sets.reduce((u, x) => u + x.n, 0), 0);
+  const sum = a => a.reduce((t, s) => t + sessReps(s), 0);
   $("hsCount").textContent = S.length;
   $("hsWeek").textContent = sum(wk);
   $("hsTime").textContent = Math.round(wk.reduce((t, s) => t + (s.dur || 0), 0) / 60000);
   $("histSub").textContent = S.length ? `Depuis le ${new Date(S[0].t).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}` : "Aucune séance pour l'instant";
   const R = computeRecords(S);
-  $("histRecs").innerHTML = ["pompes", "squats", "curls"].map(e => `<div class="rec ${R[e] ? "" : "none"}"><b>${R[e] || "–"}</b><span>${exoName(e)}</span></div>`).join("");
+  const withRec = Object.keys(EXOS).filter(e => R[e]);
+  $("histRecs").innerHTML = withRec.length ? withRec.map(e => `<div class="rec"><b>${R[e]}${EXOS[e].timed ? "<small>s</small>" : ""}</b><span>${exoName(e)}</span></div>`).join("") : '<div class="empty" style="grid-column:1/-1">Aucun record pour l\'instant.</div>';
+  // régularité : série de jours + calendrier 5 semaines
+  const st = streakOf(S);
+  $("streakN").textContent = st; $("streakLab").textContent = st > 1 ? "jours d'affilée" : "jour d'affilée";
+  const perDay = {}; for (const x of S) perDay[dayKey(x.t)] = (perDay[dayKey(x.t)] || 0) + Math.max(1, sessReps(x));
+  const start = new Date(weekStart()); start.setDate(start.getDate() - 28);
+  const todayK = dayKey(Date.now());
+  let cal = "";
+  for (let i = 0; i < 35; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const k = dayKey(d), n = perDay[k] || 0, fut = d.getTime() > Date.now();
+    cal += `<i class="${fut ? "fut" : n > 150 ? "l3" : n > 60 ? "l2" : n ? "l1" : ""}${k === todayK ? " today" : ""}"></i>`;
+  }
+  $("cal").innerHTML = cal;
+  renderGoal(S);
   // graphique : répétitions des 10 dernières séances, empilées par exercice
   const last = S.slice(-10);
   if (!last.length) $("histChart").innerHTML = '<div class="empty">Termine une séance pour voir ta progression.</div>';
   else {
     const W = 320, H = 120, pad = 18, bw = Math.min(22, (W - 20) / last.length - 8);
-    const tots = last.map(s => s.sets.reduce((u, x) => u + x.n, 0)), mx = Math.max(...tots, 1);
+    const tots = last.map(sessReps), mx = Math.max(...tots, 1);
     let g = "";
     last.forEach((s, i) => {
       const x = 10 + i * ((W - 20) / last.length) + ((W - 20) / last.length - bw) / 2;
       let y = H - pad;
-      for (const e of ["pompes", "squats", "curls"]) {
+      for (const e of REP_EXOS) {
         const n = s.sets.filter(z => z.exo === e).reduce((u, z) => u + z.n, 0);
         if (!n) continue;
         const h = n / mx * (H - pad - 14); y -= h;
@@ -951,10 +1189,11 @@ function renderHist() {
       g += `<text x="${x + bw / 2}" y="${y - 4}" text-anchor="middle" font-size="10" fill="#a1a1aa" font-weight="600">${tots[i]}</text>`;
       g += `<text x="${x + bw / 2}" y="${H - 4}" text-anchor="middle" font-size="9" fill="#52525b">${new Date(s.t).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })}</text>`;
     });
-    $("histChart").innerHTML = `<svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="legend">${["pompes", "squats", "curls"].map(e => `<span><i style="background:${EXO_COL[e]}"></i>${exoName(e)}</span>`).join("")}</div>`;
+    $("histChart").innerHTML = `<svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="legend">${REP_EXOS.filter(e => last.some(s => s.sets.some(z => z.exo === e))).map(e => `<span><i style="background:${EXO_COL[e]}"></i>${exoName(e)}</span>`).join("")}</div>`;
   }
   $("histList").innerHTML = S.slice().reverse().slice(0, 30).map(s => {
     const per = {}; for (const x of s.sets) per[x.exo] = (per[x.exo] || 0) + x.n;
+    for (const e in per) if (EXOS[e]?.timed) per[e] = per[e] + " s";
     const d = new Date(s.t);
     return `<div class="sess"><div class="sess-top"><b>${d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · ${d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</b><span>${Math.max(1, Math.round((s.dur || 0) / 60000))} min · ${s.sets.length} séries</span></div><div class="sess-exos">${Object.entries(per).map(([e, n]) => `<span>${exoName(e)}<b>${n}</b></span>`).join("")}</div></div>`;
   }).join("");
@@ -970,10 +1209,123 @@ $("histBtn").onclick = () => { renderHist(); show("hist"); };
 $("histBack").onclick = () => show("setup");
 $("doneHist").onclick = () => { renderHist(); show("hist"); };
 
+/* ---------- Objectif de la semaine ---------- */
+function renderGoal(S = loadSessions()) {
+  const done = weekReps(S);
+  $("goalDone").textContent = done;
+  $("goalOf").textContent = cfg.goal ? `/ ${cfg.goal} répétitions` : "répétitions · aucun objectif";
+  $("goalBar").style.width = cfg.goal ? Math.min(100, done / cfg.goal * 100) + "%" : "0%";
+}
+$("goalMinus").onclick = () => { cfg.goal = Math.max(0, (cfg.goal || 0) - 50); save(); renderGoal(); };
+$("goalPlus").onclick = () => { cfg.goal = Math.min(5000, (cfg.goal || 0) + 50); save(); renderGoal(); };
+
+/* ---------- Sauvegarde / restauration ---------- */
+async function giveFile(blob, name, title) {
+  const file = new File([blob], name, { type: blob.type });
+  try { if (navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title }); return "partagé"; } } catch (e) { if (e?.name === "AbortError") return "annulé"; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  return "téléchargé";
+}
+$("backupBtn").onclick = async () => {
+  const data = { app: "compteur-muscu", version: 1, date: new Date().toISOString(), sessions: loadSessions(), saved: cfg.saved || [], goal: cfg.goal || 0 };
+  const d = new Date(), name = `compteur-muscu-${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}.json`;
+  const r = await giveFile(new Blob([JSON.stringify(data)], { type: "application/json" }), name, "Sauvegarde Compteur muscu");
+  $("bkMsg").textContent = r === "annulé" ? "" : `Sauvegarde ${r} : ${data.sessions.length} séances, ${data.saved.length} programmes.`;
+};
+$("restoreBtn").onclick = () => $("restoreFile").click();
+$("restoreFile").onchange = async e => {
+  const f = e.target.files?.[0]; e.target.value = "";
+  if (!f) return;
+  try {
+    const data = JSON.parse(await f.text());
+    if (data.app !== "compteur-muscu" || !Array.isArray(data.sessions)) throw new Error();
+    const cur = loadSessions(), seen = new Set(cur.map(x => x.t));
+    const add = data.sessions.filter(x => x && x.t && Array.isArray(x.sets) && !seen.has(x.t));
+    saveSessions(cur.concat(add).sort((a, b) => a.t - b.t));
+    const names = new Set((cfg.saved || []).map(p => p.name));
+    const addP = (data.saved || []).filter(p => p && p.name && Array.isArray(p.blocks) && !names.has(p.name));
+    cfg.saved = (cfg.saved || []).concat(addP);
+    if (!cfg.goal && data.goal) cfg.goal = data.goal;
+    save(); renderHist();
+    $("bkMsg").textContent = `Restauré : ${add.length} séance${add.length > 1 ? "s" : ""} et ${addP.length} programme${addP.length > 1 ? "s" : ""} ajoutés.`;
+  } catch { $("bkMsg").textContent = "Ce fichier n'est pas une sauvegarde valide."; }
+};
+
+/* ---------- Carte de partage ---------- */
+async function shareCard() {
+  const L = lastShare; if (!L) return;
+  try { await document.fonts?.ready; } catch {}
+  const W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const g = c.getContext("2d"), F = '"Barlow Condensed", Inter, sans-serif', FI = 'Inter, system-ui, sans-serif';
+  const bg = g.createRadialGradient(W / 2, -100, 50, W / 2, 200, 1100); bg.addColorStop(0, "#1c3b2a"); bg.addColorStop(.55, "#09090b"); bg.addColorStop(1, "#09090b");
+  g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  const rr = (x, y, w, h, r) => { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); };
+  // en-tête
+  const lg = g.createLinearGradient(80, 90, 170, 180); lg.addColorStop(0, "#4ade80"); lg.addColorStop(1, "#16a34a");
+  g.fillStyle = lg; rr(80, 90, 96, 96, 26); g.fill();
+  g.strokeStyle = "#04130a"; g.lineWidth = 9; g.lineCap = g.lineJoin = "round";
+  g.beginPath(); [[22, 12], [18, 12], [15, 21], [9, 3], [6, 12], [2, 12]].forEach(([x, y], i) => g[i ? "lineTo" : "moveTo"](80 + 12 + x * 3, 90 + 12 + y * 3)); g.stroke();
+  g.fillStyle = "#fafafa"; g.font = `700 46px ${FI}`; g.fillText("Séance terminée", 206, 135);
+  g.fillStyle = "#a1a1aa"; g.font = `500 30px ${FI}`;
+  g.fillText(L.date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), 206, 178);
+  // chiffre principal
+  g.textAlign = "center"; g.fillStyle = "#fafafa"; g.font = `800 330px ${F}`; g.fillText(String(L.total), W / 2, 590);
+  g.fillStyle = "#4ade80"; g.font = `700 54px ${FI}`; g.fillText(L.unit.toUpperCase(), W / 2, 670);
+  // trois stats
+  const stats = [["SÉRIES", L.sets], ["MINUTES", L.mins], ["JOURS D'AFFILÉE", L.streak || 1]];
+  stats.forEach(([k, v], i) => {
+    const x = 80 + i * 316, y = 740;
+    g.fillStyle = "#ffffff0f"; rr(x, y, 288, 200, 32); g.fill(); g.strokeStyle = "#ffffff1f"; g.lineWidth = 2; g.stroke();
+    g.fillStyle = "#fafafa"; g.font = `800 110px ${F}`; g.fillText(String(v), x + 144, y + 125);
+    g.fillStyle = "#71717a"; g.font = `700 24px ${FI}`; g.fillText(k, x + 144, y + 170);
+  });
+  // détail par exercice
+  const per = {}; for (const h of L.history) per[h.exo] = (per[h.exo] || 0) + h.n;
+  g.textAlign = "left"; let y = 1030;
+  for (const [e, n] of Object.entries(per).slice(0, 4)) {
+    g.fillStyle = EXO_COL[e] || "#4ade80"; rr(80, y - 30, 14, 40, 7); g.fill();
+    g.fillStyle = "#e4e4e7"; g.font = `600 38px ${FI}`; g.fillText(exoName(e), 116, y);
+    g.textAlign = "right"; g.fillStyle = "#fafafa"; g.font = `800 52px ${F}`; g.fillText(n + (EXOS[e]?.timed ? " s" : ""), W - 80, y + 4); g.textAlign = "left";
+    y += 64;
+  }
+  g.fillStyle = "#52525b"; g.font = `600 26px ${FI}`; g.textAlign = "center"; g.fillText("COMPTEUR DE MUSCU · comptage par caméra", W / 2, H - 50);
+  const blob = await new Promise(r => c.toBlob(r, "image/png"));
+  if (blob) await giveFile(blob, "ma-seance.png", "Ma séance");
+}
+$("shareBtn").onclick = () => shareCard();
+
+/* ---------- Programmes enregistrés ---------- */
+function renderSaved() {
+  const L = cfg.saved || [];
+  $("savedList").innerHTML = L.map((p, i) => `<div class="saved"><div><b>${p.name.replace(/</g, "&lt;")}</b><small>${p.blocks.map(b => `${exoName(b.exo)} ${b.sets}×${EXOS[b.exo]?.timed ? (b.reps || "max") + "s" : (b.reps || "max")}`).join(" › ")}</small></div><button class="gbtn" data-load="${i}">Charger</button><button class="gbtn del" data-del="${i}" aria-label="Supprimer">${IC_X}</button></div>`).join("");
+  $("savedList").querySelectorAll("[data-load]").forEach(b => b.onclick = () => {
+    cfg.prog = cfg.saved[+b.dataset.load].blocks.map(x => ({ ...x })); save(); renderCfg();
+    $("progSheet").classList.remove("on");
+  });
+  $("savedList").querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
+    if (b.dataset.armed) { cfg.saved.splice(+b.dataset.del, 1); save(); renderSaved(); }
+    else { b.dataset.armed = 1; b.textContent = "Sûr ?"; b.style.width = "auto"; b.style.padding = "8px 10px"; }
+  });
+  $("progSave").disabled = !cfg.prog.length;
+  $("progName").placeholder = cfg.prog.length ? "Nom du programme actuel" : "Ajoute d'abord des exercices";
+}
+$("progMine").onclick = () => { $("progMsg").textContent = ""; renderSaved(); $("progSheet").classList.add("on"); };
+$("progClose").onclick = () => $("progSheet").classList.remove("on");
+$("progSheet").onclick = e => { if (e.target.id === "progSheet") $("progSheet").classList.remove("on"); };
+$("progSave").onclick = () => {
+  const name = $("progName").value.trim() || `Programme ${(cfg.saved || []).length + 1}`;
+  if (!cfg.prog.length) return;
+  cfg.saved = (cfg.saved || []).filter(p => p.name !== name);
+  cfg.saved.push({ name, blocks: cfg.prog.map(b => ({ ...b })) }); save();
+  $("progName").value = ""; $("progMsg").textContent = `« ${name} » enregistré.`; renderSaved();
+};
+
 /* ---------- Démarrage ---------- */
 $("startBtn").onclick = async () => {
   beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
   baseCfg = { ...cfg, prog: cfg.prog.map(b => ({ ...b })) };
+  setDurs = []; prevRepAt = 0; tempoWarned = false;
   runList = cfg.prog.length ? cfg.prog.map(b => ({ ...b })) : [blockOf()];
   blockIdx = 0; applyBlock(runList[0]); recs = computeRecords(loadSessions());
   reps = 0; armReps = { L: 0, R: 0 }; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null;
