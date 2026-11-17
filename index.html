@@ -237,6 +237,14 @@
   .mirror{transform:scaleX(-1)}
   .shade{position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(#09090b00,#09090bb3 55%,#09090bf2);pointer-events:none}
   #hud{position:absolute;top:0;left:0;right:0;padding:max(12px, env(safe-area-inset-top)) 12px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none}
+  [data-cast][hidden]{display:none!important}
+  [data-cast].dim:not(.on){opacity:.45}
+  .hud-r{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  .castbtn{pointer-events:auto;width:40px;height:40px;border-radius:999px;border:1px solid #ffffff1a;background:#000000a6;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#e4e4e7;display:grid;place-items:center}
+  .castbtn .ic{width:19px;height:19px}
+  [data-cast].on{color:#052e16!important;background:linear-gradient(135deg,#4ade80,#16a34a)!important;border-color:transparent!important;box-shadow:0 0 16px #22c55e66}
+  [data-cast].wait{animation:castpulse 1s ease-in-out infinite}
+  @keyframes castpulse{50%{opacity:.45}}
   .hud-l{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
   .pill{background:#000000a6;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid #ffffff1a;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;color:#e4e4e7;max-width:100%}
   .pill:empty{display:none}
@@ -318,6 +326,7 @@
     <header class="hero">
       <div class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
       <div class="htxt"><h1>Compteur de muscu</h1><p>Comptage par caméra</p></div>
+      <button class="help castbtn-h" data-cast aria-label="Caster sur la TV" hidden><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/><path d="M2 12a9 9 0 0 1 8 8"/><path d="M2 16a5 5 0 0 1 4 4"/><line x1="2" x2="2.01" y1="20" y2="20"/></svg></button>
       <button class="help" id="histBtn" aria-label="Historique"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></button>
       <button class="help" id="tipsBtn" aria-label="Conseils"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
     </header>
@@ -392,7 +401,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 17.11 · 22h30</p>
+      <p class="ver">Version 17.11 · 23h00</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -406,7 +415,7 @@
     <div class="shade"></div>
     <div id="hud">
       <div class="hud-l"><div id="setInfo" class="pill pill-strong"></div><div id="status" class="pill">Mets-toi en position</div></div>
-      <div id="angle" class="pill pill-mono"></div>
+      <div class="hud-r"><button class="castbtn" data-cast aria-label="Caster sur la TV" hidden><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/><path d="M2 12a9 9 0 0 1 8 8"/><path d="M2 16a5 5 0 0 1 4 4"/><line x1="2" x2="2.01" y1="20" y2="20"/></svg></button><div id="angle" class="pill pill-mono"></div></div>
     </div>
     <div id="count">0<small>/12</small></div>
     <div id="phaseBar"><div id="phaseFill"></div></div>
@@ -641,7 +650,62 @@ function renderProg() {
 $("progAdd").onclick = () => { if (cfg.prog.length < 8) { cfg.prog.push(blockOf()); save(); renderCfg(); } };
 renderCfg();
 
-const show = id => document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+const show = id => { document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id)); castTick(true); };
+
+/* ---------- Écran TV (Chromecast via l'API Presentation) ---------- */
+// Le téléphone garde la caméra et l'analyse ; la TV affiche une vue dédiée (tv.html) mise à jour en direct.
+let castReq = null, castConn = null, castLast = "", castSentAt = 0;
+function castState() {
+  const scr = document.querySelector(".screen.on")?.id;
+  if (scr === "workout") {
+    if ($("rest").classList.contains("on")) {
+      const off = parseFloat($("restRing").style.strokeDashoffset) || 0;
+      return { v: "rest", set: $("setInfo").textContent, t: $("restTime").textContent, ring: 1 - off / 339.29, next: $("restNext").innerHTML };
+    }
+    return { v: "work", set: $("setInfo").textContent, count: $("count").innerHTML, status: $("status").textContent, tele: $("angle").textContent,
+      amp: $("phaseFill").style.width || "0%", green: /acc/.test($("phaseFill").style.background), flash: performance.now() < flashUntil,
+      loading: $("loading").style.display !== "none" };
+  }
+  if (scr === "done") return { v: "done", total: $("statTotal").textContent, unit: $("statUnit").textContent, sets: $("statSets").textContent,
+    mins: $("statTime").textContent, kcal: $("statKcal").textContent, badges: [...$("doneRecs").children, ...$("doneBadges").children].map(e => e.textContent.trim()) };
+  return { v: "idle", exo: exoName(cfg.exo) };
+}
+function castTick(force) {
+  if (!castConn || castConn.state !== "connected") return;
+  const now = performance.now();
+  if (!force && now - castSentAt < 120) return;
+  const j = JSON.stringify(castState());
+  if (j === castLast && !force) return;
+  try { castConn.send(j); castLast = j; castSentAt = now; } catch {}
+}
+function setCastUI(state) {
+  document.querySelectorAll("[data-cast]").forEach(b => { b.classList.toggle("on", state === "on"); b.classList.toggle("wait", state === "wait"); });
+}
+function useConn(c) {
+  castConn = c; castLast = "";
+  const up = () => { setCastUI(c.state === "connected" ? "on" : c.state === "connecting" ? "wait" : ""); if (c.state === "connected") castTick(true); };
+  c.onconnect = up; c.onclose = up; c.onterminate = () => { castConn = null; setCastUI(""); };
+  up();
+}
+if ("PresentationRequest" in window) {
+  try {
+    castReq = new PresentationRequest([new URL("tv.html", location.href).href]);
+    navigator.presentation.defaultRequest = castReq;   // aussi disponible via le menu Chrome « Caster… »
+    castReq.onconnectionavailable = e => useConn(e.connection);
+    // bouton toujours visible (Chrome affiche lui-même la liste des appareils) ; grisé si aucun Chromecast n'est détecté
+    const showBtns = ok => document.querySelectorAll("[data-cast]").forEach(b => { b.hidden = false; b.classList.toggle("dim", !ok); });
+    showBtns(true);
+    castReq.getAvailability().then(a => { showBtns(a.value); a.onchange = () => showBtns(a.value); }).catch(() => {});
+  } catch { castReq = null; }
+}
+document.querySelectorAll("[data-cast]").forEach(b => b.onclick = async () => {
+  if (castConn && castConn.state !== "terminated") {        // déjà connecté : appui = arrêter de caster
+    try { castConn.terminate(); } catch {} castConn = null; setCastUI(""); return;
+  }
+  if (!castReq) return;
+  setCastUI("wait");
+  try { useConn(await castReq.start()); } catch { setCastUI(""); }
+});
 
 /* ---------- Son et voix ---------- */
 let actx;
@@ -1082,7 +1146,7 @@ function loop() {
         }
       }
       prevLm = cur ? cur.map(p => ({ x: p.x, y: p.y })) : null;
-      process(res); draw(cur);
+      process(res); draw(cur); castTick();
     }
   }
   requestAnimationFrame(loop);
@@ -1186,13 +1250,14 @@ function finishSet() {
 function startRest() {
   restLeft = cfg.rest; restTotal = cfg.rest; $("rest").classList.add("on");
   $("restHand").classList.toggle("on", !!handLm && cfg.trigger === "hand"); openSince = 0;
+  setTimeout(() => castTick(true), 50);
   if (!(handLm && cfg.trigger === "hand")) { try { video.pause(); } catch {} ctx.clearRect(0, 0, canvas.width, canvas.height); }
   const newBlock = setIdx >= cfg.sets, nb = newBlock ? runList[blockIdx + 1] : blockOf();
   const perArm = nb.exo === "curls" && nb.arms === "sep" ? " / bras" : "";
   $("restNext").innerHTML = `<div><div class="nc-k">${newBlock ? "Exercice suivant" : "Prochaine série"}</div><div class="nc-v">${exoName(nb.exo)} · ${nb.reps} reps${perArm}</div></div><div class="nc-n">${newBlock ? 1 : setIdx + 1}<small>/${nb.sets}</small></div>`;
   renderRest();
   restTimer = setInterval(() => {
-    restLeft--; renderRest();
+    restLeft--; renderRest(); castTick(true);
     if (restLeft === 10) { say("Dix secondes"); beep(660, 0.15); }
     if (restLeft > 0 && restLeft <= 3) tick();
     if (restLeft <= 0) nextSet();

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compteur de muscu · TV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;height:100%;overflow:hidden;background:#09090b;color:#fafafa;font-family:Inter,system-ui,sans-serif}
+  body{background:radial-gradient(90% 70% at 50% -10%,#14281d 0%,#09090b 60%)}
+  .num{font-family:"Barlow Condensed",Inter,sans-serif;font-weight:800;font-variant-numeric:tabular-nums}
+  .view{position:absolute;inset:0;display:none;padding:5vh 5vw}
+  .view.on{display:flex}
+  .ic{width:1em;height:1em;flex:none}
+  /* en-tête commun */
+  .top{position:absolute;top:5vh;left:5vw;right:5vw;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:1.4vw;font-size:2.2vw;font-weight:700}
+  .logo{width:4.2vw;height:4.2vw;border-radius:1.1vw;background:linear-gradient(135deg,#4ade80,#16a34a);color:#04130a;display:grid;place-items:center;box-shadow:0 .6vw 2vw #22c55e40}
+  .logo .ic{width:2.4vw;height:2.4vw;stroke-width:2.5}
+  .pill{background:#ffffff0d;border:1px solid #ffffff1a;border-radius:999px;padding:.8vh 1.6vw;font-size:2vw;font-weight:600;color:#e4e4e7}
+  /* attente */
+  #idle{flex-direction:column;align-items:center;justify-content:center;gap:3vh;text-align:center}
+  #idle h1{font-size:5vw;font-weight:800;letter-spacing:-.01em}
+  #idle p{font-size:2.2vw;color:#a1a1aa}
+  #idle .big-logo{width:12vw;height:12vw;border-radius:3.2vw}
+  #idle .big-logo .ic{width:6.5vw;height:6.5vw}
+  /* séance */
+  #work{align-items:center;justify-content:center}
+  .work-grid{display:flex;align-items:center;gap:6vw;width:100%;justify-content:center;margin-top:4vh}
+  .count{font-size:34vh;line-height:.85;text-shadow:0 1vh 6vh #000}
+  .count small{font-size:10vh;color:#71717a;font-weight:700;margin-left:.5vw}
+  .count .done{color:#4ade80}
+  .count{white-space:nowrap}
+  .count.split{font-size:15vh}
+  .side{display:flex;flex-direction:column;gap:3vh;min-width:30vw}
+  .status{font-size:5vw;font-weight:800;letter-spacing:-.01em}
+  .tele{font-size:1.8vw;color:#a1a1aa}
+  .amp{height:2.2vh;border-radius:999px;background:#ffffff14;overflow:hidden}
+  .amp i{display:block;height:100%;width:0;background:#f59e0b;border-radius:999px;transition:width .12s}
+  .amp i.green{background:linear-gradient(90deg,#16a34a,#4ade80)}
+  #work.flash .count{color:#fb923c;text-shadow:0 0 6vh #fb923c88}
+  #work.flash .status{color:#fb923c}
+  .flashring{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 0 #fb923c00;transition:box-shadow .2s}
+  #work.flash .flashring{box-shadow:inset 0 0 12vh 0 #fb923c55}
+  .loading{font-size:2.4vw;color:#a1a1aa}
+  /* pause */
+  #rest{align-items:center;justify-content:center;gap:6vw}
+  .ring{position:relative;width:56vh;height:56vh}
+  .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .ring circle{fill:none;stroke-width:7}
+  .ring .bg{stroke:#ffffff14}
+  .ring .fg{stroke:#4ade80;stroke-linecap:round;stroke-dasharray:339.29;transition:stroke-dashoffset 1s linear;filter:drop-shadow(0 0 1vh #22c55e80)}
+  .ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-txt b{font-size:22vh;line-height:.85}
+  .ring-txt span{font-size:2.2vh;letter-spacing:.3em;text-transform:uppercase;color:#71717a;font-weight:700;margin-top:1.5vh}
+  .rest-side{display:flex;flex-direction:column;gap:3vh;min-width:32vw}
+  .tag{align-self:flex-start;font-size:1.8vw;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:#4ade80;background:#22c55e1a;border:1px solid #22c55e40;border-radius:999px;padding:.8vh 1.8vw}
+  .next{display:flex;align-items:center;gap:2vw;padding:3vh 2.4vw;border-radius:2vw;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff12,#ffffff03)}
+  .next .nc-k{font-size:1.5vw;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#71717a}
+  .next .nc-v{font-size:2.6vw;font-weight:700;margin-top:.6vh}
+  .next .nc-n{margin-left:auto;font-family:"Barlow Condensed",Inter,sans-serif;font-size:7vw;font-weight:800;line-height:1}
+  .next .nc-n small{font-size:3vw;color:#71717a}
+  /* fin */
+  #done{flex-direction:column;align-items:center;justify-content:center;gap:4vh;text-align:center}
+  .trophy{width:10vw;height:10vw;border-radius:3vw;display:grid;place-items:center;background:linear-gradient(135deg,#4ade80,#16a34a);color:#052e16;box-shadow:0 0 0 1vw #22c55e14,0 2vh 6vh #22c55e66}
+  .trophy .ic{width:5vw;height:5vw}
+  #done h1{font-size:4.4vw;font-weight:800}
+  .stats{display:flex;gap:2vw}
+  .stat{min-width:17vw;padding:3vh 2vw;border-radius:2vw;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff12,#ffffff03)}
+  .stat b{display:block;font-size:12vh;line-height:1}
+  .stat span{font-size:1.5vw;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#71717a}
+  .badges{display:flex;gap:1vw;flex-wrap:wrap;justify-content:center}
+  .badges span{font-size:1.7vw;font-weight:600;color:#e4e4e7;background:#ffffff0d;border:1px solid #ffffff1a;border-radius:999px;padding:.8vh 1.6vw}
+</style>
+</head>
+<body>
+<div class="top" id="top">
+  <div class="brand"><div class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>Compteur de muscu</div>
+  <div class="pill" id="setPill" hidden></div>
+</div>
+
+<section class="view on" id="idle">
+  <div class="logo big-logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+  <h1>Prêt à t'entraîner</h1>
+  <p id="idleTxt">Lance une séance sur ton téléphone : elle s'affichera ici en direct.</p>
+</section>
+
+<section class="view" id="work">
+  <div class="flashring"></div>
+  <div class="work-grid">
+    <div class="count num" id="count">0</div>
+    <div class="side">
+      <div class="status" id="status"></div>
+      <div class="amp"><i id="amp"></i></div>
+      <div class="tele" id="tele"></div>
+      <div class="loading" id="loading" hidden>Chargement de la détection sur le téléphone…</div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="rest">
+  <div class="ring">
+    <svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="54"/><circle class="fg" id="ring" cx="60" cy="60" r="54"/></svg>
+    <div class="ring-txt"><b class="num" id="restT">0</b><span>secondes</span></div>
+  </div>
+  <div class="rest-side">
+    <div class="tag">Pause</div>
+    <div class="next" id="next"></div>
+  </div>
+</section>
+
+<section class="view" id="done">
+  <div class="trophy"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
+  <h1>Séance terminée</h1>
+  <div class="stats">
+    <div class="stat"><b class="num" id="dTotal">0</b><span id="dUnit">répétitions</span></div>
+    <div class="stat"><b class="num" id="dSets">0</b><span>séries</span></div>
+    <div class="stat"><b class="num" id="dMins">0</b><span>minutes</span></div>
+    <div class="stat"><b class="num" id="dKcal">—</b><span>kcal estimées</span></div>
+  </div>
+  <div class="badges" id="badges"></div>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// le compteur et la carte « prochaine série » viennent de l'appli : seules quelques balises de mise en forme sont gardées
+const keep = h => String(h ?? "").replace(/<(?!\/?(small|span|div|b)(\s+class="[\w\s-]*")?\s*>)[^>]*>/gi, "");
+let flashT = 0;
+function view(id) { document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === id)); }
+function render(s) {
+  $("setPill").hidden = !(s.set);
+  if (s.set) $("setPill").textContent = s.set;
+  if (s.v === "work") {
+    view("work");
+    $("count").innerHTML = keep(s.count);
+    $("count").classList.toggle("split", /G .* · D /.test(s.count || ""));
+    $("status").textContent = s.status || "";
+    $("tele").textContent = s.tele || "";
+    $("amp").style.width = s.amp || "0%";
+    $("amp").classList.toggle("green", !!s.green);
+    $("loading").hidden = !s.loading;
+    if (s.flash) { $("work").classList.add("flash"); clearTimeout(flashT); flashT = setTimeout(() => $("work").classList.remove("flash"), 700); }
+  } else if (s.v === "rest") {
+    view("rest");
+    $("restT").textContent = s.t;
+    $("ring").style.strokeDashoffset = 339.29 * (1 - Math.max(0, Math.min(1, s.ring ?? 1)));
+    $("next").innerHTML = keep(s.next);
+  } else if (s.v === "done") {
+    view("done"); $("setPill").hidden = true;
+    $("dTotal").textContent = s.total; $("dUnit").textContent = s.unit; $("dSets").textContent = s.sets;
+    $("dMins").textContent = s.mins; $("dKcal").textContent = s.kcal;
+    $("badges").innerHTML = (s.badges || []).map(b => `<span>${esc(b)}</span>`).join("");
+  } else {
+    view("idle"); $("setPill").hidden = true;
+    $("idleTxt").textContent = s.exo ? `Exercice sélectionné : ${s.exo}. Lance la séance sur ton téléphone.` : "Lance une séance sur ton téléphone : elle s'affichera ici en direct.";
+  }
+}
+function attach(conn) {
+  conn.onmessage = e => { try { render(JSON.parse(e.data)); } catch {} };
+  conn.onclose = conn.onterminate = () => render({ v: "idle" });
+}
+if (navigator.presentation && navigator.presentation.receiver) {
+  navigator.presentation.receiver.connectionList.then(list => {
+    list.connections.forEach(attach);
+    list.onconnectionavailable = e => attach(e.connection);
+  });
+}
+// aperçu hors Chromecast : tv.html#demo
+if (location.hash === "#demo") {
+  let n = 0;
+  setInterval(() => { n = (n + 1) % 13; render({ v: "work", set: "Pompes · Série 2/4", count: `${n}<small>/12</small>`, status: n % 2 ? "Pousse ⬆" : "Descends ⬇", tele: "Coude 120° · Amplitude 60%", amp: (n % 2 ? 90 : 40) + "%", green: n % 2 === 1, flash: n === 5 }); }, 900);
+}
+</script>
+</body>
+</html>
