@@ -203,6 +203,21 @@
   .saved .gbtn{padding:8px 12px}
   .saved .del{width:34px;padding:8px 0}
   #savedList:empty::before{content:"Aucun programme enregistré pour l'instant.";font-size:13px;color:#71717a}
+  .mini-row.three{grid-template-columns:1fr 1fr 1fr}
+  .mini-row.three .mini{padding:7px 7px}
+  .mini-row.three .stepper button{width:26px;height:26px}
+  .mini-row.three .stepper b{font-size:20px}
+  .mini-row.three .mini-lab{letter-spacing:.06em;font-size:10px;gap:4px}
+  .wstep{width:auto;gap:4px}
+  .wstep b{min-width:64px;font-size:20px}
+  .wstep button{width:30px;height:30px}
+  .stats.four{grid-template-columns:repeat(2,1fr)}
+  .stats.four .stat{display:grid;grid-template-columns:1fr auto;grid-template-areas:"lab num" "unit num";align-items:center;column-gap:8px;row-gap:2px;padding:10px 14px;text-align:left}
+  .stats.four .stat-lab{grid-area:lab;letter-spacing:.08em}
+  .stats.four .stat-unit{grid-area:unit;font-size:11px;color:#71717a}
+  .stats.four .stat-num{grid-area:num;font-size:36px;margin:0}
+  .hint{font-size:12px;color:#71717a;text-align:center;max-width:380px}
+  .hint:empty{display:none}
   /* Séance */
   #workout{position:relative;background:#09090b;font-family:Inter,system-ui,sans-serif}
   #stage{position:relative;flex:1;min-height:0;background:#000;overflow:hidden}
@@ -319,6 +334,7 @@
     <div class="mini-row">
       <div class="mini"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Pause</div><div class="stepper"><button data-k="rest" data-d="-15" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-rest"></span><i>s</i></b><button data-k="rest" data-d="15" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
       <div class="mini"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg> Délai</div><div class="stepper"><button data-k="delay" data-d="-5" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-delay"></span><i>s</i></b><button data-k="delay" data-d="5" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+      <div class="mini" id="loadTile"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></svg> <span id="loadLab">Charge</span></div><div class="stepper"><button data-load="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-load"></span><i>kg</i></b><button data-load="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
     </div>
 
     <div class="pcard" id="armsLine">
@@ -327,8 +343,10 @@
     </div>
 
     <details class="acc">
-      <summary><span><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg> Paramètres de détection</span><svg class="ic sm chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <summary><span><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg> Paramètres</span><svg class="ic sm chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
       <div class="acc-body">
+        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg> Poids de corps</span>
+          <div class="stepper wstep"><button data-w="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-weight"></span><i id="v-wu">kg</i></b><button data-w="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
         <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Démarrage</span>
           <div class="seg" id="trigSeg"><button data-t="timer">Chrono</button><button data-t="hand">Main levée</button></div></div>
         <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg> Caméra</span>
@@ -360,7 +378,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 17.11 · 20h00</p>
+      <p class="ver">Version 17.11 · 20h30</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -410,10 +428,11 @@
       <button class="help" id="histBack" aria-label="Retour"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button>
       <div class="htxt"><h1>Historique</h1><p id="histSub"></p></div>
     </header>
-    <div class="stats">
+    <div class="stats four">
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg> Séances</div><div class="stat-num" id="hsCount">0</div><div class="stat-unit">au total</div></div>
-      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> 7 jours</div><div class="stat-num" id="hsWeek">0</div><div class="stat-unit">répétitions</div></div>
-      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 7 jours</div><div class="stat-num" id="hsTime">0</div><div class="stat-unit">minutes</div></div>
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Reps</div><div class="stat-num" id="hsWeek">0</div><div class="stat-unit">sur 7 jours</div></div>
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Temps</div><div class="stat-num" id="hsTime">0</div><div class="stat-unit">min sur 7 jours</div></div>
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Calories</div><div class="stat-num" id="hsKcal">0</div><div class="stat-unit">kcal sur 7 jours</div></div>
     </div>
     <div class="hcard reg">
       <div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Régularité <span id="calLab">5 dernières semaines</span></div>
@@ -445,10 +464,12 @@
     <p class="done-sub" id="doneSub"></p>
     <div class="recbadges" id="doneRecs"></div>
     <div class="donebadges" id="doneBadges"></div>
-    <div class="stats">
+    <p class="hint" id="kcalHint"></p>
+    <div class="stats four done-stats">
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Total</div><div class="stat-num" id="statTotal">0</div><div class="stat-unit" id="statUnit">répétitions</div></div>
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg> Séries</div><div class="stat-num" id="statSets">0</div><div class="stat-unit">validées</div></div>
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Durée</div><div class="stat-num" id="statTime">0</div><div class="stat-unit">minutes</div></div>
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Calories</div><div class="stat-num" id="statKcal">0</div><div class="stat-unit">kcal estimées</div></div>
     </div>
     <div id="summary"></div>
   </div>
@@ -464,32 +485,32 @@ import { PoseLandmarker, HandLandmarker, FilesetResolver } from "https://cdn.jsd
 
 /* ---------- Réglages ---------- */
 const EXOS = {
-  pompes: { name: "Pompes", muscle: "Pecs · Triceps", icon: "arrow-down-up", unit: "pompes", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.4, minRep: 300, minGap: 500,
+  pompes: { met: 8, name: "Pompes", muscle: "Pecs · Triceps", icon: "arrow-down-up", unit: "pompes", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.4, minRep: 300, minGap: 500,
     joint: "Coude", ready: "Bras tendus, ne bouge plus…", hidden: "Bras et épaules non visibles", push: "Pousse ⬆", deeper: "Descends plus bas",
     tip: "Pose le téléphone au sol à 1,5–2 m, <b>de profil</b> (idéal) ou <b>face à toi</b>. Épaules, coudes et mains doivent être visibles." },
-  squats: { name: "Squats", muscle: "Quadris · Fessiers", icon: "person-standing", unit: "squats", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 105, drop: 0.3, minRep: 500, minGap: 900,
+  squats: { met: 5, load: "total", name: "Squats", muscle: "Quadris · Fessiers", icon: "person-standing", unit: "squats", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 105, drop: 0.3, minRep: 500, minGap: 900,
     joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆", deeper: "Descends plus bas",
     tip: "Pose le téléphone à 2–3 m, <b>de profil</b> (idéal) ou <b>face à toi</b>, à hauteur de taille si possible (sur une chaise, contre un mur). Tout ton corps, des épaules aux pieds, doit être visible." },
-  curls: { name: "Curls", muscle: "Biceps", icon: "dumbbell", unit: "curls", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 145, angDown: 65, drop: 0.6, minRep: 300, minGap: 600, perSide: true,
+  curls: { met: 3.5, load: "dumbbell", name: "Curls", muscle: "Biceps", icon: "dumbbell", unit: "curls", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 145, angDown: 65, drop: 0.6, minRep: 300, minGap: 600, perSide: true,
     joint: "Coude", ready: "Bras le long du corps, ne bouge plus…", hidden: "Bras non visibles : recule un peu", go: "Monte ⬆", push: "Redescends ⬇", deeper: "Monte plus haut",
     tip: "Pose le téléphone à 1,5–2 m, <b>face à toi</b> ou <b>de profil</b>, à hauteur de poitrine si possible. Le haut du corps, des épaules aux mains, doit être visible. Les curls alternés comptent un curl par bras." },
-  militaire: { name: "Militaire", muscle: "Épaules · Triceps", icon: "arrow-up-from-line", unit: "développés", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 90, angDown: 160, hMode: "rise", rise0: 0.15, rise1: 0.9, minRep: 400, minGap: 700, perSide: true,
+  militaire: { met: 3.5, load: "total", name: "Militaire", muscle: "Épaules · Triceps", icon: "arrow-up-from-line", unit: "développés", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 90, angDown: 160, hMode: "rise", rise0: 0.15, rise1: 0.9, minRep: 400, minGap: 700, perSide: true,
     joint: "Coude", ready: "Mains aux épaules, ne bouge plus…", hidden: "Bras et hanches non visibles : recule un peu", go: "Pousse ⬆", push: "Redescends ⬇", deeper: "Tends complètement les bras",
     tip: "Développé militaire (haltères ou barre). Téléphone à 2 m, <b>face à toi</b>, à hauteur de poitrine. Le haut du corps jusqu'aux hanches et les mains bras tendus au-dessus de la tête doivent être visibles." },
-  elevations: { name: "Élévations", muscle: "Épaules", icon: "move-horizontal", unit: "élévations", joints: [[23,11,15],[24,12,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 25, angDown: 80, hMode: "rise", rise0: -0.85, rise1: -0.1, minRep: 400, minGap: 700, perSide: true,
+  elevations: { met: 3.5, load: "dumbbell", name: "Élévations", muscle: "Épaules", icon: "move-horizontal", unit: "élévations", joints: [[23,11,15],[24,12,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 25, angDown: 80, hMode: "rise", rise0: -0.85, rise1: -0.1, minRep: 400, minGap: 700, perSide: true,
     joint: "Épaule", ready: "Bras le long du corps, ne bouge plus…", hidden: "Bras et hanches non visibles : recule un peu", go: "Monte ⬆", push: "Redescends ⬇", deeper: "Monte jusqu'aux épaules",
     tip: "Élévations latérales. Téléphone à 2 m, <b>face à toi</b>, à hauteur de poitrine. Le haut du corps et les mains bras écartés doivent être visibles." },
-  fentes: { name: "Fentes", muscle: "Quadris · Fessiers", icon: "footprints", unit: "fentes", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 110, drop: 0.25, minRep: 500, minGap: 900, perSide: true,
+  fentes: { met: 5, load: "total", name: "Fentes", muscle: "Quadris · Fessiers", icon: "footprints", unit: "fentes", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 110, drop: 0.25, minRep: 500, minGap: 900, perSide: true,
     joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆", deeper: "Descends plus bas",
     tip: "Téléphone à 2–3 m, <b>de profil</b>, à hauteur de taille. Tout le corps doit être visible. Chaque fente compte, jambe gauche ou droite." },
-  dips: { name: "Dips", muscle: "Triceps · Pecs", icon: "chevrons-down", unit: "dips", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.35, minRep: 300, minGap: 600,
+  dips: { met: 8, name: "Dips", muscle: "Triceps · Pecs", icon: "chevrons-down", unit: "dips", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.35, minRep: 300, minGap: 600,
     joint: "Coude", ready: "Bras tendus, ne bouge plus…", hidden: "Bras et épaules non visibles", push: "Pousse ⬆", deeper: "Descends plus bas",
     tip: "Dips aux barres ou sur un banc. Téléphone à 2 m, <b>de profil</b>, à hauteur des barres ou du banc. Épaules, coudes et mains doivent être visibles." },
-  planche: { name: "Planche", muscle: "Abdos · Gainage", icon: "timer", unit: "secondes", timed: true,
+  planche: { met: 3.8, name: "Planche", muscle: "Abdos · Gainage", icon: "timer", unit: "secondes", timed: true,
     hidden: "Corps non visible : recule un peu",
     tip: "Gainage chronométré. Téléphone au sol à 2 m, <b>de profil</b>. Tout le corps, des épaules aux pieds, doit être visible. Le chrono n'avance que si ton corps est droit et à l'horizontale." }
 };
-const DEF = { goal: 0, saved: [], prog: [], arms: "sep", trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
+const DEF = { weight: 0, loads: {}, goal: 0, saved: [], prog: [], arms: "sep", trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
 let cfg = DEF;
 try { cfg = { ...DEF, ...JSON.parse(localStorage.getItem("pompesCfg") || "{}") }; } catch {}
 const save = () => { try { localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {} };
@@ -503,6 +524,12 @@ $("exoChips").innerHTML = Object.entries(EXOS).map(([k, x]) => `<button class="c
 
 function renderCfg() {
   const TX = EXOS[cfg.exo] || EXOS.pompes;
+  if (!cfg.loads || typeof cfg.loads !== "object") cfg.loads = {};
+  $("loadTile").style.display = TX.load ? "" : "none";
+  document.querySelector(".mini-row")?.classList.toggle("three", !!TX.load);
+  $("loadLab").textContent = TX.load === "dumbbell" ? "Haltère" : "Charge";
+  $("v-load").textContent = cfg.loads[cfg.exo] || 0;
+  $("v-weight").textContent = cfg.weight || "—"; $("v-wu").style.display = cfg.weight ? "" : "none";
   $("v-reps").textContent = cfg.reps || "MAX";
   $("repsLab").textContent = TX.timed ? "Secondes" : "Répétitions";
   $("v-sets").textContent = cfg.sets;
@@ -535,13 +562,21 @@ document.querySelectorAll(".stepper button[data-k]").forEach(b => b.onclick = ()
   const [mn, mx] = timedReps ? [0, 600] : LIM[k], d = +b.dataset.d * (timedReps ? 5 : 1);
   cfg[k] = Math.min(mx, Math.max(mn, cfg[k] + d)); save(); renderCfg();
 });
+document.querySelectorAll("[data-load]").forEach(b => b.onclick = () => {
+  const v = Math.min(300, Math.max(0, (cfg.loads[cfg.exo] || 0) + (+b.dataset.load) * (cfg.loads[cfg.exo] >= 20 ? 2 : 1)));
+  cfg.loads = { ...cfg.loads, [cfg.exo]: v }; save(); renderCfg();
+});
+document.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
+  cfg.weight = !cfg.weight ? (+b.dataset.w > 0 ? 70 : 0) : Math.min(250, Math.max(30, cfg.weight + +b.dataset.w));
+  save(); renderCfg();
+});
 $("voiceBtn").onclick = () => { cfg.voice = !cfg.voice; save(); renderCfg(); };
 document.querySelectorAll("#armsSeg button").forEach(b => b.onclick = () => { cfg.arms = b.dataset.a; save(); renderCfg(); });
 document.querySelectorAll("#trigSeg button").forEach(b => b.onclick = () => { cfg.trigger = b.dataset.t; save(); renderCfg(); });
 document.querySelectorAll("#camSeg button").forEach(b => b.onclick = () => { cfg.facing = b.dataset.f; save(); renderCfg(); });
 /* ---------- Programme (exercices enchaînés) ---------- */
 function exoName(e) { return EXOS[e]?.name || e; }
-function blockOf() { return { exo: cfg.exo, reps: cfg.reps, sets: cfg.sets, arms: cfg.arms }; }
+function blockOf() { return { exo: cfg.exo, reps: cfg.reps, sets: cfg.sets, arms: cfg.arms, load: (cfg.loads || {})[cfg.exo] || 0 }; }
 function blockReps(b) { return EXOS[b.exo]?.timed ? 0 : b.reps * b.sets * (b.exo === "curls" && b.arms === "sep" ? 2 : 1); }
 const IC_X = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
 function renderProg() {
@@ -551,7 +586,7 @@ function renderProg() {
   $("progList").style.display = P.length ? "" : "none";
   $("progList").innerHTML = P.length
     ? P.map((b, i) => (i ? '<span class="pchip arrow">›</span>' : "") +
-        `<span class="pchip"><i>${i + 1}</i>${exoName(b.exo)} <small>${b.sets}×${EXOS[b.exo]?.timed ? (b.reps || "max") + (b.reps ? "s" : "") : (b.reps || "max")}${b.exo === "curls" && b.arms === "sep" ? "/bras" : ""}</small><button data-rm="${i}" aria-label="Retirer">${IC_X}</button></span>`).join("")
+        `<span class="pchip"><i>${i + 1}</i>${exoName(b.exo)} <small>${b.sets}×${EXOS[b.exo]?.timed ? (b.reps || "max") + (b.reps ? "s" : "") : (b.reps || "max")}${b.exo === "curls" && b.arms === "sep" ? "/bras" : ""}${b.load ? " · " + b.load + "kg" : ""}</small><button data-rm="${i}" aria-label="Retirer">${IC_X}</button></span>`).join("")
     : "";
   $("progList").querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { cfg.prog.splice(+b.dataset.rm, 1); save(); renderCfg(); });
   $("startLbl").textContent = P.length ? "Démarrer" : "Commencer";
@@ -892,7 +927,7 @@ function process(res) {
     if (p > 0.4) stillSince = now;
     setStatus(X.ready);
     if (now - stillSince > 700 || now - armStart > 4000) {
-      armed = true; dRef = sH; updateCount(); beep(1200, 0.25); say("C'est parti"); coach = { max: 0, on: false, last: 0 };
+      armed = true; setStartAt = Date.now(); dRef = sH; updateCount(); beep(1200, 0.25); say("C'est parti"); coach = { max: 0, on: false, last: 0 };
       armsT = { L: newArm([11, 13, 15]), R: newArm([12, 14, 16]) };
     }
     return;
@@ -1009,7 +1044,7 @@ function plankStep(lm, now, X) {
   if (!armed) {
     if (lastCd !== 0) { lastCd = 0; inSince = 0; updateCount(); say("Mets-toi en planche"); }
     setStatus(pos.vis ? "Mets-toi en planche, corps droit" : X.hidden);
-    if (pos.vis && pos.inPos) { inSince ||= now; if (now - inSince > 800) { armed = true; holdMs = 0; lastTick = now; outSince = 0; outWarned = false; beep(1200, 0.25); say("C'est parti, tiens bon"); } }
+    if (pos.vis && pos.inPos) { inSince ||= now; if (now - inSince > 800) { armed = true; setStartAt = Date.now(); holdMs = 0; lastTick = now; outSince = 0; outWarned = false; beep(1200, 0.25); say("C'est parti, tiens bon"); } }
     else inSince = 0;
     return;
   }
@@ -1034,10 +1069,24 @@ function plankStep(lm, now, X) {
   }
 }
 let runList = [], blockIdx = 0, baseCfg = null, recs = {};
-function applyBlock(b) { cfg.exo = b.exo; cfg.reps = b.reps; cfg.sets = b.sets; cfg.arms = b.arms; }
+function applyBlock(b) { cfg.exo = b.exo; cfg.reps = b.reps; cfg.sets = b.sets; cfg.arms = b.arms; if (b.load != null) cfg.loads = { ...cfg.loads, [b.exo]: b.load }; }
+let setStartAt = 0;
+// Tonnage : charge × répétitions (×2 si deux haltères soulevés ensemble)
+function tonnageOf(exo, n, split) {
+  const X = EXOS[exo], kg = (cfg.loads || {})[exo] || 0;
+  if (!X?.load || !kg) return 0;
+  return kg * n * (X.load === "dumbbell" && !split ? 2 : 1);
+}
+// Calories ≈ MET × poids (kg) × heures d'effort, + récupération à 1,5 MET
+function kcalOf(sets, durMs, w) {
+  if (!w) return 0;
+  const act = sets.reduce((a, x) => a + (x.sec || 0), 0), rest = Math.max(0, durMs / 1000 - act);
+  return Math.round(sets.reduce((a, x) => a + (EXOS[x.exo]?.met || 4) * w * (x.sec || 0) / 3600, 0) + 1.5 * w * rest / 3600);
+}
 function pushSet() {
   const best = isSplit() ? Math.max(armReps.L, armReps.R) : reps;
-  history.push({ exo: cfg.exo, n: reps, best, txt: isSplit() ? `G ${armReps.L} · D ${armReps.R}` : `${reps}` });
+  const sec = setStartAt ? Math.round((Date.now() - setStartAt) / 1000) : 0; setStartAt = 0;
+  history.push({ exo: cfg.exo, n: reps, best, sec, kg: (cfg.loads || {})[cfg.exo] || 0, ton: tonnageOf(cfg.exo, reps, isSplit()), txt: (isSplit() ? `G ${armReps.L} · D ${armReps.R}` : `${reps}`) + (EXOS[cfg.exo]?.load && cfg.loads[cfg.exo] ? ` · ${cfg.loads[cfg.exo]} kg` : "") });
   if (best > 0 && recs[cfg.exo] > 0 && best > recs[cfg.exo]) { setTimeout(() => say("Nouveau record !", false), 1200); try { setTimeout(() => navigator.vibrate?.([80, 60, 80, 60, 300]), 1200); } catch {} }
   recs[cfg.exo] = Math.max(recs[cfg.exo] || 0, best);
 }
@@ -1072,7 +1121,7 @@ function nextSet() {
   clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
   const newBlock = setIdx >= cfg.sets;
   if (newBlock) { blockIdx++; applyBlock(runList[blockIdx]); setIdx = 1; } else setIdx++;
-  setDurs = []; prevRepAt = 0; tempoWarned = false;
+  setDurs = []; prevRepAt = 0; tempoWarned = false; setStartAt = 0;
   reps = 0; armReps = { L: 0, R: 0 }; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null; lastCd = -1;
   updateCount(); updateSet(); beep(1200, 0.35);
   say(newBlock ? `${exoName(cfg.exo)}, série 1, mets-toi en position` : `Série ${setIdx}, mets-toi en position`);
@@ -1102,22 +1151,26 @@ function endWorkout() {
   $("statTotal").textContent = total; $("statUnit").textContent = unit;
   $("statSets").textContent = history.length;
   const dur = workoutStart ? Date.now() - workoutStart : 0;
+  const kcal = kcalOf(history, dur, cfg.weight), ton = history.reduce((a, h) => a + (h.ton || 0), 0);
+  $("statKcal").textContent = cfg.weight ? "≈" + kcal : "—";
+  $("kcalHint").textContent = cfg.weight ? "" : "Indique ton poids de corps dans Paramètres pour estimer les calories.";
   $("statTime").textContent = dur ? Math.max(1, Math.round(dur / 60000)) : 0;
   $("doneSub").textContent = total ? "Beau travail, continue comme ça." : "";
   // records battus pendant la séance, puis sauvegarde
   const sessions = loadSessions(), before = computeRecords(sessions);
   const IC_T = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
   $("doneRecs").innerHTML = exos.map(e => { const b = Math.max(...history.filter(h => h.exo === e).map(h => h.best)); return b > 0 && b > (before[e] || 0) ? `<span>${IC_T}Record ${exoName(e)} : ${b}${EXOS[e]?.timed ? " s" : ""}</span>` : ""; }).join("");
-  if (history.some(h => h.n > 0)) { sessions.push({ t: workoutStart || Date.now(), dur, sets: history.map(h => ({ exo: h.exo, n: h.n, best: h.best, txt: h.txt })) }); saveSessions(sessions); }
+  if (history.some(h => h.n > 0)) { sessions.push({ t: workoutStart || Date.now(), dur, kcal, ton, sets: history.map(h => ({ exo: h.exo, n: h.n, best: h.best, sec: h.sec, kg: h.kg, ton: h.ton, txt: h.txt })) }); saveSessions(sessions); }
   say(`Bravo ! ${total} ${unit} au total`);
   if (baseCfg) { Object.assign(cfg, baseCfg); baseCfg = null; renderCfg(); }
   // série de jours + objectif hebdo
   const S2 = loadSessions(), st = streakOf(S2), wkDone = weekReps(S2);
   const IC_F = '<svg class="ic fl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>';
   const IC_G = '<svg class="ic tg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
-  $("doneBadges").innerHTML = (st ? `<span>${IC_F}${st} jour${st > 1 ? "s" : ""} d'affilée</span>` : "") +
+  const IC_W = '<svg class="ic tg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></svg>';
+  $("doneBadges").innerHTML = (ton ? `<span>${IC_W}${ton.toLocaleString("fr-FR")} kg soulevés</span>` : "") + (st ? `<span>${IC_F}${st} jour${st > 1 ? "s" : ""} d'affilée</span>` : "") +
     (cfg.goal ? `<span>${IC_G}Semaine : ${wkDone} / ${cfg.goal}${wkDone >= cfg.goal ? " ✓" : ""}</span>` : "");
-  lastShare = { date: new Date(workoutStart || Date.now()), total, unit, sets: history.length, mins: dur ? Math.max(1, Math.round(dur / 60000)) : 0, history: history.slice(), streak: st };
+  lastShare = { kcal: cfg.weight ? kcal : 0, ton, date: new Date(workoutStart || Date.now()), total, unit, sets: history.length, mins: dur ? Math.max(1, Math.round(dur / 60000)) : 0, history: history.slice(), streak: st };
   show("done");
 }
 
@@ -1152,6 +1205,8 @@ function renderHist() {
   $("hsCount").textContent = S.length;
   $("hsWeek").textContent = sum(wk);
   $("hsTime").textContent = Math.round(wk.reduce((t, s) => t + (s.dur || 0), 0) / 60000);
+  const wkK = wk.reduce((t, s) => t + (s.kcal || 0), 0);
+  $("hsKcal").textContent = wkK ? "≈" + wkK : "—";
   $("histSub").textContent = S.length ? `Depuis le ${new Date(S[0].t).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}` : "Aucune séance pour l'instant";
   const R = computeRecords(S);
   const withRec = Object.keys(EXOS).filter(e => R[e]);
@@ -1195,7 +1250,7 @@ function renderHist() {
     const per = {}; for (const x of s.sets) per[x.exo] = (per[x.exo] || 0) + x.n;
     for (const e in per) if (EXOS[e]?.timed) per[e] = per[e] + " s";
     const d = new Date(s.t);
-    return `<div class="sess"><div class="sess-top"><b>${d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · ${d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</b><span>${Math.max(1, Math.round((s.dur || 0) / 60000))} min · ${s.sets.length} séries</span></div><div class="sess-exos">${Object.entries(per).map(([e, n]) => `<span>${exoName(e)}<b>${n}</b></span>`).join("")}</div></div>`;
+    return `<div class="sess"><div class="sess-top"><b>${d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · ${d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</b><span>${Math.max(1, Math.round((s.dur || 0) / 60000))} min · ${s.sets.length} séries${s.kcal ? ` · ≈${s.kcal} kcal` : ""}</span></div><div class="sess-exos">${Object.entries(per).map(([e, n]) => `<span>${exoName(e)}<b>${n}</b></span>`).join("")}${s.ton ? `<span>Tonnage<b>${s.ton.toLocaleString("fr-FR")} kg</b></span>` : ""}</div></div>`;
   }).join("");
   $("histClear").style.display = S.length ? "" : "none";
   $("histClear").querySelector("span").textContent = "Effacer l'historique"; clearArmed = false;
@@ -1273,7 +1328,7 @@ async function shareCard() {
   g.textAlign = "center"; g.fillStyle = "#fafafa"; g.font = `800 330px ${F}`; g.fillText(String(L.total), W / 2, 590);
   g.fillStyle = "#4ade80"; g.font = `700 54px ${FI}`; g.fillText(L.unit.toUpperCase(), W / 2, 670);
   // trois stats
-  const stats = [["SÉRIES", L.sets], ["MINUTES", L.mins], ["JOURS D'AFFILÉE", L.streak || 1]];
+  const stats = [["MINUTES", L.mins], L.kcal ? ["KCAL (ESTIM.)", "≈" + L.kcal] : ["SÉRIES", L.sets], ["JOURS D'AFFILÉE", L.streak || 1]];
   stats.forEach(([k, v], i) => {
     const x = 80 + i * 316, y = 740;
     g.fillStyle = "#ffffff0f"; rr(x, y, 288, 200, 32); g.fill(); g.strokeStyle = "#ffffff1f"; g.lineWidth = 2; g.stroke();
@@ -1283,12 +1338,13 @@ async function shareCard() {
   // détail par exercice
   const per = {}; for (const h of L.history) per[h.exo] = (per[h.exo] || 0) + h.n;
   g.textAlign = "left"; let y = 1030;
-  for (const [e, n] of Object.entries(per).slice(0, 4)) {
+  for (const [e, n] of Object.entries(per).slice(0, L.ton ? 3 : 4)) {
     g.fillStyle = EXO_COL[e] || "#4ade80"; rr(80, y - 30, 14, 40, 7); g.fill();
     g.fillStyle = "#e4e4e7"; g.font = `600 38px ${FI}`; g.fillText(exoName(e), 116, y);
     g.textAlign = "right"; g.fillStyle = "#fafafa"; g.font = `800 52px ${F}`; g.fillText(n + (EXOS[e]?.timed ? " s" : ""), W - 80, y + 4); g.textAlign = "left";
     y += 64;
   }
+  if (L.ton) { g.fillStyle = "#a1a1aa"; g.font = `600 34px ${FI}`; g.fillText("Tonnage", 116, y); g.textAlign = "right"; g.fillStyle = "#4ade80"; g.font = `800 52px ${F}`; g.fillText(L.ton.toLocaleString("fr-FR") + " kg", W - 80, y + 4); g.textAlign = "left"; }
   g.fillStyle = "#52525b"; g.font = `600 26px ${FI}`; g.textAlign = "center"; g.fillText("COMPTEUR DE MUSCU · comptage par caméra", W / 2, H - 50);
   const blob = await new Promise(r => c.toBlob(r, "image/png"));
   if (blob) await giveFile(blob, "ma-seance.png", "Ma séance");
@@ -1324,7 +1380,7 @@ $("progSave").onclick = () => {
 /* ---------- Démarrage ---------- */
 $("startBtn").onclick = async () => {
   beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
-  baseCfg = { ...cfg, prog: cfg.prog.map(b => ({ ...b })) };
+  baseCfg = { ...cfg, loads: { ...cfg.loads }, prog: cfg.prog.map(b => ({ ...b })) };
   setDurs = []; prevRepAt = 0; tempoWarned = false;
   runList = cfg.prog.length ? cfg.prog.map(b => ({ ...b })) : [blockOf()];
   blockIdx = 0; applyBlock(runList[0]); recs = computeRecords(loadSessions());
