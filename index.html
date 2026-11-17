@@ -357,13 +357,13 @@
     .next-card,.rest-actions{max-width:42vw}
     .rest-side-wrap{display:contents}
     /* fin de séance */
-    .done-wrap{flex-direction:row;flex-wrap:wrap;align-content:center;gap:2vh 3vw;padding:3vh 4vw}
+    .done-wrap{flex-direction:column;flex-wrap:nowrap;padding:3vh 4vw}
+    #done .done-foot{flex-direction:column}
     .trophy{width:13vh;height:13vh;border-radius:4vh}
     .trophy .ic{width:7vh;height:7vh}
     .done-title{font-size:6vh;margin:0}
     .done-sub{display:none}
     .stats,.stats.four{max-width:none;width:auto;grid-template-columns:repeat(4,minmax(110px,1fr))}
-    #summary{display:none}
     .recbadges,.donebadges{width:100%}
     .done-foot{display:flex;gap:8px;padding:8px 4vw max(10px, env(safe-area-inset-bottom))}
     .done-foot .gbtn,.done-foot .go{margin:0;max-width:none;flex:1}
@@ -401,100 +401,171 @@
     .params-card .line{min-height:46px}
     .sheet .sheet-box .go{padding:10px;margin-top:8px}
   }
+
+  /* ===== Refonte UX : Accueil, Nouvelle séance, onglets ===== */
+  #home,#pick,#hist{background:radial-gradient(120% 50% at 50% -8%,#14281d 0%,#09090b 55%);font-family:Inter,system-ui,sans-serif}
+  .page{flex:1;min-height:0;overflow-y:auto;padding:max(16px, env(safe-area-inset-top)) 18px 16px;display:flex;flex-direction:column;gap:12px}
+  .page>*{flex-shrink:0}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px}
+  .top h1{font-size:26px;font-weight:800;letter-spacing:-.02em}
+  .hello{font-size:13px;color:#a1a1aa}
+  .row{display:flex;align-items:center;gap:8px}
+  .iconbtn{width:42px;height:42px;border-radius:14px;border:1px solid #ffffff1a;background:#ffffff08;color:#d4d4d8;display:grid;place-items:center}
+  .iconbtn .ic{width:20px;height:20px}
+  .sec-k{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#71717a;margin:6px 2px -2px}
+  .card{background:linear-gradient(160deg,#ffffff0d,#ffffff03);border:1px solid #ffffff17;border-radius:20px;padding:14px}
+  .mut{font-size:13px;color:#a1a1aa}
+  .goal-card{display:flex;align-items:center;gap:16px;cursor:pointer}
+  .goal-card .ring{position:relative;width:88px;height:88px;flex:none}
+  .goal-card .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .goal-card .rb{fill:none;stroke:#ffffff14;stroke-width:9}
+  .goal-card .rf{fill:none;stroke:#4ade80;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .6s;filter:drop-shadow(0 0 4px #22c55e80)}
+  .goal-card .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:24px}
+  .goal-txt2{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .big2{font-size:34px;line-height:1}
+  .big2 small{font-size:15px;color:#71717a;font-weight:700}
+  .pill2{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;background:#ffffff0d;border:1px solid #ffffff17;border-radius:999px;padding:4px 10px;color:#e4e4e7}
+  .pill2.dim{color:#a1a1aa}
+  .rcard{display:flex;align-items:center;gap:12px;padding:12px}
+  .rcard+.rcard{margin-top:10px}
+  .exo-ic.on{background:#4ade80;color:#052e16}
+  .rcard .exo-ic{width:44px;height:44px;border-radius:14px;margin:0;flex:none}
+  .rc-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .rc-t b{font-size:16px}
+  .rc-t small{font-size:12.5px;color:#a1a1aa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .playbtn{width:50px;height:50px;border-radius:50%;border:none;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,#4ade80,#16a34a);color:#052e16;box-shadow:0 6px 18px #22c55e4d}
+  .playbtn .ic{width:20px;height:20px;margin-left:2px}
+  .playbtn.ghost2{background:transparent;border:1px solid #ffffff2a;color:#fafafa;box-shadow:none}
+  .stats3{display:grid;grid-template-columns:repeat(3,1fr);margin-top:10px;text-align:center}
+  .stats3 b{display:block;font-size:30px;line-height:1.05}
+  .stats3 span{font-size:11.5px;color:#71717a}
+  .welcome{display:flex;flex-direction:column;gap:8px;text-align:center;padding:22px 18px}
+  .welcome b{font-size:18px}.welcome p{font-size:14px;color:#a1a1aa}
+  .welcome .go{margin-top:8px}
+  /* barre d'onglets */
+  .tabbar{display:flex;align-items:center;justify-content:space-around;height:calc(64px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#0c0c0eee;border-top:1px solid #ffffff12;flex:none}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:#71717a;font-size:11px;font-weight:600;font-family:inherit;width:90px}
+  .tab .ic{width:23px;height:23px}
+  .tab.on{color:#4ade80}
+  .tab-rec{width:62px;height:62px;border-radius:50%;border:none;margin-top:-28px;background:linear-gradient(135deg,#4ade80,#16a34a);display:grid;place-items:center;box-shadow:0 8px 24px #22c55e66,0 0 0 5px #09090b}
+  .tab-rec i{width:22px;height:22px;border-radius:50%;background:#052e16}
+  /* Nouvelle séance */
+  #pick .exos{display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow:visible;margin:0;padding:0;-webkit-mask-image:none;mask-image:none}
+  #pick .exos{gap:8px}
+  #pick .exos .exo{min-width:0;padding:9px 10px;border-radius:16px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left}
+  #pick .exo-ic{width:36px;height:36px;border-radius:11px;margin:0;grid-row:1 / 3}
+  #pick .exo b{font-size:15px;line-height:1.1}
+  #pick .exo small{grid-column:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .obj-card{display:flex;flex-direction:column}
+  .presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  .pchip2{border:1px solid #ffffff24;background:transparent;color:#fafafa;border-radius:14px;padding:11px 14px;font:inherit;font-size:15px;font-weight:700;font-family:"Barlow Condensed",Inter,sans-serif;letter-spacing:.02em;font-size:18px}
+  .pchip2.on{background:#fafafa;color:#09090b;border-color:#fafafa}
+  .obj-more{display:flex;align-items:center;gap:8px;margin-top:12px;padding:10px 12px;border-radius:12px;border:1px solid #ffffff12;background:#ffffff06;color:#a1a1aa;font:inherit;font-size:13px;text-align:left}
+  .obj-more span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .obj-more b{color:#4ade80;font-weight:700}
+  .linkrow{display:flex;align-items:center;gap:10px;padding:14px;border-radius:18px;border:1px dashed #ffffff24;background:none;color:#d4d4d8;font:inherit;font-size:14.5px;font-weight:600;text-align:left}
+  .linkrow span{flex:1}.linkrow .ic{color:#71717a}
+  .pick-foot{padding:10px 18px calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(#09090b00,#09090b 30%)}
+  .pick-foot .go{width:100%}
+  /* feuilles : réglages détaillés et programme */
+  .sheet-sub{font-size:13px;color:#a1a1aa;margin:2px 0 10px}
+  #customSheet .main-card{margin:10px 0;min-height:0;max-height:none;padding:16px 10px}
+  #customSheet .mini-row,#customSheet .pcard{margin-bottom:10px}
+  #customSheet .bigstep b{font-size:64px}
+  #progBuild .prog{margin-bottom:6px}
+  @media (orientation: landscape) {
+    .page,.pick-foot{width:100%;max-width:620px;margin:0 auto}
+    #pick .exos{grid-template-columns:repeat(4,1fr)}
+    .tabbar{height:56px}
+    .tab-rec{width:52px;height:52px;margin-top:-18px}
+  }
+
+  /* contrôles de séance : −1 · Pause · +1 */
+  #controls{justify-content:center;align-items:center;gap:26px;padding:12px 16px calc(14px + env(safe-area-inset-bottom))}
+  .rbtn{width:58px;height:58px;border-radius:50%;border:1px solid #ffffff22;background:#ffffff0d;color:#fafafa;font-family:"Barlow Condensed",Inter,sans-serif;font-size:22px;font-weight:800;display:grid;place-items:center}
+  .rbtn:active{background:#ffffff22}
+  .rbig{width:76px;height:76px;background:#fafafa;color:#09090b;border:none;box-shadow:0 8px 24px #0008}
+  .rbig .ic{width:30px;height:30px}
+  #workout:has(#rest.on) #controls{display:none}
+  #pauseOv{position:absolute;inset:0;z-index:6;display:none;align-items:center;justify-content:center;padding:24px;background:#09090bd9;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  #pauseOv.on{display:flex}
+  .po-box{width:100%;max-width:340px;display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:center}
+  .po-k{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#a1a1aa}
+  .po-time{font-size:64px;line-height:1;margin-bottom:10px}
+  .po-b{padding:14px;font-size:15px}
+  .hold{position:relative;overflow:hidden}
+  .hold .hold-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:#ef444455;transition:width .1s linear}
+  .hold.pressing .hold-fill{width:100%;transition:width .9s linear}
+  .hold>*:not(.hold-fill){position:relative}
+  .rest-stop{margin-top:4px;background:none;border:none;color:#a1a1aa;font:inherit;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+  /* résumé façon Strava */
+  .done-top{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:420px}
+  .done-head{width:100%;max-width:420px;text-align:left}
+  .done-head p{font-size:13px;color:#a1a1aa}
+  .done-head h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+  #done .done-wrap{justify-content:flex-start;align-items:center;gap:12px}
+  #done .trophy{display:none}
+  #done .stats.four{grid-template-columns:repeat(3,1fr);max-width:420px}
+  #done .stats.four .stat:nth-child(2){display:none}
+  #done .stats.four .stat{display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px 6px}
+  #done .stats.four .stat-num{font-size:34px;order:0}
+  #done .stats.four .stat-lab{order:1;font-size:10.5px;margin-top:2px}
+  #done .stats.four .stat-unit{display:none}
+  .sets-card{width:100%;max-width:420px}
+  .setbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:5px 0;font-size:13px;color:#a1a1aa}
+  .setbar .bar{height:7px;border-radius:4px;background:#ffffff12;overflow:hidden}
+  .setbar .bar i{display:block;height:100%;border-radius:4px;background:#4ade80}
+  .setbar .bar i.over{background:#fbbf24}
+  .setbar b{font-family:"Barlow Condensed",Inter,sans-serif;font-size:19px;color:#fafafa;min-width:44px;text-align:right}
+  .rpe{display:flex;gap:6px;flex-wrap:wrap}
+  .rpe button{flex:1;min-width:64px;border:1px solid #ffffff22;background:none;color:#fafafa;border-radius:12px;padding:10px 6px;font:inherit;font-size:14px;font-weight:700}
+  .rpe button.on{background:#fafafa;color:#09090b}
+  #done .done-foot{display:flex;flex-direction:column;gap:8px;max-width:420px;width:100%;margin:0 auto}
+  #done .done-foot .row2{display:flex;gap:8px}
+  #done .done-foot .row2 .gbtn{flex:1;padding:12px}
+  #doneHist{display:none}
 </style>
 </head>
 <body>
 
 <!-- ÉCRAN 1 : réglages -->
-<section id="setup" class="screen on">
-  <div class="scroll">
-    <header class="hero">
-      <div class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-      <div class="htxt"><h1>Compteur muscu</h1><p>Par caméra</p></div>
-      <button class="help" id="histBtn" aria-label="Historique"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></button>
-      <button class="help" id="tipsBtn" aria-label="Conseils"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
+<section id="home" class="screen on">
+  <div class="page">
+    <header class="top">
+      <div><p class="hello" id="helloDate"></p><h1 id="helloTitle">Bonjour</h1></div>
+      <button class="iconbtn" id="paramsBtn" aria-label="Paramètres"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button><span id="paramsSum" hidden></span>
     </header>
-
-    <div class="exos" id="exoChips"></div>
-
-    <div class="main-card">
-      <div class="mc-col">
-        <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg> Séries</div>
-        <div class="stepper bigstep"><b id="v-sets"></b><div class="pm"><button data-k="sets" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button data-k="sets" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
-      </div>
-      <div class="mc-x">×</div>
-      <div class="mc-col">
-        <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span id="repsLab">Répétitions</span></div>
-        <div class="stepper bigstep"><b id="v-reps"></b><div class="pm"><button data-k="reps" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button data-k="reps" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
-      </div>
-    </div>
-
-    <div class="side-col">
-    <div class="prog" id="progCard">
-      <div class="prog-head"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg> Programme</span><span class="prog-hint" id="progHint">Enchaîner</span>
-        <button class="prog-mine" id="progMine" aria-label="Mes programmes"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg></button>
-        <button class="prog-add" id="progAdd"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Ajouter</button></div>
-      <div class="prog-list" id="progList"></div>
-    </div>
-
-    <div class="mini-row">
-      <div class="mini"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Pause</div><div class="stepper"><button data-k="rest" data-d="-15" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-rest"></span><i>s</i></b><button data-k="rest" data-d="15" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
-      <div class="mini"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg> Délai</div><div class="stepper"><button data-k="delay" data-d="-5" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-delay"></span><i>s</i></b><button data-k="delay" data-d="5" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
-      <div class="mini" id="loadTile"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></svg> <span id="loadLab">Charge</span></div><div class="stepper"><button data-load="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-load"></span><i>kg</i></b><button data-load="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
-    </div>
-
-    <div class="pcard" id="armsLine">
-      <span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></svg> Bras</span>
-      <div class="seg" id="armsSeg"><button data-a="sep">Gauche / Droite</button><button data-a="both">Ensemble</button></div>
-    </div>
-
-    <button class="acc acc-btn" id="paramsBtn"><span class="acc-l"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg> Paramètres</span><span class="acc-sum" id="paramsSum"></span><svg class="ic sm chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-    </div>
+    <div class="card goal-card" id="goalCard"></div>
+    <div class="sec-k" id="resumeK">Reprendre</div>
+    <div id="resumeList"></div>
+    <div class="sec-k" id="lastK">Dernière séance</div>
+    <div id="lastCard"></div>
   </div>
-
-  <footer class="foot">
+  <nav class="tabbar">
+    <button class="tab on" data-go="home"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"/></svg><span>Accueil</span></button>
+    <button class="tab-rec" data-go="pick" aria-label="Nouvelle séance"><i></i></button>
+    <button class="tab" data-go="hist" id="histBtn"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg><span>Progrès</span></button>
+  </nav>
+</section>
+<section id="pick" class="screen">
+  <div class="page">
+    <header class="top">
+      <h1>Nouvelle séance</h1>
+      <div class="row"><button class="iconbtn" id="tipsBtn" aria-label="Conseils"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button><button class="iconbtn" id="pickClose" aria-label="Fermer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+    </header>
+    <div class="sec-k">Exercice</div>
+    <div class="exos" id="exoChips"></div>
+    <div class="card obj-card">
+      <div class="sec-k" style="margin:0 0 10px" id="objK">Objectif</div>
+      <div class="presets" id="presets"></div>
+      <button class="obj-more" id="customBtn"><span id="objSum"></span><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg><b>Modifier</b></button>
+    </div>
+    <button class="linkrow" id="progOpen"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg><span id="progRowTxt">Enchaîner plusieurs exercices</span><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+  </div>
+  <footer class="pick-foot">
     <div class="recap" id="recap"></div>
     <button class="go" id="startBtn"><svg class="ic go-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg><span id="startLbl">Commencer</span></button>
   </footer>
-
-  <div class="sheet" id="paramsSheet">
-    <div class="sheet-box">
-      <h2>Paramètres</h2>
-      <div class="card params-card">
-        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg> Poids de corps</span>
-          <div class="stepper wstep"><button data-w="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-weight"></span><i id="v-wu">kg</i></b><button data-w="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
-        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Démarrage</span>
-          <div class="seg" id="trigSeg"><button data-t="timer">Chrono</button><button data-t="hand">Main ✋</button></div></div>
-        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg> Caméra</span>
-          <div class="seg" id="camSeg"><button data-f="user">Avant</button><button data-f="environment">Arrière</button></div></div>
-        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Annonce vocale</span>
-          <button class="switch" id="voiceBtn" role="switch"><i></i></button></div>
-        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg> Mode éco <small class="eco-sub">batterie</small></span>
-          <button class="switch" id="ecoBtn" role="switch"><i></i></button></div>
-      </div>
-      <button class="go" id="paramsClose"><span>OK</span></button>
-    </div>
-  </div>
-  <div class="sheet" id="progSheet">
-    <div class="sheet-box">
-      <h2>Mes programmes</h2>
-      <div class="save-row"><input id="progName" maxlength="24" placeholder="Nom du programme actuel"><button class="gbtn gbtn-acc" id="progSave"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>Enregistrer</button></div>
-      <p class="bk-msg" id="progMsg"></p>
-      <div id="savedList"></div>
-      <button class="gbtn" id="progClose" style="width:100%;margin-top:12px">Fermer</button>
-    </div>
-  </div>
-  <div class="sheet" id="tipsSheet">
-    <div class="sheet-box">
-      <h2>Conseils</h2>
-      <p id="tipPlace"></p>
-      <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
-      <p><b>Démarrage « Main » :</b> montre ta main ouverte face à l'écran, 5 doigts écartés vers le haut, assez près de la caméra, et garde-la immobile un peu plus d'une seconde. Le délai de départ démarre ensuite. Le même geste pendant une pause lance la série suivante.</p>
-      <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 18.11 · 01h15</p>
-      <button class="go" id="tipsClose"><span>OK</span></button>
-    </div>
-  </div>
 </section>
 
 <!-- ÉCRAN 2 : séance -->
@@ -504,11 +575,20 @@
     <canvas id="canvas"></canvas>
     <div class="shade"></div>
     <div id="hud">
-      <div class="hud-l"><div id="setInfo" class="pill pill-strong"></div><div id="status" class="pill">Mets-toi en position</div></div>
+      <div class="hud-l"><div class="row" style="gap:6px"><div id="setInfo" class="pill pill-strong"></div><div id="elapsed" class="pill pill-mono">0:00</div></div><div id="status" class="pill">Mets-toi en position</div></div>
       <div id="angle" class="pill pill-mono"></div>
     </div>
     <div id="count">0<small>/12</small></div>
     <div id="phaseBar"><div id="phaseFill"></div></div>
+    <div id="pauseOv">
+      <div class="po-box">
+        <div class="po-k">En pause</div>
+        <div class="po-time num" id="poTime">0:00</div>
+        <button class="go" id="resumeBtn"><svg class="ic go-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="7 4 20 12 7 20" fill="currentColor" stroke="none"/></svg><span>Reprendre</span></button>
+        <button class="gbtn po-b" id="endSetBtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>Terminer la série</button>
+        <button class="gbtn gbtn-red po-b hold" id="stopBtn"><i class="hold-fill"></i><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="16" x="4" y="4" rx="2"/></svg><span>Maintenir pour arrêter</span></button>
+      </div>
+    </div>
     <div id="loading"><svg class="ic spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><div>Chargement du modèle de détection…</div><span class="sub">Quelques secondes la première fois</span></div>
     <div id="rest">
       <div class="rest-tag">Pause</div>
@@ -520,6 +600,7 @@
         <div class="ring-txt"><div id="restTime">90</div><span>secondes</span></div>
       </div>
       <div class="next-card" id="restNext"></div>
+      <button class="rest-stop" id="restPause">Mettre en pause ou arrêter</button>
       <div class="rest-hand" id="restHand"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg><span>Montre ta main ouverte pour enchaîner</span><i id="restHandBar"></i></div>
       <div class="rest-actions">
         <button class="gbtn" id="restMinus"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>15 s</button>
@@ -529,10 +610,9 @@
     </div>
   </div>
   <div id="controls">
-    <button id="minusBtn" class="gbtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg>1</button>
-    <button id="plusBtn" class="gbtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>1</button>
-    <button id="endSetBtn" class="gbtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>Fin de série</button>
-    <button id="stopBtn" class="gbtn gbtn-red"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>Arrêter</button>
+    <button id="minusBtn" class="rbtn" aria-label="Retirer une répétition">−1</button>
+    <button id="pauseBtn" class="rbtn rbig" aria-label="Pause"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/></svg></button>
+    <button id="plusBtn" class="rbtn" aria-label="Ajouter une répétition">+1</button>
   </div>
 </section>
 <section id="hist" class="screen">
@@ -569,13 +649,18 @@
     </div>
     <button class="gbtn gbtn-red" id="histClear"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg><span>Effacer l'historique</span></button>
   </div>
+  <nav class="tabbar">
+    <button class="tab" data-go="home"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"/></svg><span>Accueil</span></button>
+    <button class="tab-rec" data-go="pick" aria-label="Nouvelle séance"><i></i></button>
+    <button class="tab on" data-go="hist" id="histBtn"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg><span>Progrès</span></button>
+  </nav>
 </section>
 <section id="done" class="screen">
   <div class="done-wrap">
     <div class="trophy"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
-    <h1 class="done-title">Séance terminée</h1>
+    <div class="done-top"><button class="iconbtn" id="doneClose" aria-label="Fermer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button><div class="recbadges" id="doneRecs"></div></div>
+    <div class="done-head"><p id="doneDate"></p><h1 id="doneTitle">Séance terminée</h1></div>
     <p class="done-sub" id="doneSub"></p>
-    <div class="recbadges" id="doneRecs"></div>
     <div class="donebadges" id="doneBadges"></div>
     <p class="hint" id="kcalHint"></p>
     <div class="stats four done-stats">
@@ -584,15 +669,93 @@
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Durée</div><div class="stat-num" id="statTime">0</div><div class="stat-unit">minutes</div></div>
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Calories</div><div class="stat-num" id="statKcal">0</div><div class="stat-unit">kcal estimées</div></div>
     </div>
-    <div id="summary"></div>
+    <div class="card sets-card"><div class="sec-k" style="margin:0 0 6px">Séries</div><div id="summary"></div></div>
+    <div class="card sets-card"><div class="sec-k" style="margin:0 0 8px">Comment c'était ?</div><div class="rpe" id="rpe"><button data-r="1">Facile</button><button data-r="2">Bien</button><button data-r="3">Dur</button><button data-r="4">À bloc</button></div></div>
   </div>
   <div class="done-foot">
-    <button class="gbtn hist-link" id="shareBtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>Partager ma séance</button>
+    <button class="go" id="againBtn"><span>Enregistrer</span></button>
+    <div class="row2"><button class="gbtn hist-link" id="shareBtn"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>Partager</button><button class="gbtn" id="deleteBtn">Supprimer</button></div>
     <button class="gbtn hist-link" id="doneHist"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>Voir l'historique</button>
-    <button class="go" id="againBtn"><svg class="ic go-ic2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span>Nouvelle séance</span></button>
   </div>
 </section>
 
+  <div class="sheet" id="paramsSheet">
+    <div class="sheet-box">
+      <h2>Paramètres</h2>
+      <div class="card params-card">
+        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg> Poids de corps</span>
+          <div class="stepper wstep"><button data-w="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-weight"></span><i id="v-wu">kg</i></b><button data-w="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Démarrage</span>
+          <div class="seg" id="trigSeg"><button data-t="timer">Chrono</button><button data-t="hand">Main ✋</button></div></div>
+        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg> Caméra</span>
+          <div class="seg" id="camSeg"><button data-f="user">Avant</button><button data-f="environment">Arrière</button></div></div>
+        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Annonce vocale</span>
+          <button class="switch" id="voiceBtn" role="switch"><i></i></button></div>
+        <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg> Mode éco <small class="eco-sub">batterie</small></span>
+          <button class="switch" id="ecoBtn" role="switch"><i></i></button></div>
+      </div>
+      <button class="go" id="paramsClose"><span>OK</span></button>
+    </div>
+  </div>
+  <div class="sheet" id="progSheet">
+    <div class="sheet-box">
+      <h2>Mes programmes</h2>
+      <div class="save-row"><input id="progName" maxlength="24" placeholder="Nom du programme actuel"><button class="gbtn gbtn-acc" id="progSave"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>Enregistrer</button></div>
+      <p class="bk-msg" id="progMsg"></p>
+      <div id="savedList"></div>
+      <button class="gbtn" id="progClose" style="width:100%;margin-top:12px">Fermer</button>
+    </div>
+  </div>
+  <div class="sheet" id="tipsSheet">
+    <div class="sheet-box">
+      <h2>Conseils</h2>
+      <p id="tipPlace"></p>
+      <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
+      <p><b>Démarrage « Main » :</b> montre ta main ouverte face à l'écran, 5 doigts écartés vers le haut, assez près de la caméra, et garde-la immobile un peu plus d'une seconde. Le délai de départ démarre ensuite. Le même geste pendant une pause lance la série suivante.</p>
+      <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
+      <p class="ver">Version 18.11 · 02h00</p>
+      <button class="go" id="tipsClose"><span>OK</span></button>
+    </div>
+  </div>
+  <div class="sheet" id="customSheet">
+    <div class="sheet-box">
+      <h2 id="customTitle">Objectif personnalisé</h2>
+    <div class="main-card">
+      <div class="mc-col">
+        <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg> Séries</div>
+        <div class="stepper bigstep"><b id="v-sets"></b><div class="pm"><button data-k="sets" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button data-k="sets" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+      </div>
+      <div class="mc-x">×</div>
+      <div class="mc-col">
+        <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span id="repsLab">Répétitions</span></div>
+        <div class="stepper bigstep"><b id="v-reps"></b><div class="pm"><button data-k="reps" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button data-k="reps" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+      </div>
+    </div>
+    <div class="mini-row">
+      <div class="mini"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Pause</div><div class="stepper"><button data-k="rest" data-d="-15" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-rest"></span><i>s</i></b><button data-k="rest" data-d="15" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+      <div class="mini"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg> Délai</div><div class="stepper"><button data-k="delay" data-d="-5" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-delay"></span><i>s</i></b><button data-k="delay" data-d="5" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+      <div class="mini" id="loadTile"><div class="mini-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></svg> <span id="loadLab">Charge</span></div><div class="stepper"><button data-load="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-load"></span><i>kg</i></b><button data-load="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+    </div>
+    <div class="pcard" id="armsLine">
+      <span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></svg> Bras</span>
+      <div class="seg" id="armsSeg"><button data-a="sep">Gauche / Droite</button><button data-a="both">Ensemble</button></div>
+    </div>
+      <button class="go" id="customClose"><span>OK</span></button>
+    </div>
+  </div>
+  <div class="sheet" id="progBuild">
+    <div class="sheet-box">
+      <h2>Programme</h2>
+      <p class="sheet-sub">Règle un exercice et son objectif, puis « Ajouter ». Recommence pour enchaîner plusieurs exercices.</p>
+    <div class="prog" id="progCard">
+      <div class="prog-head"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg> Programme</span><span class="prog-hint" id="progHint">Enchaîner</span>
+        <button class="prog-mine" id="progMine" aria-label="Mes programmes"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg></button>
+        <button class="prog-add" id="progAdd"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Ajouter</button></div>
+      <div class="prog-list" id="progList"></div>
+    </div>
+      <button class="go" id="progBuildClose"><span>OK</span></button>
+    </div>
+  </div>
 <script type="module">
 import { PoseLandmarker, HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
 
@@ -637,9 +800,18 @@ const LIM = { reps: [0, 100], sets: [1, 20], rest: [15, 600], delay: [0, 30] };
 const $ = id => document.getElementById(id);
 
 /* ---------- Cartes d'exercice (générées) ---------- */
-const ICONS = {"arrow-down-up": "<path d=\"m3 16 4 4 4-4\"/><path d=\"M7 20V4\"/><path d=\"m21 8-4-4-4 4\"/><path d=\"M17 4v16\"/>", "person-standing": "<circle cx=\"12\" cy=\"5\" r=\"1\"/><path d=\"m9 20 3-6 3 6\"/><path d=\"m6 8 6 2 6-2\"/><path d=\"M12 10v4\"/>", "dumbbell": "<path d=\"m6.5 6.5 11 11\"/><path d=\"m21 21-1-1\"/><path d=\"m3 3 1 1\"/><path d=\"m18 22 4-4\"/><path d=\"m2 6 4-4\"/><path d=\"m3 10 7-7\"/><path d=\"m14 21 7-7\"/>", "arrow-up-from-line": "<path d=\"m18 9-6-6-6 6\"/><path d=\"M12 3v14\"/><path d=\"M5 21h14\"/>", "move-horizontal": "<path d=\"m18 8 4 4-4 4\"/><path d=\"M2 12h20\"/><path d=\"m6 8-4 4 4 4\"/>", "footprints": "<path d=\"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z\"/><path d=\"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z\"/><path d=\"M16 17h4\"/><path d=\"M4 13h4\"/>", "chevrons-down": "<path d=\"m7 6 5 5 5-5\"/><path d=\"m7 13 5 5 5-5\"/>", "timer": "<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>"};
+const ICONS = {"list":'<path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/>',"arrow-down-up": "<path d=\"m3 16 4 4 4-4\"/><path d=\"M7 20V4\"/><path d=\"m21 8-4-4-4 4\"/><path d=\"M17 4v16\"/>", "person-standing": "<circle cx=\"12\" cy=\"5\" r=\"1\"/><path d=\"m9 20 3-6 3 6\"/><path d=\"m6 8 6 2 6-2\"/><path d=\"M12 10v4\"/>", "dumbbell": "<path d=\"m6.5 6.5 11 11\"/><path d=\"m21 21-1-1\"/><path d=\"m3 3 1 1\"/><path d=\"m18 22 4-4\"/><path d=\"m2 6 4-4\"/><path d=\"m3 10 7-7\"/><path d=\"m14 21 7-7\"/>", "arrow-up-from-line": "<path d=\"m18 9-6-6-6 6\"/><path d=\"M12 3v14\"/><path d=\"M5 21h14\"/>", "move-horizontal": "<path d=\"m18 8 4 4-4 4\"/><path d=\"M2 12h20\"/><path d=\"m6 8-4 4 4 4\"/>", "footprints": "<path d=\"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z\"/><path d=\"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z\"/><path d=\"M16 17h4\"/><path d=\"M4 13h4\"/>", "chevrons-down": "<path d=\"m7 6 5 5 5-5\"/><path d=\"m7 13 5 5 5-5\"/>", "timer": "<line x1=\"10\" x2=\"14\" y1=\"2\" y2=\"2\"/><line x1=\"12\" x2=\"15\" y1=\"14\" y2=\"11\"/><circle cx=\"12\" cy=\"14\" r=\"8\"/>"};
 const svgIc = (n, c = "ic") => `<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ""}</svg>`;
-$("exoChips").innerHTML = Object.entries(EXOS).map(([k, x]) => `<button class="chip exo" data-exo="${k}"><span class="exo-ic">${svgIc(x.icon)}</span><b>${x.name}</b><small>${x.muscle}</small></button>`).join("");
+function exoOrder() {
+  let S = []; try { S = JSON.parse(localStorage.getItem("muscuHistory") || "[]"); } catch {}
+  const last = {}; S.forEach(s => s.sets.forEach(x => last[x.exo] = Math.max(last[x.exo] || 0, s.t)));
+  return Object.keys(EXOS).sort((a, b) => (last[b] || 0) - (last[a] || 0));
+}
+function renderExoCards() {
+  $("exoChips").innerHTML = exoOrder().map(k => [k, EXOS[k]]).map(([k, x]) => `<button class="chip exo" data-exo="${k}"><span class="exo-ic">${svgIc(x.icon)}</span><b>${x.name}</b><small>${x.muscle}</small></button>`).join("");
+}
+renderExoCards();
+const __unused = Object.entries(EXOS).map(([k, x]) => `<button class="chip exo" data-exo="${k}"><span class="exo-ic">${svgIc(x.icon)}</span><b>${x.name}</b><small>${x.muscle}</small></button>`).join("");
 
 function renderCfg() {
   const TX = EXOS[cfg.exo] || EXOS.pompes;
@@ -689,6 +861,7 @@ document.querySelectorAll("#armsSeg button").forEach(b => b.classList.toggle("on
   const tonP = plannedTon(blockOf());
   if (tonP) $("recap").innerHTML += `<i class="dot"></i><span>${IC_KG}<b>${tonP.toLocaleString("fr-FR")}</b> kg</span>`;
   renderProg();
+  if (typeof renderPicks === "function") try { renderPicks(); } catch {}
 }
 document.querySelectorAll(".stepper button[data-k]").forEach(b => b.onclick = () => {
   const k = b.dataset.k, timedReps = k === "reps" && EXOS[cfg.exo]?.timed;
@@ -1183,6 +1356,7 @@ let lastInfer = 0;
 const inferGap = () => 1000 / (cfg.eco ? 12 : 20);   // 20 analyses/s (12 en mode éco) : largement assez pour compter
 function loop() {
   if (!running) return;
+  if (paused) { requestAnimationFrame(loop); return; }
   const tNow = performance.now();
   if (tNow - lastInfer < inferGap() - 4) { requestAnimationFrame(loop); return; }
   lastInfer = tNow;
@@ -1295,7 +1469,8 @@ function kcalOf(sets, durMs, w) {
 function pushSet() {
   const best = isSplit() ? Math.max(armReps.L, armReps.R) : reps;
   const sec = setStartAt ? Math.round((Date.now() - setStartAt) / 1000) : 0; setStartAt = 0;
-  history.push({ exo: cfg.exo, n: reps, best, sec, kg: (cfg.loads || {})[cfg.exo] || 0, ton: tonnageOf(cfg.exo, reps, isSplit()), txt: (isSplit() ? `G ${armReps.L} · D ${armReps.R}` : `${reps}`) + (EXOS[cfg.exo]?.load && cfg.loads[cfg.exo] ? ` · ${cfg.loads[cfg.exo]} kg` : "") });
+  const target = cfg.reps ? cfg.reps * (isSplit() ? 2 : 1) : 0;
+  history.push({ target, exo: cfg.exo, n: reps, best, sec, kg: (cfg.loads || {})[cfg.exo] || 0, ton: tonnageOf(cfg.exo, reps, isSplit()), txt: (isSplit() ? `G ${armReps.L} · D ${armReps.R}` : `${reps}`) + (EXOS[cfg.exo]?.load && cfg.loads[cfg.exo] ? ` · ${cfg.loads[cfg.exo]} kg` : "") });
   if (best > 0 && recs[cfg.exo] > 0 && best > recs[cfg.exo]) { setTimeout(() => say("Nouveau record !", false), 1200); try { setTimeout(() => navigator.vibrate?.([80, 60, 80, 60, 300]), 1200); } catch {} }
   recs[cfg.exo] = Math.max(recs[cfg.exo] || 0, best);
 }
@@ -1305,6 +1480,12 @@ function finishSet() {
   if (setIdx >= cfg.sets && blockIdx >= runList.length - 1) { endWorkout(); return; }
   startRest();
 }
+function restTick() {
+  restLeft--; renderRest();
+  if (restLeft === 10) { say("Dix secondes"); beep(660, 0.15); }
+  if (restLeft > 0 && restLeft <= 3) tick();
+  if (restLeft <= 0) nextSet();
+}
 function startRest() {
   restLeft = cfg.rest; restTotal = cfg.rest; $("rest").classList.add("on");
   $("restHand").classList.toggle("on", !!handLm && cfg.trigger === "hand"); openSince = 0;
@@ -1313,12 +1494,7 @@ function startRest() {
   const perArm = nb.exo === "curls" && nb.arms === "sep" ? " / bras" : "";
   $("restNext").innerHTML = `<div><div class="nc-k">${newBlock ? "Exercice suivant" : "Prochaine série"}</div><div class="nc-v">${exoName(nb.exo)} · ${nb.reps} reps${perArm}</div></div><div class="nc-n">${newBlock ? 1 : setIdx + 1}<small>/${nb.sets}</small></div>`;
   renderRest();
-  restTimer = setInterval(() => {
-    restLeft--; renderRest();
-    if (restLeft === 10) { say("Dix secondes"); beep(660, 0.15); }
-    if (restLeft > 0 && restLeft <= 3) tick();
-    if (restLeft <= 0) nextSet();
-  }, 1000);
+  restTimer = setInterval(restTick, 1000);
   setTimeout(() => say(`Pause, ${cfg.rest} secondes${newBlock ? ". Ensuite : " + exoName(nb.exo) : ""}`, false), 900);
 }
 function renderRest() {
@@ -1346,8 +1522,61 @@ $("minusBtn").onclick = () => {
   if (isSplit()) { if (armReps[lastArm] > 0) { armReps[lastArm]--; reps = armReps.L + armReps.R; updateCount(); beep(400, 0.08, 0.2); } return; }
   if (reps > 0) { reps--; updateCount(); beep(400, 0.08, 0.2); }
 };
-$("endSetBtn").onclick = () => { say("Série terminée"); finishSet(); };
-$("stopBtn").onclick = () => { if (reps > 0 && !restTimer) pushSet(); endWorkout(); };
+$("endSetBtn").onclick = () => { resumeWorkout(true); say("Série terminée"); finishSet(); };
+function stopAction() { resumeWorkout(true); if (reps > 0 && !restTimer) pushSet(); endWorkout(); }
+// Arrêter : appui maintenu ~1 s (évite les arrêts par erreur)
+(() => {
+  const b = $("stopBtn"); let t = null;
+  const start = e => { e.preventDefault(); b.classList.add("pressing"); t = setTimeout(() => { b.classList.remove("pressing"); stopAction(); }, 900); };
+  const cancel = () => { clearTimeout(t); b.classList.remove("pressing"); };
+  b.addEventListener("pointerdown", start); ["pointerup", "pointerleave", "pointercancel"].forEach(ev => b.addEventListener(ev, cancel));
+  b.addEventListener("contextmenu", e => e.preventDefault());
+})();
+/* ---------- Résumé : ressenti, enregistrer, supprimer ---------- */
+let lastSessT = 0, delArmed = false;
+function patchLastSession(fn) {
+  if (!lastSessT) return;
+  const S = loadSessions(), i = S.findIndex(x => x.t === lastSessT);
+  if (i >= 0) { fn(S, i); saveSessions(S); }
+}
+document.querySelectorAll("#rpe button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#rpe button").forEach(x => x.classList.toggle("on", x === b));
+  patchLastSession((S, i) => { S[i].rpe = +b.dataset.r; });
+});
+$("deleteBtn").onclick = () => {
+  if (!delArmed) { delArmed = true; $("deleteBtn").textContent = "Confirmer ?"; return; }
+  patchLastSession((S, i) => S.splice(i, 1)); lastSessT = 0; goTo("home");
+};
+$("doneClose").onclick = () => goTo("home");
+/* ---------- Pause ---------- */
+let paused = false, pauseAt = 0, pausedTotal = 0, restWasRunning = false;
+function pauseWorkout() {
+  if (paused || !running) return;
+  paused = true; pauseAt = performance.now();
+  if (restTimer && restTimer !== "paused") { clearInterval(restTimer); restTimer = "paused"; restWasRunning = true; } else restWasRunning = false;
+  $("endSetBtn").style.display = restWasRunning ? "none" : "";
+  $("pauseOv").classList.add("on"); say("Pause"); renderElapsed();
+}
+function resumeWorkout(silent) {
+  if (!paused) return;
+  const dt = performance.now() - pauseAt; paused = false; pausedTotal += dt;
+  if (armDelayEnd) armDelayEnd += dt;          // le compte à rebours reprend où il en était
+  lastRepAt = performance.now(); lastTick = performance.now(); stillSince = performance.now();
+  if (restWasRunning) { restTimer = setInterval(restTick, 1000); restWasRunning = false; }
+  $("pauseOv").classList.remove("on"); if (!silent) say("C'est reparti");
+}
+$("pauseBtn").onclick = pauseWorkout;
+$("restPause").onclick = pauseWorkout;
+$("resumeBtn").onclick = () => resumeWorkout();
+/* ---------- Chrono de séance (hors pauses) ---------- */
+const fmtClock = ms => { const t = Math.max(0, Math.floor(ms / 1000)), m = Math.floor(t / 60); return `${m}:${String(t % 60).padStart(2, "0")}`; };
+function renderElapsed() {
+  if (!workoutStart) return;
+  const now = performance.now(), active = (Date.now() - workoutStart) - pausedTotal - (paused ? now - pauseAt : 0);
+  $("elapsed").textContent = fmtClock(active);
+  if (paused) $("poTime").textContent = fmtClock(active);
+}
+setInterval(() => { if (running) renderElapsed(); }, 1000);
 
 function endWorkout() {
   running = false; waitingHand = false; clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
@@ -1373,6 +1602,22 @@ function endWorkout() {
   $("doneRecs").innerHTML = exos.map(e => { const b = Math.max(...history.filter(h => h.exo === e).map(h => h.best)); return b > 0 && b > (before[e] || 0) ? `<span>${IC_T}Record ${exoName(e)} : ${b}${EXOS[e]?.timed ? " s" : ""}</span>` : ""; }).join("");
   if (history.some(h => h.n > 0)) { sessions.push({ t: workoutStart || Date.now(), dur, kcal, ton, sets: history.map(h => ({ exo: h.exo, n: h.n, best: h.best, sec: h.sec, kg: h.kg, ton: h.ton, txt: h.txt })) }); saveSessions(sessions); }
   say(`Bravo ! ${total} ${unit} au total`);
+  const exNames = [...new Set(history.map(h => exoName(h.exo)))];
+  const hh = new Date().getHours();
+  $("doneDate").textContent = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) + (hh < 12 ? " · matin" : hh < 18 ? " · après-midi" : " · soir");
+  $("doneTitle").textContent = exNames.length ? (exNames.length > 2 ? "Séance complète" : "Séance " + exNames.join(" + ").toLowerCase()) : "Séance terminée";
+  const activeMs = dur - pausedTotal;
+  $("statTime").textContent = fmtClock(activeMs);
+  const cnt2 = {};
+  $("summary").innerHTML = history.map(r => {
+    cnt2[r.exo] = (cnt2[r.exo] || 0) + 1;
+    const pct = r.target ? Math.min(100, r.n / r.target * 100) : 100, over = r.target && r.n > r.target;
+    return `<div class="setbar"><span>${exNames.length > 1 ? exoName(r.exo) + " " : "Série "}${cnt2[r.exo]}</span><div class="bar"><i class="${over ? "over" : ""}" style="width:${pct}%"></i></div><b>${r.n}${EXOS[r.exo]?.timed ? " s" : ""}${r.target ? `<small style="color:#71717a;font-size:13px">/${r.target}</small>` : ""}</b></div>`;
+  }).join("") || '<div class="mut">Aucune série enregistrée.</div>';
+  lastSessT = history.some(h => h.n > 0) ? (workoutStart || 0) : 0;
+  document.querySelectorAll("#rpe button").forEach(b => b.classList.remove("on"));
+  $("deleteBtn").textContent = "Supprimer"; delArmed = false;
+  $("deleteBtn").style.display = lastSessT ? "" : "none";
   if (baseCfg) { Object.assign(cfg, baseCfg); baseCfg = null; renderCfg(); }
   // série de jours + objectif hebdo
   const S2 = loadSessions(), st = streakOf(S2), wkDone = weekReps(S2);
@@ -1471,9 +1716,8 @@ $("histClear").onclick = () => {
   if (!clearArmed) { clearArmed = true; $("histClear").querySelector("span").textContent = "Appuie encore pour confirmer"; return; }
   saveSessions([]); try { localStorage.removeItem(HKEY); } catch {} renderHist();
 };
-$("histBtn").onclick = () => { renderHist(); show("hist"); };
-$("histBack").onclick = () => show("setup");
-$("doneHist").onclick = () => { renderHist(); show("hist"); };
+$("histBack").onclick = () => goTo("home");
+$("doneHist").onclick = () => goTo("hist");
 
 /* ---------- Objectif de la semaine ---------- */
 function renderGoal(S = loadSessions()) {
@@ -1588,15 +1832,98 @@ $("progSave").onclick = () => {
   $("progName").value = ""; $("progMsg").textContent = `« ${name} » enregistré.`; renderSaved();
 };
 
+/* ---------- Navigation (barre d'onglets) ---------- */
+function goTo(id) {
+  if (id === "home") renderHome();
+  if (id === "hist") renderHist();
+  if (id === "pick") { renderExoCards(); renderCfg(); }
+  show(id); window.scrollTo(0, 0);
+}
+document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => goTo(b.dataset.go));
+$("pickClose").onclick = () => goTo("home");
+
+/* ---------- Nouvelle séance : objectifs en un appui ---------- */
+function fmtRest(sec) { const m = Math.floor(sec / 60), r = sec % 60; return m ? `${m} min${r ? " " + String(r).padStart(2, "0") : ""}` : `${r} s`; }
+function renderPicks() {
+  const X = EXOS[cfg.exo]; if (!X) return;
+  const P = X.timed ? [[3, 30], [3, 45], [3, 60], [3, 0]] : [[3, 10], [4, 12], [5, 5], [3, 0]];
+  const lab = ([se, r]) => r ? `${se} × ${r}${X.timed ? " s" : ""}` : "Max";
+  $("objK").textContent = "Objectif · " + X.name;
+  $("presets").innerHTML = P.map(p => `<button class="pchip2${cfg.sets === p[0] && cfg.reps === p[1] ? " on" : ""}" data-s="${p[0]}" data-r="${p[1]}">${lab(p)}</button>`).join("")
+    + (P.some(p => cfg.sets === p[0] && cfg.reps === p[1]) ? "" : `<button class="pchip2 on" data-custom>${cfg.reps ? `${cfg.sets} × ${cfg.reps}${X.timed ? " s" : ""}` : `${cfg.sets} × Max`}</button>`);
+  $("presets").querySelectorAll("[data-s]").forEach(b => b.onclick = () => { cfg.sets = +b.dataset.s; cfg.reps = +b.dataset.r; save(); renderCfg(); });
+  $("presets").querySelectorAll("[data-custom]").forEach(b => b.onclick = () => $("customSheet").classList.add("on"));
+  const kg = X.load && (cfg.loads || {})[cfg.exo];
+  $("objSum").textContent = [`Pause ${fmtRest(cfg.rest)}`, kg ? `${X.load === "dumbbell" ? "Haltère" : "Charge"} ${kg} kg` : null, cfg.exo === "curls" ? (cfg.arms === "sep" ? "Gauche / Droite" : "Bras ensemble") : null].filter(Boolean).join(" · ");
+  $("customTitle").textContent = "Objectif · " + X.name;
+  $("progRowTxt").textContent = cfg.prog.length ? `Programme : ${cfg.prog.length} exercice${cfg.prog.length > 1 ? "s" : ""} — modifier` : "Enchaîner plusieurs exercices";
+}
+$("customBtn").onclick = () => $("customSheet").classList.add("on");
+$("customClose").onclick = () => $("customSheet").classList.remove("on");
+$("customSheet").onclick = e => { if (e.target.id === "customSheet") $("customSheet").classList.remove("on"); };
+$("progOpen").onclick = () => $("progBuild").classList.add("on");
+$("progBuildClose").onclick = () => $("progBuild").classList.remove("on");
+$("progBuild").onclick = e => { if (e.target.id === "progBuild") $("progBuild").classList.remove("on"); };
+
+/* ---------- Accueil « Aujourd'hui » ---------- */
+const IC_PLAY = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg>';
+function quickStart(exo) {
+  const m = (cfg.perExo || {})[exo];
+  cfg.exo = exo; cfg.prog = [];
+  if (m) { cfg.sets = m.sets ?? cfg.sets; cfg.reps = m.reps ?? cfg.reps; cfg.rest = m.rest ?? cfg.rest; if (m.load != null) cfg.loads = { ...cfg.loads, [exo]: m.load }; }
+  save(); renderCfg(); $("startBtn").click();
+}
+function quickProgram(i) { cfg.prog = cfg.saved[i].blocks.map(b => ({ ...b })); save(); renderCfg(); $("startBtn").click(); }
+function renderHome() {
+  const S = loadSessions(), now = new Date(), h = now.getHours();
+  const ds = now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  $("helloDate").textContent = ds.charAt(0).toUpperCase() + ds.slice(1);
+  $("helloTitle").textContent = h < 5 ? "Bonne nuit" : h < 18 ? "Bonjour" : "Bonsoir";
+  // objectif de la semaine + série de jours
+  const done = weekReps(S), goal = cfg.goal || 0, st = streakOf(S), pct = goal ? Math.min(1, done / goal) : 0;
+  const C = 2 * Math.PI * 36;
+  $("goalCard").innerHTML = `<div class="ring"><svg viewBox="0 0 86 86"><circle cx="43" cy="43" r="36" class="rb"/><circle cx="43" cy="43" r="36" class="rf" style="stroke-dasharray:${C};stroke-dashoffset:${C * (1 - pct)}"/></svg><b class="num">${goal ? Math.round(pct * 100) + "%" : done}</b></div>
+    <div class="goal-txt2"><div class="sec-k" style="margin:0">${goal ? "Objectif de la semaine" : "Cette semaine"}</div><div class="num big2">${done}<small>${goal ? " / " + goal : ""} reps</small></div>
+    <div class="row" style="gap:6px;flex-wrap:wrap">${st ? `<span class="pill2">🔥 ${st} jour${st > 1 ? "s" : ""} d'affilée</span>` : ""}${goal ? "" : `<span class="pill2 dim">Fixer un objectif ›</span>`}</div></div>`;
+  $("goalCard").onclick = () => goTo("hist");
+  // reprendre : derniers exercices + programmes enregistrés
+  const seen = []; for (const s of S.slice().reverse()) for (const x of s.sets) if (!seen.includes(x.exo) && EXOS[x.exo]) seen.push(x.exo);
+  const cards = seen.slice(0, 2).map(e => { const X = EXOS[e], m = { ...(e === cfg.exo ? { sets: cfg.sets, reps: cfg.reps, rest: cfg.rest } : {}), ...((cfg.perExo || {})[e] || {}) };
+      const obj = m.sets == null ? "Derniers réglages" : m.reps ? `${m.sets} × ${m.reps}${X.timed ? " s" : ""}` : `${m.sets} × max`;
+      return `<div class="card rcard"><span class="exo-ic on">${svgIc(X.icon)}</span><div class="rc-t"><b>${X.name}</b><small>${obj} · pause ${fmtRest(m.rest || cfg.rest)}</small></div><button class="playbtn" data-q="${e}" aria-label="Démarrer ${X.name}">${IC_PLAY}</button></div>`; })
+    .concat((cfg.saved || []).slice(0, 2).map((p, i) => `<div class="card rcard"><span class="exo-ic">${svgIc("list")}</span><div class="rc-t"><b>${p.name.replace(/</g, "&lt;")}</b><small>${p.blocks.map(b => exoName(b.exo)).join(" › ")}</small></div><button class="playbtn ghost2" data-p="${i}" aria-label="Démarrer le programme">${IC_PLAY}</button></div>`));
+  $("resumeK").style.display = cards.length ? "" : "none";
+  $("resumeList").innerHTML = cards.join("") || "";
+  $("resumeList").querySelectorAll("[data-q]").forEach(b => b.onclick = () => quickStart(b.dataset.q));
+  $("resumeList").querySelectorAll("[data-p]").forEach(b => b.onclick = () => quickProgram(+b.dataset.p));
+  // dernière séance
+  const L = S[S.length - 1];
+  if (!L) {
+    $("lastK").style.display = "none";
+    $("lastCard").innerHTML = `<div class="card welcome"><b>Prêt pour ta première séance ?</b><p>Choisis un exercice, pose ton téléphone, l'appli compte pour toi.</p><button class="go" data-go2="pick"><span>Commencer</span></button></div>`;
+    $("lastCard").querySelector("[data-go2]").onclick = () => goTo("pick");
+  } else {
+    $("lastK").style.display = "";
+    const d = new Date(L.t), days = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(L.t).setHours(0, 0, 0, 0)) / 864e5);
+    const when = days === 0 ? "Aujourd'hui" : days === 1 ? "Hier" : d.toLocaleDateString("fr-FR", { weekday: "long" });
+    const exos = [...new Set(L.sets.map(x => exoName(x.exo)))].join(", ");
+    $("lastCard").innerHTML = `<div class="card"><div class="row" style="justify-content:space-between"><b>${when} · ${exos}</b><span class="mut">${Math.max(1, Math.round((L.dur || 0) / 60000))} min</span></div>
+      <div class="stats3"><div><b class="num">${sessReps(L) || L.sets.reduce((a, x) => a + x.n, 0)}</b><span>${sessReps(L) ? "reps" : "secondes"}</span></div><div><b class="num">${L.sets.length}</b><span>séries</span></div><div><b class="num">${L.kcal ? "≈" + L.kcal : "—"}</b><span>kcal</span></div></div></div>`;
+    $("lastCard").firstElementChild.onclick = () => goTo("hist");
+  }
+}
+
 /* ---------- Démarrage ---------- */
 $("startBtn").onclick = async () => {
   beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
   keepAwake();                                // dès le clic : délai, caméra et pauses compris
+  save();                                     // mémorise les réglages de cet exercice
   baseCfg = { ...cfg, loads: { ...cfg.loads }, prog: cfg.prog.map(b => ({ ...b })) };
   setDurs = []; prevRepAt = 0; tempoWarned = false;
   runList = cfg.prog.length ? cfg.prog.map(b => ({ ...b })) : [blockOf()];
   blockIdx = 0; applyBlock(runList[0]); recs = computeRecords(loadSessions());
   reps = 0; armReps = { L: 0, R: 0 }; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null;
+  paused = false; pausedTotal = 0; $("pauseOv").classList.remove("on"); $("elapsed").textContent = "0:00";
   updateCount(); updateSet(); show("workout"); workoutStart = Date.now();
   $("loading").style.display = "flex";
   try {
@@ -1618,8 +1945,9 @@ $("startBtn").onclick = async () => {
   }
   requestAnimationFrame(loop);
 };
+renderHome();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
-$("againBtn").onclick = () => show("setup");
+$("againBtn").onclick = () => goTo("home");
 </script>
 </body>
 </html>
