@@ -389,7 +389,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 17.11 · 21h30</p>
+      <p class="ver">Version 17.11 · 22h00</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -502,13 +502,13 @@ const EXOS = {
   squats: { met: 5, load: "total", name: "Squats", muscle: "Quadris · Fessiers", icon: "person-standing", unit: "squats", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 105, drop: 0.3, minRep: 500, minGap: 900,
     joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆", deeper: "Descends plus bas",
     tip: "Pose le téléphone à 2–3 m, <b>de profil</b> (idéal) ou <b>face à toi</b>, à hauteur de taille si possible (sur une chaise, contre un mur). Tout ton corps, des épaules aux pieds, doit être visible." },
-  curls: { met: 3.5, load: "dumbbell", name: "Curls", muscle: "Biceps", icon: "dumbbell", unit: "curls", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 145, angDown: 65, drop: 0.6, minRep: 300, minGap: 600, perSide: true,
+  curls: { short: "Plus haut", met: 3.5, load: "dumbbell", name: "Curls", muscle: "Biceps", icon: "dumbbell", unit: "curls", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 145, angDown: 65, drop: 0.6, minRep: 300, minGap: 600, perSide: true,
     joint: "Coude", ready: "Bras le long du corps, ne bouge plus…", hidden: "Bras non visibles : recule un peu", go: "Monte ⬆", push: "Redescends ⬇", deeper: "Monte plus haut",
     tip: "Pose le téléphone à 1,5–2 m, <b>face à toi</b> ou <b>de profil</b>, à hauteur de poitrine si possible. Le haut du corps, des épaules aux mains, doit être visible. Les curls alternés comptent un curl par bras." },
-  militaire: { met: 3.5, load: "total", name: "Militaire", muscle: "Épaules · Triceps", icon: "arrow-up-from-line", unit: "développés", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 90, angDown: 160, hMode: "rise", rise0: 0.15, rise1: 0.9, minRep: 400, minGap: 700, perSide: true,
+  militaire: { short: "Plus haut", met: 3.5, load: "total", name: "Militaire", muscle: "Épaules · Triceps", icon: "arrow-up-from-line", unit: "développés", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 90, angDown: 160, hMode: "rise", rise0: 0.15, rise1: 0.9, minRep: 400, minGap: 700, perSide: true,
     joint: "Coude", ready: "Mains aux épaules, ne bouge plus…", hidden: "Bras et hanches non visibles : recule un peu", go: "Pousse ⬆", push: "Redescends ⬇", deeper: "Tends complètement les bras",
     tip: "Développé militaire (haltères ou barre). Téléphone à 2 m, <b>face à toi</b>, à hauteur de poitrine. Le haut du corps jusqu'aux hanches et les mains bras tendus au-dessus de la tête doivent être visibles." },
-  elevations: { met: 3.5, load: "dumbbell", name: "Élévations", muscle: "Épaules", icon: "move-horizontal", unit: "élévations", joints: [[23,11,15],[24,12,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 25, angDown: 80, hMode: "rise", rise0: -0.85, rise1: -0.1, minRep: 400, minGap: 700, perSide: true,
+  elevations: { short: "Plus haut", met: 3.5, load: "dumbbell", name: "Élévations", muscle: "Épaules", icon: "move-horizontal", unit: "élévations", joints: [[23,11,15],[24,12,16]], top: [11,12], bottom: [15,16], hips: [23,24], angUp: 25, angDown: 80, hMode: "rise", rise0: -0.85, rise1: -0.1, minRep: 400, minGap: 700, perSide: true,
     joint: "Épaule", ready: "Bras le long du corps, ne bouge plus…", hidden: "Bras et hanches non visibles : recule un peu", go: "Monte ⬆", push: "Redescends ⬇", deeper: "Monte jusqu'aux épaules",
     tip: "Élévations latérales. Téléphone à 2 m, <b>face à toi</b>, à hauteur de poitrine. Le haut du corps et les mains bras écartés doivent être visibles." },
   fentes: { met: 5, load: "total", name: "Fentes", muscle: "Quadris · Fessiers", icon: "footprints", unit: "fentes", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 110, drop: 0.25, minRep: 500, minGap: 900, perSide: true,
@@ -640,6 +640,9 @@ const show = id => document.querySelectorAll(".screen").forEach(s => s.classList
 
 /* ---------- Son et voix ---------- */
 let actx;
+// Compte à rebours sonore : 3 bips courts identiques, puis un bip aigu plus long au départ
+function tick() { beep(880, 0.12, 0.3); }
+function goBeep() { beep(1320, 0.4, 0.35); }
 function beep(freq = 880, dur = 0.15, vol = 0.3) {
   try {
     actx ||= new (window.AudioContext || window.webkitAudioContext)();
@@ -665,9 +668,19 @@ function say(txt, interrupt = true) {
 }
 
 /* ---------- Écran toujours allumé ---------- */
-let wakeLock = null;
-async function keepAwake() { try { wakeLock = await navigator.wakeLock?.request("screen"); } catch {} }
-document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && running) keepAwake(); });
+// Anti-veille : l'écran reste allumé du clic sur Commencer jusqu'à la fin ou l'arrêt
+let wakeLock = null, wakeWanted = false;
+async function keepAwake() {
+  wakeWanted = true;
+  try {
+    if (wakeLock && !wakeLock.released) return;
+    wakeLock = await navigator.wakeLock?.request("screen");
+    wakeLock?.addEventListener?.("release", () => { if (wakeWanted && document.visibilityState === "visible") keepAwake(); });
+  } catch {}
+}
+function releaseWake() { wakeWanted = false; try { wakeLock?.release(); } catch {} wakeLock = null; }
+// le système libère le verrou quand l'appli passe en arrière-plan : on le reprend au retour
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && wakeWanted) keepAwake(); });
 
 /* ---------- Caméra + modèle ---------- */
 const video = $("video"), canvas = $("canvas"), ctx = canvas.getContext("2d");
@@ -835,7 +848,7 @@ function addRep(auto = true) {
 }
 
 // Curls gauche / droite : un suivi complet par bras
-const newArm = ids => ({ ids, sm: null, sH: null, dRef: null, A: { phase: "up", hi: 0, downAt: 0 }, H: { phase: "up", hi: 0, downAt: 0 }, last: 0 });
+const newArm = ids => ({ coach: { max: 0, on: false, last: 0 }, ids, sm: null, sH: null, dRef: null, A: { phase: "up", hi: 0, downAt: 0 }, H: { phase: "up", hi: 0, downAt: 0 }, last: 0 });
 let armsT = { L: newArm([11, 13, 15]), R: newArm([12, 14, 16]) };
 function stepDet(D, val, ok, now, minRep) {
   if (!ok) { D.hi = 0; return false; }
@@ -860,6 +873,7 @@ function armsStep(lm, now, X) {
     if (T.dRef == null) T.dRef = T.sH; else T.dRef += (T.sH - T.dRef) * (T.sH > T.dRef ? 0.03 : 0.002);
     const pH = T.dRef > 0.04 ? clamp((1 - T.sH / T.dRef) / X.drop) : 0;
     const dA = stepDet(T.A, pA, true, now, X.minRep), dH = stepDet(T.H, pH, true, now, X.minRep);
+    coachStep(T.coach, Math.max(pA, pH), T.A.phase === "down" || T.H.phase === "down", now, X);
     if ((dA || dH) && now - T.last >= X.minGap) { T.last = now; T.A.phase = T.H.phase = "up"; T.A.hi = T.H.hi = 0; addArmRep(k); }
     if (T.A.phase === "down" || T.H.phase === "down") anyDown = true;
   }
@@ -892,7 +906,7 @@ function process(res) {
     const sec = Math.ceil((armDelayEnd - now) / 1000);
     setStatus("Pose le téléphone et mets-toi en position");
     $("count").innerHTML = `${sec}<small>s</small>`;
-    if (sec !== lastCd) { lastCd = sec; if (sec <= 3) beep(660, 0.1, 0.2); }
+    if (sec !== lastCd) { lastCd = sec; if (sec <= 3) tick(); }
     dRef = sH = smooth = null; anchorY = null; stillSince = now;
     $("phaseFill").style.width = "0%"; $("angle").textContent = "";
     return;
@@ -958,6 +972,7 @@ function process(res) {
   if (!armed) {                                  // attend une position stable
     det.A.phase = det.H.phase = phase = "up"; det.A.hi = det.H.hi = 0;
     if (lastCd !== 0) {                          // fin du compte à rebours : on affiche 0 et on prévient
+      if (armDelayEnd && lastCd > 0) goBeep();    // fin du délai de départ
       lastCd = 0; armStart = now; updateCount(); say(X.ready.replace("…", ""));
     }
     if (shY == null || anchorY == null || Math.abs(shY - anchorY) > 0.05) { anchorY = shY; stillSince = now; }
@@ -971,13 +986,8 @@ function process(res) {
   }
   if (!cfg.reps && reps > 0 && now - lastRepAt > 8000) { say("Série terminée"); beep(1200, 0.4); finishSet(); return; }   // mode max : 8 s sans répétition
   if (isSplit()) { armsStep(lm, now, X); return; }
-  // Coach : mouvement commencé mais pas assez ample
-  if (phase === "up" && p > 0.45) { coach.on = true; coach.max = Math.max(coach.max, p); }
-  if (phase === "down") { coach.on = false; coach.max = 0; }
-  if (coach.on && p < 0.2) {
-    if (coach.max < 0.85 && now - coach.last > 4000) { say(X.deeper, false); coach.last = now; }
-    coach.on = false; coach.max = 0;
-  }
+  // Coach : mouvement engagé à plus de 50 % puis abandonné avant le seuil de validation (85 %)
+  coachStep(coach, p, phase === "down", now, X);
 
   // Une répétition = rester en bas au moins 0,2 s, puis remonter ; durée et écart minimum entre deux reps
   const step = (D, val, ok) => {
@@ -1011,7 +1021,9 @@ function draw(lm) {
   const vw = video.videoWidth, vh = video.videoHeight, cw = canvas.width, ch = canvas.height;
   const s = Math.max(cw / vw, ch / vh), ox = (cw - vw * s) / 2, oy = (ch - vh * s) / 2;
   const P = p => [p.x * vw * s + ox, p.y * vh * s + oy];
-  ctx.lineWidth = 4 * devicePixelRatio; ctx.strokeStyle = "#3ddc84cc"; ctx.fillStyle = "#fff";
+  const flash = performance.now() < flashUntil;
+  ctx.lineWidth = (flash ? 6 : 4) * devicePixelRatio; ctx.strokeStyle = flash ? "#fb923ce6" : "#3ddc84cc"; ctx.fillStyle = flash ? "#fdba74" : "#fff";
+  if (flash) { ctx.shadowColor = "#fb923c"; ctx.shadowBlur = 18 * devicePixelRatio; } else ctx.shadowBlur = 0;
   for (const [i, j] of SKEL) {
     if ((lm[i].visibility ?? 0) < 0.4 || (lm[j].visibility ?? 0) < 0.4) continue;
     const [x1, y1] = P(lm[i]), [x2, y2] = P(lm[j]);
@@ -1051,6 +1063,18 @@ function loop() {
 }
 
 /* ---------- Séries et pauses ---------- */
+let flashUntil = 0;
+function coachStep(C, p, reached, now, X) {
+  if (reached) { C.on = false; C.max = 0; return; }
+  if (p > 0.5) { C.on = true; C.max = Math.max(C.max, p); }
+  if (C.on && p < 0.2) {
+    if (C.max < 0.85) {                            // répétition incomplète : rien n'est compté
+      flashUntil = now + 700;                      // flash orange du squelette
+      if (now - C.last > 2500) { say(X.short || "Plus bas", false); C.last = now; }
+    }
+    C.on = false; C.max = 0;
+  }
+}
 let coach = { max: 0, on: false, last: 0 }, setDurs = [], prevRepAt = 0, tempoWarned = false;
 let holdMs = 0, lastTick = 0, inSince = 0, outSince = 0, outWarned = false;
 // Tempo : alerte si les répétitions deviennent nettement plus rapides qu'en début de série
@@ -1079,7 +1103,7 @@ function plankPose(lm) {
 function plankStep(lm, now, X) {
   const pos = plankPose(lm);
   if (!armed) {
-    if (lastCd !== 0) { lastCd = 0; inSince = 0; updateCount(); say("Mets-toi en planche"); }
+    if (lastCd !== 0) { if (armDelayEnd && lastCd > 0) goBeep(); lastCd = 0; inSince = 0; updateCount(); say("Mets-toi en planche"); }
     setStatus(pos.vis ? "Mets-toi en planche, corps droit" : X.hidden);
     if (pos.vis && pos.inPos) { inSince ||= now; if (now - inSince > 800) { armed = true; setStartAt = Date.now(); holdMs = 0; lastTick = now; outSince = 0; outWarned = false; beep(1200, 0.25); say("C'est parti, tiens bon"); } }
     else inSince = 0;
@@ -1143,7 +1167,7 @@ function startRest() {
   restTimer = setInterval(() => {
     restLeft--; renderRest();
     if (restLeft === 10) { say("Dix secondes"); beep(660, 0.15); }
-    if (restLeft > 0 && restLeft <= 3) beep(880, 0.12);
+    if (restLeft > 0 && restLeft <= 3) tick();
     if (restLeft <= 0) nextSet();
   }, 1000);
   setTimeout(() => say(`Pause, ${cfg.rest} secondes${newBlock ? ". Ensuite : " + exoName(nb.exo) : ""}`, false), 900);
@@ -1160,7 +1184,7 @@ function nextSet() {
   if (newBlock) { blockIdx++; applyBlock(runList[blockIdx]); setIdx = 1; } else setIdx++;
   setDurs = []; prevRepAt = 0; tempoWarned = false; setStartAt = 0;
   reps = 0; armReps = { L: 0, R: 0 }; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null; lastCd = -1;
-  updateCount(); updateSet(); beep(1200, 0.35);
+  updateCount(); updateSet(); goBeep();
   say(newBlock ? `${exoName(cfg.exo)}, série 1, mets-toi en position` : `Série ${setIdx}, mets-toi en position`);
 }
 $("restSkip").onclick = nextSet;
@@ -1177,7 +1201,7 @@ $("stopBtn").onclick = () => { if (reps > 0 && !restTimer) pushSet(); endWorkout
 
 function endWorkout() {
   running = false; waitingHand = false; clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
-  stopCamera(); try { wakeLock?.release(); } catch {}
+  stopCamera(); releaseWake();
   const exos = [...new Set(history.map(h => h.exo))];
   const onlyTimed = exos.length > 0 && exos.every(e => EXOS[e]?.timed);
   const total = history.filter(h => onlyTimed || !EXOS[h.exo]?.timed).reduce((a, b) => a + b.n, 0);
@@ -1417,6 +1441,7 @@ $("progSave").onclick = () => {
 /* ---------- Démarrage ---------- */
 $("startBtn").onclick = async () => {
   beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
+  keepAwake();                                // dès le clic : délai, caméra et pauses compris
   baseCfg = { ...cfg, loads: { ...cfg.loads }, prog: cfg.prog.map(b => ({ ...b })) };
   setDurs = []; prevRepAt = 0; tempoWarned = false;
   runList = cfg.prog.length ? cfg.prog.map(b => ({ ...b })) : [blockOf()];
@@ -1428,6 +1453,7 @@ $("startBtn").onclick = async () => {
     if (!navigator.mediaDevices?.getUserMedia) throw new Error("Caméra indisponible : ouvre la page en https.");
     await Promise.all([startCamera(), loadModel(), cfg.trigger === "hand" ? loadHandModel().catch(() => { cfg.trigger = "timer"; }) : null]);
   } catch (e) {
+    releaseWake();
     $("loading").innerHTML = `Impossible de démarrer :<br>${e.message || e}<br><br><button class="ghost" onclick="location.reload()">Retour</button>`;
     return;
   }
