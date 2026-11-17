@@ -95,6 +95,11 @@ export function streakOf(S) {
   return n;
 }
 export const weekGoal = () => cfg.profile?.perWeek || 0;
+// État de la semaine, partagé par l'Accueil, Progrès et le résumé
+export function weekState(S = loadSessions()) {
+  const done = weekSessions(S), goal = weekGoal();
+  return { done, goal, days: weekDays(S), streak: streakOf(S), reached: !!goal && done >= goal };
+}
 // Séance du jour : la séance du plan qui suit la dernière faite (A, B, … en alternance)
 export function todaySeance(S = loadSessions()) {
   const P = planSeances(); if (!P.length) return null;
@@ -103,4 +108,10 @@ export function todaySeance(S = loadSessions()) {
     if (k >= 0) return P[(k + 1) % P.length];
   }
   return P[0];
+}
+// Séance mise en avant, partagée par l'Accueil (carte) et Séances (badge)
+export function todayInfo(S = loadSessions()) {
+  const seance = todaySeance(S), today = new Date().toDateString();
+  const doneToday = S.some(s => new Date(s.t).toDateString() === today);
+  return { seance, doneToday, label: doneToday ? "Prochaine" : "Aujourd'hui" };
 }

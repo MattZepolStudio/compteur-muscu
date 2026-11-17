@@ -2,13 +2,13 @@
 import { EXOS, GUIDED, LEVELS, GOALS, lvlIcon, svgIc, planFor, buildPlan, weeklySessionsFor, guidedSteps, stepsDur,
   fmtRest, fmtDur, fmtClock, esc, isG, exoName, EXO_COL } from "./data.js";
 import { cfg, save, weight, lv, applyProfile, newId, planSeances, mySeances, blockFor, remember, guidedParams, guidedSec,
-  seanceMinutes, usesCamera, usesGuided, loadSessions, saveSessions, computeRecords, sessReps, weekSessions, weekDays, streakOf,
-  weekGoal, todaySeance } from "./store.js";
+  seanceMinutes, usesCamera, usesGuided, loadSessions, saveSessions, computeRecords, sessReps,
+  weekGoal, weekState, todayInfo } from "./store.js";
 import { $, show, openSheet, closeSheet, confirmBtn, say, releaseWake } from "./device.js";
 import { runCamera } from "./camera.js";
 import { runGuided } from "./guided.js";
 
-const VERSION = "Version 19.0 · 17 nov.";
+const VERSION = "Version 19.1 · 17 nov.";
 const ic = d => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const IC = {
   play: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><polygon points="7 4 20 12 7 20" fill="currentColor"/></svg>',
@@ -23,6 +23,11 @@ const IC = {
 };
 const gIcon = (k, cls = "exo-ic") => `<span class="${cls}" style="background:${GUIDED[k].color};color:#052e16">${ic(GUIDED[k].icon)}</span>`;
 const plural = (n, w) => `${n} ${w}${n > 1 ? "s" : ""}`;
+// Ligne descriptive d'une séance : identique partout (Accueil, Séances, éditeur)
+function seanceMeta(s) {
+  const kind = usesCamera(s) && usesGuided(s) ? "caméra + coach vocal" : usesCamera(s) ? "avec caméra" : "coach vocal";
+  return `${plural(s.blocks.length, "étape")} · ≈ ${seanceMinutes(s)} min · ${kind}`;
+}
 const DAYS = ["L", "M", "M", "J", "V", "S", "D"];
 
 /* ===================== Navigation ===================== */
@@ -126,9 +131,9 @@ function renderDone() {
   // records battus pendant la séance
   const best = {}; for (const h of H) best[h.exo] = Math.max(best[h.exo] || 0, h.best);
   $("doneRecs").innerHTML = Object.entries(best).filter(([e, b]) => b > 0 && b > (R.recs0[e] || 0)).map(([e, b]) => `<span>${IC.trophy}Record ${exoName(e)} : ${b}${EXOS[e]?.timed ? " s" : ""}</span>`).join("");
-  const S = loadSessions(), st = streakOf(S), wk = weekSessions(S), g = weekGoal();
+  const S = loadSessions(), W = weekState(S), st = W.streak, wk = W.done, g = W.goal;
   $("doneBadges").innerHTML = (ton ? `<span class="acc">${IC.kg}Tonnage <b>${ton.toLocaleString("fr-FR")} kg</b></span>` : "") + (st ? `<span>${IC.fire}${plural(st, "jour")} d'affilée</span>` : "") +
-    (g ? `<span>${IC.target}Semaine : ${wk} / ${g}${wk >= g ? " ✓" : ""}</span>` : "");
+    (g ? `<span>${IC.target}Semaine : ${wk} / ${g}${W.reached ? " ✓" : ""}</span>` : "");
   $("summary").innerHTML = P.length > 1 ? P.map(p => `<div class="sum-k">${esc(p.title)}</div>${p.html}`).join("") : (P[0]?.html || "") || '<p class="mut">Aucune série enregistrée.</p>';
   document.querySelectorAll("#rpe button").forEach(b => b.classList.remove("on")); $("progTip").hidden = true;
   $("deleteBtn").hidden = !P.some(p => p.session);
@@ -190,30 +195,39 @@ function renderHome() {
   $("helloTitle").textContent = name ? `Salut ${name}` : h < 18 ? "Bonjour" : "Bonsoir";
   $("homeAvatar").textContent = name ? name.charAt(0).toUpperCase() : "?";
   $("weekCard").innerHTML = weekHtml(S);
-  const T = todaySeance(S);
-  const doneToday = S.some(s => new Date(s.t).toDateString() === now.toDateString());
+  const { seance: T, doneToday } = todayInfo(S);
   if (!T) {
     $("todayCard").innerHTML = `<div class="card today empty-plan"><div class="sec-k flat acc">Ton plan</div><h2>${cfg.profile ? "Aucune activité choisie" : "Crée ton plan"}</h2>
       <p class="mut">${cfg.profile ? "Choisis tes activités : on prépare tes séances." : "Quelques questions, et tes séances sont prêtes, adaptées à ton niveau et à ton temps."}</p>
       <button class="go" id="mkPlan"><span>${cfg.profile ? "Choisir" : "Commencer"}</span></button><button class="linkbtn" id="otherSe">Choisir une séance</button></div>`;
     $("mkPlan").onclick = () => startOnb(!!cfg.profile, cfg.profile ? 4 : 0);
   } else {
-    const P = planSeances(), idx = P.indexOf(T), cam = usesCamera(T);
+    const P = planSeances(), idx = P.indexOf(T);
     $("todayCard").innerHTML = `<div class="card today"><div class="today-k"><span class="sec-k flat acc">${doneToday ? "Prochaine séance" : "Séance du jour"}</span><span class="mut">Plan · ${idx + 1}/${P.length}</span></div>
-      ${doneToday ? `<p class="done-today">✓ Séance faite aujourd'hui, bravo. Repos conseillé avant la suivante.</p>` : ""}
-      <h2>${esc(T.name)}</h2><p class="mut">≈ ${seanceMinutes(T)} min · ${plural(T.blocks.length, "exercice")} · ${cam ? "avec caméra" : "coach vocal"}</p>
+      ${doneToday ? `<p class="done-today">✓ Séance faite aujourd'hui. Repos conseillé avant la suivante.</p>` : ""}
+      <h2>${esc(T.name)}</h2><p class="mut" id="todayMeta">${seanceMeta(T)}</p>
       <div class="blist">${T.blocks.map(b => `<div><span>${exoName(b.exo)}</span><b>${blockLabel(b)}</b></div>`).join("")}</div>
       <button class="go" id="todayGo">${IC.play}<span>Commencer</span></button><button class="linkbtn" id="otherSe">Autre séance</button></div>`;
     $("todayGo").onclick = () => startSeance(T);
   }
   $("otherSe").onclick = () => goTo("seances");
+  renderExpress(S);
+}
+// Séance express : un exercice, lancé en un appui avec ses derniers réglages (ou ceux du plan)
+function renderExpress(S) {
+  const used = []; for (const s of S.slice().reverse()) for (const x of s.sets) if (EXOS[x.exo] && !used.includes(x.exo)) used.push(x.exo);
+  const order = [...used, ...(cfg.profile?.exos || []), ...Object.keys(EXOS)].filter((e, i, a) => a.indexOf(e) === i);
+  $("expressCard").innerHTML = `<div class="xp-h"><div><div class="sec-k flat">Séance express</div><p class="mut">Un exercice, lancé en un appui</p></div><button class="linkbtn sm" id="xpAll">Catalogue</button></div>
+    <div class="xp-list">${order.map(e => { const b = blockFor(e); return `<button class="xp" data-xp="${e}" aria-label="Lancer ${EXOS[e].name}"><span class="exo-ic">${svgIc(EXOS[e].icon)}</span><b>${EXOS[e].name}</b><small>${blockLabel(b)}</small></button>`; }).join("")}</div>`;
+  $("expressCard").querySelectorAll("[data-xp]").forEach(x => x.onclick = () => { const e = x.dataset.xp; startSeance({ name: EXOS[e].name, rest: planFor(e, cfg.profile).rest, blocks: [blockFor(e)] }); });
+  $("xpAll").onclick = () => { seTab = "cat"; goTo("seances"); };
 }
 $("homeAvatar").onclick = () => goTo("profil");
 $("weekCard").onclick = () => goTo("progres");
 function weekHtml(S) {
-  const done = weekSessions(S), g = weekGoal(), st = streakOf(S), days = weekDays(S), today = (new Date().getDay() + 6) % 7;
+  const { done, goal: g, streak: st, days, reached } = weekState(S), today = (new Date().getDay() + 6) % 7;
   const C = 2 * Math.PI * 27, pct = g ? Math.min(1, done / g) : 0;
-  const msg = !g ? `${plural(done, "séance")} cette semaine` : done >= g ? "Objectif de la semaine atteint ✓" : `Encore ${plural(g - done, "séance")} cette semaine`;
+  const msg = !g ? `${plural(done, "séance")} cette semaine` : reached ? "Objectif de la semaine atteint ✓" : `Encore ${plural(g - done, "séance")} cette semaine`;
   return `<div class="ring64"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" class="rb"/><circle cx="32" cy="32" r="27" class="rf" style="stroke-dasharray:${C};stroke-dashoffset:${C * (1 - pct)}"/></svg><b class="num">${g ? `${done}/${g}` : done}</b></div>
     <div class="week-r"><span class="week-t">${msg}</span><div class="days">${DAYS.map((x, i) => `<i class="${days.has(i) ? "on" : ""}${i === today ? " now" : ""}">${x}</i>`).join("")}</div>
     ${st ? `<span class="streak">${IC.fire}${plural(st, "jour")} d'affilée</span>` : ""}</div>`;
@@ -230,16 +244,15 @@ function seIcon(s) {
   if (s.blocks.length === 1 && EXOS[s.blocks[0].exo]) return `<span class="exo-ic">${svgIc(EXOS[s.blocks[0].exo].icon)}</span>`;
   return `<span class="exo-ic">${IC.list}</span>`;
 }
-function seRow(s, today) {
-  const kind = usesCamera(s) && usesGuided(s) ? "caméra + coach vocal" : usesCamera(s) ? "caméra" : "coach vocal";
-  return `<div class="row-item" data-id="${esc(s.id)}">${seIcon(s)}<button class="ri-t" data-ed="${esc(s.id)}"><b>${esc(s.name)}</b><small>${plural(s.blocks.length, "étape")} · ≈ ${seanceMinutes(s)} min · ${kind}</small></button>${today ? `<span class="tag">Aujourd'hui</span>` : ""}<button class="playbtn" data-go="${esc(s.id)}" aria-label="Lancer ${esc(s.name)}">${IC.play}</button></div>`;
+function seRow(s, tag) {
+  return `<div class="row-item" data-id="${esc(s.id)}">${seIcon(s)}<button class="ri-t" data-ed="${esc(s.id)}"><b>${esc(s.name)}</b><small>${seanceMeta(s)}</small></button>${tag ? `<span class="tag">${tag}</span>` : ""}<button class="playbtn" data-go="${esc(s.id)}" aria-label="Lancer ${esc(s.name)}">${IC.play}</button></div>`;
 }
 function renderSeances() {
   document.querySelectorAll("#seTabs button").forEach(b => b.classList.toggle("on", b.dataset.t === seTab));
   $("seMine").hidden = seTab !== "mine"; $("seCat").hidden = seTab !== "cat";
   if (seTab === "mine") {
-    const P = planSeances(), M = mySeances(), T = todaySeance();
-    $("seMine").innerHTML = (P.length ? `<div class="sec-k">Mon plan${weekGoal() ? ` · ${weekGoal()} par semaine` : ""}</div><div class="list">${P.map(s => seRow(s, s === T)).join("")}</div>`
+    const P = planSeances(), M = mySeances(), TI = todayInfo();
+    $("seMine").innerHTML = (P.length ? `<div class="sec-k">Mon plan${weekGoal() ? ` · ${weekGoal()} par semaine` : ""}</div><div class="list">${P.map(s => seRow(s, s === TI.seance ? TI.label : "")).join("")}</div>`
         : `<div class="card empty"><b>Pas encore de plan</b><p class="mut">Réponds à quelques questions : tes séances sont préparées selon ton niveau et ton temps.</p><button class="gbtn wide acc" id="sePlan">Créer mon plan</button></div>`) +
       `<div class="sec-k">Mes séances</div>` + (M.length ? `<div class="list">${M.map(s => seRow(s)).join("")}</div>` : `<p class="empty">Crée une séance avec « Créer », ou pars d'un exercice du catalogue et enregistre-le.</p>`);
     $("seMine").querySelectorAll("[data-go]").forEach(b => b.onclick = () => startSeance(cfg.seances.find(s => s.id === b.dataset.go)));
@@ -345,7 +358,7 @@ function renderProgres() {
     const work = it.reduce((a, s) => a + (s.guided?.work || 0), 0), timed = it.reduce((a, s) => a + s.sets.filter(x => EXOS[x.exo]?.timed).reduce((u, x) => u + x.n, 0), 0);
     const kcal = it.reduce((a, s) => a + (s.kcal || 0), 0), dur = it.reduce((a, s) => a + (s.dur || 0), 0);
     const name = s0.name || [...new Set(it.flatMap(s => s.guided ? [s.guided.name] : s.sets.map(x => exoName(x.exo))))].join(", ");
-    const what = [reps ? `${reps} reps` : "", timed ? `${timed} s de gainage` : "", work ? `${fmtClock(work * 1000)} d'effort` : ""].filter(Boolean).join(" · ");
+    const what = [reps ? plural(reps, "rep") : "", timed ? `${timed} s de gainage` : "", work ? `${fmtClock(work * 1000)} d'effort` : ""].filter(Boolean).join(" · ");
     return `<div class="row-item hist"><div class="date"><small>${d.toLocaleDateString("fr-FR", { weekday: "short" }).replace(".", "")}</small><b class="num">${d.getDate()}</b></div><div class="ri-t"><b>${esc(name)}</b><small>${Math.max(1, Math.round(dur / 60000))} min${what ? " · " + what : ""}${kcal ? ` · ≈${kcal} kcal` : ""}${it.some(s => s.rpe) ? " · " + ["", "Facile", "Bien", "Dur", "À bloc"][it.find(s => s.rpe).rpe] : ""}</small></div></div>`;
   }).join("")}</div>${runs.length > 10 ? `<button class="linkbtn" id="histMore">${histAll ? "Afficher moins" : `Tout l'historique (${runs.length})`}</button>` : ""}` : `<p class="empty">Termine une séance pour la voir ici.</p>`;
   const m = $("histMore"); if (m) m.onclick = () => { histAll = !histAll; renderProgres(); };

@@ -92,6 +92,7 @@ function handSignal(ts) {
   } else handAnchor = null;
   return { hands, good, why };
 }
+const HAND_SVG = '<svg class="hand-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Main ouverte"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>';
 const HAND_MSG = { none: "Montre ta main ouverte face à l'écran", unsure: "Montre ta main ouverte face à l'écran", small: "Approche ta main de la caméra",
   upright: "Doigts vers le haut", facing: "Paume face à la caméra", fingers: "Écarte bien les 5 doigts", moving: "Garde la main immobile" };
 function restHandStep(ts) {
@@ -107,7 +108,7 @@ function restHandStep(ts) {
 function handStep(ts) {
   const { hands, good, why } = handSignal(ts);
   drawPoints(hands.flat(), good ? "#3ddc84" : "#ffb020");
-  $("count").innerHTML = "✋";
+  $("count").innerHTML = HAND_SVG;
   setStatus(good ? "Parfait, ne bouge plus…" : HAND_MSG[why] || HAND_MSG.none);
   $("angle").textContent = "";
   if (good) {
@@ -463,7 +464,7 @@ function startRest() {
   $("restHand").classList.toggle("on", useHand()); openSince = 0;
   if (!useHand()) { try { video.pause(); } catch {} ctx.clearRect(0, 0, canvas.width, canvas.height); }
   const newBlock = setIdx >= W.sets, nb = newBlock ? runList[blockIdx + 1] : W;
-  const unit = EXOS[nb.exo]?.timed ? "s" : "reps", perArm = nb.exo === "curls" && nb.arms === "sep" ? " / bras" : "";
+  const unit = EXOS[nb.exo]?.timed ? "s" : nb.reps === 1 ? "rep" : "reps", perArm = nb.exo === "curls" && nb.arms === "sep" ? " / bras" : "";
   $("restNext").innerHTML = `<div><div class="nc-k">${newBlock ? "Exercice suivant" : "Prochaine série"}</div><div class="nc-v">${exoName(nb.exo)} · ${nb.reps || "max"} ${unit}${perArm}</div></div><div class="nc-n">${newBlock ? 1 : setIdx + 1}<small>/${nb.sets}</small></div>`;
   renderRest();
   restTimer = setInterval(restTick, 1000);

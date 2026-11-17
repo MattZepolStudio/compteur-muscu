@@ -34,6 +34,7 @@
     </header>
     <button class="card week" id="weekCard"></button>
     <div id="todayCard"></div>
+    <div class="card express" id="expressCard"></div>
   </div>
 </section>
 
@@ -71,7 +72,7 @@
     <div class="sec-k">Pendant la séance</div>
     <div class="list">
       <div class="line"><label for="voiceSw">Coach vocal et annonces</label><button class="switch" id="voiceSw" role="switch" aria-label="Coach vocal"><i></i></button></div>
-      <div class="line"><span>Démarrer la série</span><div class="seg" id="trigSeg"><button data-v="timer">Compte à rebours</button><button data-v="hand">Main ✋</button></div></div>
+      <div class="line"><span>Démarrer la série</span><div class="seg" id="trigSeg"><button data-v="timer">Compte à rebours</button><button data-v="hand"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>Main</button></div></div>
       <div class="line"><span>Délai de départ</span><div class="stepper sm"><button data-delay="-5" aria-label="Moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="delayV"></span><i>s</i></b><button data-delay="5" aria-label="Plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
       <div class="line"><span>Caméra</span><div class="seg" id="camSeg"><button data-v="user">Avant</button><button data-v="environment">Arrière</button></div></div>
       <div class="line"><label for="ecoSw">Économie de batterie<small>détection plus légère</small></label><button class="switch" id="ecoSw" role="switch" aria-label="Économie de batterie"><i></i></button></div>
