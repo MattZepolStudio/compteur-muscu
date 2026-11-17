@@ -367,22 +367,31 @@
     .done-foot .gbtn,.done-foot .go{margin:0;max-width:none;flex:1}
     .done-foot .go{padding:10px}
     .done-foot .go span{font-size:18px}
-    /* accueil : deux colonnes, tout visible sans défiler */
-    #setup{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;column-gap:14px;
-      padding:max(8px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left))}
+    /* accueil : tableau de bord — en-tête pleine largeur, deux colonnes de hauteur égale */
+    #setup{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;column-gap:20px;align-items:stretch;
+      padding:max(8px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left))}
     #setup .scroll{display:contents}
-    #setup .hero{grid-column:1;grid-row:1;margin:0 0 6px}
-    #setup .exos{grid-column:1;grid-row:2;margin:0 0 8px;padding:0}
-    #setup .exos .exo{flex-basis:30%;min-width:96px;padding:7px 8px 6px}
+    #setup .hero{grid-column:1 / -1;grid-row:1;margin:0 0 8px}
+    #setup .hero .logo{width:34px;height:34px;border-radius:10px}
+    #setup .hero .help{width:34px;height:34px}
+    #setup .htxt p{display:none}
+    #setup .exos{grid-column:1;grid-row:2;margin:0 0 8px;padding:0;
+      -webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);mask-image:linear-gradient(90deg,#000 82%,transparent)}
+    #setup .exos .exo{flex-basis:31%;min-width:96px;padding:7px 8px 6px}
     #setup .exo-ic{width:24px;height:24px;margin-bottom:3px}
     #setup .exo b{font-size:13.5px}
-    #setup .main-card{grid-column:1;grid-row:3 / 5;max-height:none;min-height:0;margin-bottom:4px}
-    #setup .bigstep b{font-size:clamp(48px,17vh,80px)}
-    #setup .side-col{grid-column:2;grid-row:1 / 4;display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:0;padding-bottom:4px}
-    #setup .foot{grid-column:2;grid-row:4;padding:6px 0 0;gap:6px;background:none}
+    #setup .main-card{grid-column:1;grid-row:3 / 5;max-height:none;min-height:0;margin:0;display:flex;align-items:center;justify-content:center;padding:10px}
+    #setup .bigstep b{font-size:clamp(46px,17vh,84px)}
+    #setup .mc-col{gap:6px}
+    #setup .side-col{grid-column:2;grid-row:2 / 4;display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:0;padding-bottom:8px}
+    #setup .prog{padding:5px 6px 5px 12px}
+    #setup .mini{padding:7px 8px 6px}
+    #setup .pcard{padding:5px 6px 5px 12px}
+    #setup .acc summary{padding:9px 12px}
+    #setup .foot{grid-column:2;grid-row:4;align-self:end;padding:0;gap:6px;background:none;margin-top:auto}
     #setup .go{padding:10px}
     #setup .go span{font-size:20px}
-    #setup .recap{font-size:12px;padding:5px 12px}
+    #setup .recap{font-size:12px;padding:4px 12px}
     .hist-wrap{width:100%;max-width:720px;margin:0 auto}
   }
 </style>
@@ -482,7 +491,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 18.11 · 00h05</p>
+      <p class="ver">Version 18.11 · 00h15</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
