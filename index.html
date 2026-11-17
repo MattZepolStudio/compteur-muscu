@@ -615,6 +615,9 @@
   .disclaimer{font-size:11.5px;line-height:1.45;color:#71717a;border-top:1px solid #ffffff12;padding-top:10px;margin-top:4px}
   .prog-tip{border-color:#22c55e55;background:linear-gradient(160deg,#22c55e1a,#22c55e05)}
   .prog-tip[hidden]{display:none}
+  .chips7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .chips5{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .chips7 .pchip2,.chips5 .pchip2{padding:12px 4px!important}
 </style>
 </head>
 <body>
@@ -814,7 +817,7 @@
       <p><b>Démarrage « Main » :</b> montre ta main ouverte face à l'écran, 5 doigts écartés vers le haut, assez près de la caméra, et garde-la immobile un peu plus d'une seconde. Le délai de départ démarre ensuite. Le même geste pendant une pause lance la série suivante.</p>
       <p class="disclaimer">Repères généraux inspirés des recommandations de l’ACSM (American College of Sports Medicine). Ils ne remplacent ni un coach ni un avis médical : arrête-toi en cas de douleur, et demande conseil à un professionnel de santé si tu as un problème de santé ou une blessure.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 18.11 · 03h40</p>
+      <p class="ver">Version 18.11 · 04h00</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -2046,10 +2049,12 @@ function renderHome() {
   // reprendre : derniers exercices + programmes enregistrés
   const seen = []; for (const s of S.slice().reverse()) for (const x of s.sets) if (!seen.includes(x.exo) && EXOS[x.exo]) seen.push(x.exo);
   for (const e of cfg.profile?.exos || []) if (seen.length < 2 && !seen.includes(e)) seen.push(e);
-  const cards = seen.slice(0, 2).map(e => { const X = EXOS[e], m = { ...(e === cfg.exo ? { sets: cfg.sets, reps: cfg.reps, rest: cfg.rest } : {}), ...((cfg.perExo || {})[e] || {}) };
+  const nPlan = (cfg.saved || []).filter(x => x.plan).length;
+  const exoCards = seen.slice(0, nPlan ? 1 : 2).map(e => { const X = EXOS[e], m = { ...(e === cfg.exo ? { sets: cfg.sets, reps: cfg.reps, rest: cfg.rest } : {}), ...((cfg.perExo || {})[e] || {}) };
       const obj = m.sets == null ? "Derniers réglages" : m.reps ? `${m.sets} × ${m.reps}${X.timed ? " s" : ""}` : `${m.sets} × max`;
-      return `<div class="card rcard"><span class="exo-ic on">${svgIc(X.icon)}</span><div class="rc-t"><b>${X.name}</b><small>${obj} · pause ${fmtRest(m.rest || cfg.rest)}</small></div><button class="playbtn" data-q="${e}" aria-label="Démarrer ${X.name}">${IC_PLAY}</button></div>`; })
-    .concat((cfg.saved || []).slice(0, 2).map((p, i) => `<div class="card rcard"><span class="exo-ic">${svgIc("list")}</span><div class="rc-t"><b>${p.name.replace(/</g, "&lt;")}</b><small>${p.blocks.map(b => exoName(b.exo)).join(" › ")}</small></div><button class="playbtn ghost2" data-p="${i}" aria-label="Démarrer le programme">${IC_PLAY}</button></div>`));
+      return `<div class="card rcard"><span class="exo-ic on">${svgIc(X.icon)}</span><div class="rc-t"><b>${X.name}</b><small>${obj} · pause ${fmtRest(m.rest || cfg.rest)}</small></div><button class="playbtn" data-q="${e}" aria-label="Démarrer ${X.name}">${IC_PLAY}</button></div>`; });
+  const progCards = (cfg.saved || []).map((p, i) => [p, i]).sort((a, b) => (b[0].plan ? 1 : 0) - (a[0].plan ? 1 : 0)).slice(0, 2).map(([p, i]) => `<div class="card rcard"><span class="exo-ic${p.plan ? " on" : ""}">${svgIc("list")}</span><div class="rc-t"><b>${p.name.replace(/</g, "&lt;")}</b><small>${p.plan && p.minutes ? `≈ ${p.minutes} min · ` : ""}${p.blocks.map(b => exoName(b.exo)).join(" › ")}</small></div><button class="playbtn${p.plan ? "" : " ghost2"}" data-p="${i}" aria-label="Démarrer le programme">${IC_PLAY}</button></div>`);
+  const cards = progCards.concat(exoCards);
   $("resumeK").style.display = cards.length ? "" : "none";
   $("resumeK").textContent = S.length ? "Reprendre" : "Ton plan";
   $("resumeList").innerHTML = cards.join("") || "";
@@ -2099,11 +2104,43 @@ function weeklyGoalFor(p) {
   const base = [150, 300, 500][(p?.level || 2) - 1], f = p?.goal === "endurance" || p?.goal === "perte" ? 1.3 : p?.goal === "force" ? 0.8 : 1;
   return Math.round(base * f / 25) * 25;
 }
+// Séance(s) type construites pour tenir dans le temps choisi.
+// Grands groupes musculaires d'abord (ordre conseillé), puis séries ajoutées s'il reste du temps.
+const ORDER = ["squats", "fentes", "pompes", "dips", "militaire", "curls", "elevations", "planche"];
+function buildPlanPrograms(p) {
+  const ex = ORDER.filter(e => p.exos.includes(e)); if (!ex.length) return [];
+  const budget = (p.minutes || 30) * 60, rest = planFor(ex[0], p).rest;
+  const split = (p.perWeek || 0) >= 3 && ex.length >= 4;          // 3 séances ou plus : séances A / B en alternance
+  const groups = split ? [ex.filter((_, i) => i % 2 === 0), ex.filter((_, i) => i % 2 === 1)] : [ex];
+  const cost = b => b.sets * ((EXOS[b.exo].timed ? (b.reps || 30) : (b.reps || 12) * 2.5) + rest);
+  return groups.map((g, gi) => {
+    const blocks = []; let t = 0;
+    for (const e of g) {
+      const pl = planFor(e, p), b = { exo: e, sets: pl.sets, reps: pl.reps, arms: "both", load: (cfg.loads || {})[e] || 0, rest };
+      if (blocks.length && t + cost(b) > budget) { b.sets = Math.max(1, Math.floor((budget - t) / cost({ ...b, sets: 1 }))); if (b.sets < 2) continue; }
+      blocks.push(b); t += cost(b);
+    }
+    let grew = true;
+    // séries ajoutées s'il reste du temps, sans dépasser les repères du niveau (débutant 3, intermédiaire 4, avancé 5)
+    const maxSets = [3, 4, 5][(p.level || 2) - 1] + (p.goal === "force" ? 1 : 0);
+    while (grew) { grew = false; for (const b of blocks) { const one = cost({ ...b, sets: 1 }); if (b.sets < maxSets && t + one <= budget) { b.sets++; t += one; grew = true; } } }
+    return { name: split ? `Ma séance ${"AB"[gi]}` : "Ma séance", rest, blocks, plan: true, minutes: Math.max(1, Math.round(t / 60)) };
+  });
+}
+function planWeeklyReps(progs, perWeek) {
+  if (!progs.length) return 0;
+  const per = progs.map(pr => pr.blocks.filter(b => !EXOS[b.exo].timed).reduce((a, b) => a + b.sets * (b.reps || 0), 0));
+  return Math.round(per.reduce((a, b) => a + b, 0) / per.length * (perWeek || 2) / 25) * 25;
+}
 function applyProfile() {
   const p = cfg.profile; if (!p) return;
   cfg.perExo = cfg.perExo || {};
   for (const e of p.exos) { const pl = planFor(e); cfg.perExo[e] = { ...pl, load: (cfg.loads || {})[e] || 0 }; }
-  cfg.goal = weeklyGoalFor(p); cfg.goalSessions = weeklySessionsFor(p); cfg.weight = p.weight || cfg.weight;
+  const progs = buildPlanPrograms(p);
+  cfg.saved = [...progs, ...(cfg.saved || []).filter(x => !x.plan)];   // la séance type remplace l'ancienne
+  cfg.goalSessions = p.perWeek || weeklySessionsFor(p);
+  cfg.goal = planWeeklyReps(progs, cfg.goalSessions) || weeklyGoalFor(p);
+  cfg.weight = p.weight || cfg.weight;
   cfg.exo = p.exos[0] || cfg.exo;
   const m = cfg.perExo[cfg.exo]; if (m) { cfg.sets = m.sets; cfg.reps = m.reps; cfg.rest = m.rest; }
 }
@@ -2117,7 +2154,7 @@ $("profileBtn").onclick = () => { $("paramsSheet").classList.remove("on"); start
 
 /* ---------- Premier lancement : création du profil ---------- */
 let onbStep = 0, onbEdit = false, op = null;
-const ONB_N = 6;
+const ONB_N = 7;
 function startOnb(edit) {
   onbEdit = edit; onbStep = 0;
   op = JSON.parse(JSON.stringify(cfg.profile || { name: "", weight: cfg.weight || 70, height: 170, level: 2, goal: "forme", exos: ["pompes", "squats"] }));
@@ -2144,15 +2181,27 @@ function renderOnb() {
   } else if (onbStep === 3) {
     html = `<h1>Ton objectif</h1><p class="lead">Il change le rythme de tes séances et tes pauses.</p>` +
       GOALS.map(g => `<button class="opt${op.goal === g.k ? " on" : ""}" data-goal="${g.k}"><span class="oe" style="color:#4ade80"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px">${g.i}</svg></span><span><b>${g.n}</b><small>${g.d}</small></span></button>`).join("");
+  } else if (onbStep === 5) {
+    if (!op.perWeek) op.perWeek = weeklySessionsFor(op);
+    if (!op.minutes) op.minutes = 30;
+    const advice = ["2 à 3", "3 à 4", "4 à 5"][op.level - 1];
+    html = `<h1>Ton rythme</h1><p class="lead">On construit ta séance type pour qu'elle tienne dans ton emploi du temps.</p>
+      <div class="sec-k">Séances par semaine</div>
+      <div class="chips7">${[1, 2, 3, 4, 5, 6, 7].map(n => `<button class="pchip2${op.perWeek === n ? " on" : ""}" data-pw="${n}">${n}</button>`).join("")}</div>
+      <p class="mut" style="font-size:12.5px;margin-top:-4px">Conseillé pour ton niveau : ${advice} séances, avec au moins un jour de repos entre deux séances pour les mêmes muscles.</p>
+      <div class="sec-k">Temps par séance</div>
+      <div class="chips5">${[10, 15, 20, 30, 45, 60].map(n => `<button class="pchip2${op.minutes === n ? " on" : ""}" data-mn="${n}">${n} min</button>`).join("")}</div>`;
   } else if (onbStep === 4) {
     html = `<h1>Tes exercices</h1><p class="lead">Choisis ceux que tu veux pratiquer. Tu pourras en faire d'autres quand tu veux.</p>
       <div class="exo-grid">${Object.entries(EXOS).map(([k, x]) => `<button class="exo${op.exos.includes(k) ? " on" : ""}" data-ex="${k}"><span class="exo-ic">${svgIc(x.icon)}</span><b>${x.name}</b><small>${x.muscle}</small></button>`).join("")}</div>`;
     next = op.exos.length ? `Continuer (${op.exos.length})` : "Choisis au moins un exercice";
   } else {
-    const wg = weeklyGoalFor(op);
+    const progs = buildPlanPrograms(op), wg = planWeeklyReps(progs, op.perWeek) || weeklyGoalFor(op);
     html = `<h1>Ton plan${op.name ? ", " + op.name.replace(/</g, "") : ""}</h1><p class="lead">${LEVELS[op.level - 1].n} · ${GOALS.find(g => g.k === op.goal).n}</p>
-      <div class="card goal-card" style="cursor:default"><div class="ring"><svg viewBox="0 0 86 86"><circle cx="43" cy="43" r="36" class="rb"/><circle cx="43" cy="43" r="36" class="rf" style="stroke-dasharray:226;stroke-dashoffset:150"/></svg><b class="num">${weeklySessionsFor(op)}×</b></div><div class="goal-txt2"><div class="sec-k" style="margin:0">Rythme conseillé</div><div class="num big2">${weeklySessionsFor(op)}<small> séances / semaine</small></div><div class="mut" style="font-size:12.5px">≈ ${wg} répétitions par semaine</div></div></div>
-      <div class="card">${op.exos.map(e => { const pl = planFor(e, op); return `<div class="plan-row"><span class="exo-ic">${svgIc(EXOS[e].icon)}</span><span>${EXOS[e].name}</span><b>${pl.sets} × ${pl.reps}${EXOS[e].timed ? " s" : ""}</b><small class="mut">· ${fmtRest(pl.rest)}</small></div>`; }).join("")}</div>
+      <div class="card goal-card" style="cursor:default"><div class="ring"><svg viewBox="0 0 86 86"><circle cx="43" cy="43" r="36" class="rb"/><circle cx="43" cy="43" r="36" class="rf" style="stroke-dasharray:226;stroke-dashoffset:${226 * (1 - Math.min(1, op.perWeek / 7))}"/></svg><b class="num">${op.perWeek}×</b></div><div class="goal-txt2"><div class="sec-k" style="margin:0">Par semaine</div><div class="num big2">${op.perWeek}<small> séance${op.perWeek > 1 ? "s" : ""} · ${op.minutes} min</small></div><div class="mut" style="font-size:12.5px">≈ ${wg} répétitions par semaine</div></div></div>
+      ${progs.map(pr => `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><b>${pr.name}</b><span class="mut">≈ ${pr.minutes} min · repos ${fmtRest(pr.rest)}</span></div>${pr.blocks.map(b => `<div class="plan-row"><span class="exo-ic">${svgIc(EXOS[b.exo].icon)}</span><span>${EXOS[b.exo].name}</span><b>${b.sets} × ${b.reps}${EXOS[b.exo].timed ? " s" : ""}</b></div>`).join("")}${progs.length > 1 ? "" : ""}</div>`).join("")}
+      ${progs.length > 1 ? `<p class="mut" style="text-align:center;font-size:12.5px">Alterne A et B d'une séance à l'autre.</p>` : ""}
+      ${(() => { const used = new Set(progs.flatMap(pr => pr.blocks.map(b => b.exo))), left = op.exos.filter(e => !used.has(e)); return left.length ? `<p class="mut" style="text-align:center;font-size:12.5px">Pas assez de temps pour ${left.map(e => EXOS[e].name).join(", ")} : augmente la durée ou fais-les à part.</p>` : ""; })()}
       <p class="mut" style="text-align:center">Modifiable à tout moment : Paramètres › Mon profil</p>
       <p class="disclaimer">Repères généraux inspirés des recommandations de l’ACSM (American College of Sports Medicine). Ils ne remplacent ni un coach ni un avis médical : arrête-toi en cas de douleur, et demande conseil à un professionnel de santé si tu as un problème de santé ou une blessure.</p>`;
     next = onbEdit ? "Enregistrer" : "C'est parti";
@@ -2162,7 +2211,9 @@ function renderOnb() {
   $("onbNext").disabled = onbStep === 4 && !op.exos.length;
   const nm = $("onbName"); if (nm) { nm.oninput = () => op.name = nm.value.trim(); if (!onbEdit) setTimeout(() => nm.focus(), 250); nm.onkeydown = e => { if (e.key === "Enter") $("onbNext").click(); }; }
   B.querySelectorAll("[data-ok]").forEach(b => b.onclick = () => { const k = b.dataset.ok, lim = k === "weight" ? [30, 250] : [120, 230]; op[k] = Math.min(lim[1], Math.max(lim[0], (op[k] || 0) + +b.dataset.od)); renderOnb(); });
-  B.querySelectorAll("[data-lvl]").forEach(b => b.onclick = () => { op.level = +b.dataset.lvl; renderOnb(); });
+  B.querySelectorAll("[data-lvl]").forEach(b => b.onclick = () => { op.level = +b.dataset.lvl; if (!op.rythmTouched) op.perWeek = 0; renderOnb(); });
+  B.querySelectorAll("[data-pw]").forEach(b => b.onclick = () => { op.perWeek = +b.dataset.pw; op.rythmTouched = true; renderOnb(); });
+  B.querySelectorAll("[data-mn]").forEach(b => b.onclick = () => { op.minutes = +b.dataset.mn; renderOnb(); });
   B.querySelectorAll("[data-goal]").forEach(b => b.onclick = () => { op.goal = b.dataset.goal; renderOnb(); });
   B.querySelectorAll("[data-ex]").forEach(b => b.onclick = () => { const k = b.dataset.ex; op.exos = op.exos.includes(k) ? op.exos.filter(x => x !== k) : [...op.exos, k]; renderOnb(); });
 }
