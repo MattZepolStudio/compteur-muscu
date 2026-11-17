@@ -77,6 +77,13 @@
   .chev{color:#71717a;transition:transform .2s}
   .acc[open] .chev{transform:rotate(180deg)}
   .acc-body{border-top:1px solid #ffffff12}
+  .acc-btn{width:100%;display:flex;align-items:center;gap:10px;padding:13px 12px 13px 14px;color:#d4d4d8;font:inherit;font-size:14px;font-weight:600;text-align:left}
+  .acc-btn:active{background:#ffffff0d}
+  .acc-l{display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .acc-l .ic{color:#4ade80}
+  .acc-sum{flex:1;min-width:0;text-align:right;font-size:12px;font-weight:500;color:#71717a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .params-card{margin:8px 0 4px;background:#ffffff08;border:1px solid #ffffff12}
+  .params-card .line{min-height:56px}
   .line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 8px 7px 14px;min-height:50px}
   .line+.line{border-top:1px solid #ffffff0d}
   .switch{width:48px;height:28px;border:none;border-radius:999px;background:#3f3f46;position:relative;transition:background .2s;margin-right:4px}
@@ -97,9 +104,11 @@
   .go:active{transform:scale(.98);filter:brightness(.95)}
   .big{border:none;border-radius:16px;padding:18px;font-size:19px;font-weight:700;background:var(--acc);color:#04150b;width:100%}
   .ghost{border:1px solid #333743;background:transparent;color:var(--txt);border-radius:12px;padding:10px 14px;font-size:15px}
-  body>.sheet{position:fixed}
-  .sheet{position:absolute;inset:0;background:#000b;backdrop-filter:blur(4px);display:none;align-items:flex-end;z-index:5}
-  .sheet.on{display:flex}
+  .sheet{position:fixed;inset:0;background:#000b;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;z-index:20;
+    visibility:hidden;opacity:0;transition:opacity .22s ease,visibility 0s linear .22s}
+  .sheet.on{visibility:visible;opacity:1;transition:opacity .22s ease}
+  .sheet .sheet-box{transform:translateY(40px);transition:transform .32s cubic-bezier(.2,.9,.25,1);max-height:92dvh;overflow-y:auto;overscroll-behavior:contain}
+  .sheet.on .sheet-box{transform:none}
   .sheet-box{background:#111113;border-top:1px solid #ffffff1a;width:100%;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom));font-size:14px;color:#a1a1aa;line-height:1.5}
   .sheet-box h2{color:#fafafa;font-size:18px;margin-bottom:6px}
   .sheet-box p{margin:8px 0}
@@ -321,18 +330,21 @@
   @media (orientation: landscape) {
     #workout{flex-direction:row}
     #stage{flex:1}
-    .shade{top:0;bottom:0;left:auto;right:0;width:46%;height:auto;background:linear-gradient(90deg,#09090b00,#09090bb8 35%,#09090bf2)}
-    #hud{left:auto;right:0;top:0;bottom:0;width:40%;padding:4vh 3vw 0 2vw;flex-direction:column;justify-content:flex-start;align-items:stretch;gap:1.5vh}
+    #stage{background:#09090b}
+    #stage video,#stage canvas{object-fit:contain;object-position:left center}
+    #stage video.mirror{object-position:right center}
+    .shade{top:0;bottom:0;left:auto;right:0;width:36%;height:auto;background:linear-gradient(90deg,#09090b00,#09090bcc 30%,#09090b)}
+    #hud{left:auto;right:0;top:0;bottom:0;width:34%;padding:4vh 3vw 0 2vw;flex-direction:column;justify-content:flex-start;align-items:stretch;gap:1.5vh}
     .hud-l{align-items:flex-start;gap:1.4vh}
     .pill{font-size:max(13px,2.6vh);padding:.8vh 1.6vh}
     .pill-strong{font-size:max(14px,3vh)}
     #status{font-size:max(18px,6vh);font-weight:800;background:none;border:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0;color:#fafafa;margin-top:1vh}
     #angle{font-size:max(11px,2.2vh)}
     #controls #stopBtn{flex:1!important;max-height:30vh}
-    #count{left:auto;right:0;width:40%;bottom:14vh;font-size:40vh;line-height:.85}
+    #count{left:auto;right:0;width:34%;bottom:14vh;font-size:34vh;line-height:.85}
     #count small{font-size:12vh}
     #count.split{font-size:20vh}
-    #phaseBar{left:auto;right:3vw;width:34%;bottom:5vh;height:1.4vh;min-height:6px}
+    #phaseBar{left:auto;right:2.5vw;width:29%;bottom:5vh;height:1.4vh;min-height:6px}
     #controls{flex-direction:column;width:clamp(84px,13vw,120px);padding:max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) 8px;border-top:none;border-left:1px solid #ffffff0f;gap:6px}
     #controls .gbtn{flex:1!important;flex-direction:column;gap:4px;font-size:12px;padding:6px 4px;white-space:normal;text-align:center;line-height:1.1}
     #controls .gbtn .ic{width:20px;height:20px}
@@ -358,7 +370,7 @@
     .done-foot .go{padding:10px}
     .done-foot .go span{font-size:18px}
     /* accueil : tableau de bord — en-tête pleine largeur, deux colonnes de hauteur égale */
-    #setup{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;column-gap:20px;align-items:stretch;
+    #setup.on{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;column-gap:20px;align-items:stretch;
       padding:max(8px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left))}
     #setup .scroll{display:contents}
     #setup .hero{grid-column:1 / -1;grid-row:1;margin:0 0 8px}
@@ -383,6 +395,11 @@
     #setup .go span{font-size:20px}
     #setup .recap{font-size:12px;padding:4px 12px}
     .hist-wrap{width:100%;max-width:720px;margin:0 auto}
+    .sheet{align-items:center;padding:10px}
+    .sheet .sheet-box{max-width:560px;border-radius:22px;border:1px solid #ffffff1a;padding:14px 16px 14px;max-height:calc(100dvh - 20px)}
+    .sheet .sheet-box h2{font-size:16px}
+    .params-card .line{min-height:46px}
+    .sheet .sheet-box .go{padding:10px;margin-top:8px}
   }
 </style>
 </head>
@@ -431,9 +448,19 @@
       <div class="seg" id="armsSeg"><button data-a="sep">Gauche / Droite</button><button data-a="both">Ensemble</button></div>
     </div>
 
-    <details class="acc">
-      <summary><span><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg> Paramètres</span><svg class="ic sm chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
-      <div class="acc-body">
+    <button class="acc acc-btn" id="paramsBtn"><span class="acc-l"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg> Paramètres</span><span class="acc-sum" id="paramsSum"></span><svg class="ic sm chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="recap" id="recap"></div>
+    <button class="go" id="startBtn"><svg class="ic go-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg><span id="startLbl">Commencer</span></button>
+  </footer>
+
+  <div class="sheet" id="paramsSheet">
+    <div class="sheet-box">
+      <h2>Paramètres</h2>
+      <div class="card params-card">
         <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg> Poids de corps</span>
           <div class="stepper wstep"><button data-w="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><b><span id="v-weight"></span><i id="v-wu">kg</i></b><button data-w="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
         <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Démarrage</span>
@@ -445,15 +472,9 @@
         <div class="line"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg> Mode éco <small class="eco-sub">batterie</small></span>
           <button class="switch" id="ecoBtn" role="switch"><i></i></button></div>
       </div>
-    </details>
+      <button class="go" id="paramsClose"><span>OK</span></button>
     </div>
   </div>
-
-  <footer class="foot">
-    <div class="recap" id="recap"></div>
-    <button class="go" id="startBtn"><svg class="ic go-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg><span id="startLbl">Commencer</span></button>
-  </footer>
-
   <div class="sheet" id="progSheet">
     <div class="sheet-box">
       <h2>Mes programmes</h2>
@@ -470,7 +491,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 18.11 · 00h20</p>
+      <p class="ver">Version 18.11 · 00h50</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -634,6 +655,7 @@ function renderCfg() {
   $("v-rest").textContent = cfg.rest;
   $("v-delay").textContent = cfg.delay;
   $("voiceBtn").classList.toggle("on", cfg.voice);
+  $("paramsSum").textContent = [cfg.trigger === "hand" ? "Main levée" : "Chrono", cfg.facing === "user" ? "Avant" : "Arrière", cfg.weight ? cfg.weight + " kg" : null, cfg.voice ? null : "Muet", cfg.eco ? "Éco" : null].filter(Boolean).join(" · ");
   $("ecoBtn").classList.toggle("on", !!cfg.eco); $("ecoBtn").setAttribute("aria-checked", !!cfg.eco);
   $("voiceBtn").setAttribute("aria-checked", cfg.voice);
   document.querySelectorAll("#exoChips .chip[data-exo]").forEach(b => b.onclick = () => {
@@ -716,6 +738,9 @@ function renderProg() {
     $("recap").innerHTML = `<span><b>${P.length}</b> exos · <b>${tot}</b> reps</span><i class="dot"></i><span>≈ <b>${mins} min</b></span>` + (tonP ? `<i class="dot"></i><span>${IC_KG}<b>${tonP.toLocaleString("fr-FR")}</b> kg</span>` : "");
   }
 }
+$("paramsBtn").onclick = () => $("paramsSheet").classList.add("on");
+$("paramsClose").onclick = () => $("paramsSheet").classList.remove("on");
+$("paramsSheet").onclick = e => { if (e.target.id === "paramsSheet") $("paramsSheet").classList.remove("on"); };
 $("progAdd").onclick = () => { if (cfg.prog.length < 8) { cfg.prog.push(blockOf()); save(); renderCfg(); } };
 renderCfg();
 
@@ -867,7 +892,7 @@ function handStep(ts) {
 function drawPoints(pts, color, clear = true) {
   if (clear) { fitCanvas(); ctx.clearRect(0, 0, canvas.width, canvas.height); }
   const vw = video.videoWidth, vh = video.videoHeight, cw = canvas.width, ch = canvas.height;
-  const s = Math.max(cw / vw, ch / vh), ox = (cw - vw * s) / 2, oy = (ch - vh * s) / 2;
+  const { s, ox, oy } = videoBox(cw, ch, vw, vh);
   ctx.fillStyle = color;
   for (const p of pts) { ctx.beginPath(); ctx.arc(p.x * vw * s + ox, p.y * vh * s + oy, 4 * devicePixelRatio, 0, 7); ctx.fill(); }
 }
@@ -1108,6 +1133,16 @@ function process(res) {
   }
 }
 
+// Placement du squelette : identique à l'affichage de la vidéo
+function videoBox(cw, ch, vw, vh) {
+  if (matchMedia("(orientation: landscape)").matches) {
+    const s = Math.min(cw / vw, ch / vh), w = vw * s;
+    const mirrored = video.classList.contains("mirror");
+    return { s, ox: mirrored ? cw - w : 0, oy: (ch - vh * s) / 2 };   // calée à gauche à l'écran (miroir compris)
+  }
+  const s = Math.max(cw / vw, ch / vh);
+  return { s, ox: (cw - vw * s) / 2, oy: (ch - vh * s) / 2 };
+}
 function fitCanvas() {
   const dpr = Math.min(devicePixelRatio, 2);       // au-delà de 2×, le squelette n'est pas plus net à l'œil
   const w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr);
@@ -1120,7 +1155,7 @@ function draw(lm) {
   if (!lm) return;
   // correspondance object-fit: cover
   const vw = video.videoWidth, vh = video.videoHeight, cw = canvas.width, ch = canvas.height;
-  const s = Math.max(cw / vw, ch / vh), ox = (cw - vw * s) / 2, oy = (ch - vh * s) / 2;
+  const { s, ox, oy } = videoBox(cw, ch, vw, vh);
   const P = p => [p.x * vw * s + ox, p.y * vh * s + oy];
   const flash = performance.now() < flashUntil;
   ctx.lineWidth = (flash ? 6 : 4) * devicePixelRatio; ctx.strokeStyle = flash ? "#fb923ce6" : "#3ddc84cc"; ctx.fillStyle = flash ? "#fdba74" : "#fff";
