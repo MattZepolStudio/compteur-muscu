@@ -28,7 +28,7 @@
   .ic.xs{width:13px;height:13px}
   .ic.sm{width:17px;height:17px}
   #setup .scroll{flex:1;min-height:0;overflow-y:auto;padding:max(14px, env(safe-area-inset-top)) 16px 4px;display:flex;flex-direction:column;justify-content:space-between;gap:clamp(10px, 1.8dvh, 18px)}
-  #setup .main-card{flex:1 1 auto;min-height:230px;max-height:290px;justify-content:center}
+  #setup .main-card{flex:1 1 auto;min-height:200px;max-height:290px;justify-content:center}
   #setup .scroll>*{flex-shrink:0}
   .glass{background:linear-gradient(160deg,#ffffff0d,#ffffff03);border:1px solid #ffffff1a}
   .hero{display:flex;align-items:center;gap:12px;margin-bottom:2px}
@@ -103,6 +103,63 @@
   .sheet-box b{color:#fafafa}
   .sheet-box .go{margin-top:12px;padding:13px}
   .sheet-box .go span{font-size:20px}
+  /* Programme */
+  .prog{border-radius:16px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff0b,#ffffff02);padding:8px 8px 8px 14px;display:flex;flex-direction:column;gap:7px}
+  .prog-head{display:flex;align-items:center;justify-content:space-between}
+  .prog-add{display:flex;align-items:center;gap:5px;border:1px solid #22c55e59;background:#22c55e1a;color:#4ade80;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700}
+  .prog-list{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-right:6px}
+  .prog-list::-webkit-scrollbar{display:none}
+  .prog-hint{font-size:12px;color:#71717a;padding:2px 0 3px}
+  .pchip{flex:none;display:flex;align-items:center;gap:6px;border:1px solid #ffffff1a;background:#ffffff0a;border-radius:10px;padding:5px 4px 5px 8px;font-size:12.5px;color:#e4e4e7;white-space:nowrap}
+  .pchip i{font-style:normal;font-family:"Barlow Condensed",Inter,sans-serif;font-weight:800;color:#4ade80;font-size:14px}
+  .pchip small{color:#a1a1aa;font-size:12px}
+  .pchip button{width:22px;height:22px;border:none;border-radius:6px;background:transparent;color:#71717a;display:grid;place-items:center;padding:0}
+  .pchip button .ic{width:14px;height:14px}
+  .pchip.arrow{border:none;background:none;padding:0;color:#52525b}
+  /* Historique */
+  #hist{background:radial-gradient(120% 60% at 50% -5%,#14281d 0%,#09090b 55%);font-family:Inter,system-ui,sans-serif}
+  .hist-wrap{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:12px;padding:max(14px, env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom))}
+  .hist-wrap>*{flex-shrink:0}
+  .hist-wrap .stats{max-width:none}
+  .hcard{border-radius:18px;border:1px solid #ffffff1a;background:linear-gradient(160deg,#ffffff0d,#ffffff02);padding:12px 14px}
+  .hc-title{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#71717a;margin-bottom:10px}
+  .hc-title span{margin-left:auto;letter-spacing:.04em;text-transform:none;font-weight:500;color:#52525b}
+  .recs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+  .rec b{display:block;font-family:"Barlow Condensed",Inter,sans-serif;font-size:36px;font-weight:800;line-height:1;color:#fafafa}
+  .rec span{font-size:12px;color:#a1a1aa}
+  .rec.none b{color:#3f3f46}
+  #histChart svg{width:100%;height:auto;display:block}
+  .legend{display:flex;gap:12px;justify-content:center;margin-top:8px;font-size:11.5px;color:#a1a1aa}
+  .legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+  .empty{font-size:13px;color:#71717a;text-align:center;padding:14px 0}
+  .sess{border-radius:16px;border:1px solid #ffffff14;background:#ffffff06;padding:11px 14px;display:flex;flex-direction:column;gap:4px}
+  .sess+.sess{margin-top:8px}
+  .sess-top{display:flex;justify-content:space-between;font-size:13px;color:#a1a1aa}
+  .sess-top b{color:#fafafa;font-weight:600}
+  .sess-exos{display:flex;flex-wrap:wrap;gap:6px}
+  .sess-exos span{font-size:12.5px;color:#d4d4d8;background:#ffffff0d;border-radius:8px;padding:3px 8px}
+  .sess-exos span b{font-family:"Barlow Condensed",Inter,sans-serif;font-size:15px;font-weight:800;margin-left:3px}
+  #histClear{margin-top:6px}
+  .recbadges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .recbadges:empty{display:none}
+  .recbadges span{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:#fde68a;background:#f59e0b1f;border:1px solid #f59e0b55;border-radius:999px;padding:5px 11px}
+  .recbadges .ic{width:14px;height:14px}
+  .hist-link{width:100%;max-width:420px;margin:0 auto 8px}
+  /* compactage accueil */
+  .exo{padding:9px 9px 8px;gap:1px;border-radius:15px}
+  .exo-ic{width:28px;height:28px;border-radius:9px;margin-bottom:5px}
+  .exo-ic .ic{width:17px;height:17px}
+  .exo small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  #setup .main-card{flex:1 0 auto;min-height:0;max-height:260px;padding:12px}
+  .mini{padding:7px 10px;gap:4px}
+  .mini .stepper button{width:28px;height:28px}
+  .mini .stepper b{font-size:22px}
+  .prog{padding:7px 7px 7px 14px;gap:6px}
+  .prog-head{gap:8px}
+  .prog-hint{flex:1;font-size:12px;color:#71717a;padding:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .acc summary{padding:11px 14px}
+  .ver{font-size:11.5px;color:#52525b;text-align:center}
+  #setup .scroll{gap:clamp(8px, 1.4dvh, 16px)}
   /* Séance */
   #workout{position:relative;background:#09090b;font-family:Inter,system-ui,sans-serif}
   #stage{position:relative;flex:1;min-height:0;background:#000;overflow:hidden}
@@ -184,13 +241,14 @@
   <div class="scroll">
     <header class="hero">
       <div class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-      <div class="htxt"><h1>Compteur de muscu</h1><p>Comptage par caméra · v17.11-18h30</p></div>
+      <div class="htxt"><h1>Compteur de muscu</h1><p>Comptage par caméra</p></div>
+      <button class="help" id="histBtn" aria-label="Historique"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></button>
       <button class="help" id="tipsBtn" aria-label="Conseils"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
     </header>
 
     <div class="exos" id="exoChips">
-      <button class="chip exo" data-exo="pompes"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg></span><b>Pompes</b><small>Pectoraux · Triceps</small></button>
-      <button class="chip exo" data-exo="squats"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></svg></span><b>Squats</b><small>Quadriceps · Fessiers</small></button>
+      <button class="chip exo" data-exo="pompes"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg></span><b>Pompes</b><small>Pecs · Triceps</small></button>
+      <button class="chip exo" data-exo="squats"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></svg></span><b>Squats</b><small>Quadris · Fessiers</small></button>
       <button class="chip exo" data-exo="curls"><span class="exo-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg></span><b>Curls</b><small>Biceps</small></button>
     </div>
 
@@ -204,6 +262,12 @@
         <div class="mc-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Répétitions</div>
         <div class="stepper bigstep"><b id="v-reps"></b><div class="pm"><button data-k="reps" data-d="-1" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button data-k="reps" data-d="1" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
       </div>
+    </div>
+
+    <div class="prog" id="progCard">
+      <div class="prog-head"><span class="pl"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg> Programme</span><span class="prog-hint" id="progHint">Enchaîne des exercices</span>
+        <button class="prog-add" id="progAdd"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Ajouter</button></div>
+      <div class="prog-list" id="progList"></div>
     </div>
 
     <div class="mini-row">
@@ -231,7 +295,7 @@
 
   <footer class="foot">
     <div class="recap" id="recap"></div>
-    <button class="go" id="startBtn"><svg class="ic go-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg><span>Commencer</span></button>
+    <button class="go" id="startBtn"><svg class="ic go-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg><span id="startLbl">Commencer</span></button>
   </footer>
 
   <div class="sheet" id="tipsSheet">
@@ -241,6 +305,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
+      <p class="ver">Version 17.11 · 19h00</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -283,11 +348,29 @@
     <button id="stopBtn" class="gbtn gbtn-red"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>Arrêter</button>
   </div>
 </section>
+<section id="hist" class="screen">
+  <div class="hist-wrap">
+    <header class="hero">
+      <button class="help" id="histBack" aria-label="Retour"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button>
+      <div class="htxt"><h1>Historique</h1><p id="histSub"></p></div>
+    </header>
+    <div class="stats">
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg> Séances</div><div class="stat-num" id="hsCount">0</div><div class="stat-unit">au total</div></div>
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> 7 jours</div><div class="stat-num" id="hsWeek">0</div><div class="stat-unit">répétitions</div></div>
+      <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 7 jours</div><div class="stat-num" id="hsTime">0</div><div class="stat-unit">minutes</div></div>
+    </div>
+    <div class="hcard"><div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> Records <span>meilleure série</span></div><div class="recs" id="histRecs"></div></div>
+    <div class="hcard"><div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Dernières séances <span>répétitions</span></div><div id="histChart"></div></div>
+    <div id="histList"></div>
+    <button class="gbtn gbtn-red" id="histClear"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg><span>Effacer l'historique</span></button>
+  </div>
+</section>
 <section id="done" class="screen">
   <div class="done-wrap">
     <div class="trophy"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
     <h1 class="done-title">Séance terminée</h1>
     <p class="done-sub" id="doneSub"></p>
+    <div class="recbadges" id="doneRecs"></div>
     <div class="stats">
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Total</div><div class="stat-num" id="statTotal">0</div><div class="stat-unit" id="statUnit">répétitions</div></div>
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg> Séries</div><div class="stat-num" id="statSets">0</div><div class="stat-unit">validées</div></div>
@@ -296,6 +379,7 @@
     <div id="summary"></div>
   </div>
   <div class="done-foot">
+    <button class="gbtn hist-link" id="doneHist"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>Voir l'historique</button>
     <button class="go" id="againBtn"><svg class="ic go-ic2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span>Nouvelle séance</span></button>
   </div>
 </section>
@@ -315,7 +399,7 @@ const EXOS = {
     joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆",
     tip: "Pose le téléphone à 2–3 m, <b>de profil</b> (idéal) ou <b>face à toi</b>, à hauteur de taille si possible (sur une chaise, contre un mur). Tout ton corps, des épaules aux pieds, doit être visible." }
 };
-const DEF = { arms: "sep", trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
+const DEF = { prog: [], arms: "sep", trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
 let cfg = DEF;
 try { cfg = { ...DEF, ...JSON.parse(localStorage.getItem("pompesCfg") || "{}") }; } catch {}
 const save = () => { try { localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {} };
@@ -345,6 +429,7 @@ document.querySelectorAll("#armsSeg button").forEach(b => b.classList.toggle("on
   const totAll = perArm ? tot * 2 : tot;
   const mins = Math.max(1, Math.round((totAll * 2.5 + (cfg.sets - 1) * cfg.rest + cfg.delay) / 60));
   $("recap").innerHTML = `<span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><b>${totAll}</b> ${EXOS[cfg.exo].unit}${perArm ? " (G+D)" : ""}</span><i class="dot"></i><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>≈ <b>${mins} min</b></span>`;
+  renderProg();
 }
 document.querySelectorAll(".stepper button[data-k]").forEach(b => b.onclick = () => {
   const k = b.dataset.k, [mn, mx] = LIM[k];
@@ -354,6 +439,29 @@ $("voiceBtn").onclick = () => { cfg.voice = !cfg.voice; save(); renderCfg(); };
 document.querySelectorAll("#armsSeg button").forEach(b => b.onclick = () => { cfg.arms = b.dataset.a; save(); renderCfg(); });
 document.querySelectorAll("#trigSeg button").forEach(b => b.onclick = () => { cfg.trigger = b.dataset.t; save(); renderCfg(); });
 document.querySelectorAll("#camSeg button").forEach(b => b.onclick = () => { cfg.facing = b.dataset.f; save(); renderCfg(); });
+/* ---------- Programme (exercices enchaînés) ---------- */
+function exoName(e) { return { pompes: "Pompes", squats: "Squats", curls: "Curls" }[e] || e; }
+function blockOf() { return { exo: cfg.exo, reps: cfg.reps, sets: cfg.sets, arms: cfg.arms }; }
+function blockReps(b) { return b.reps * b.sets * (b.exo === "curls" && b.arms === "sep" ? 2 : 1); }
+const IC_X = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+function renderProg() {
+  if (!Array.isArray(cfg.prog)) cfg.prog = [];
+  const P = cfg.prog;
+  $("progHint").style.display = P.length ? "none" : "";
+  $("progList").style.display = P.length ? "" : "none";
+  $("progList").innerHTML = P.length
+    ? P.map((b, i) => (i ? '<span class="pchip arrow">›</span>' : "") +
+        `<span class="pchip"><i>${i + 1}</i>${exoName(b.exo)} <small>${b.sets}×${b.reps}${b.exo === "curls" && b.arms === "sep" ? "/bras" : ""}</small><button data-rm="${i}" aria-label="Retirer">${IC_X}</button></span>`).join("")
+    : "";
+  $("progList").querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { cfg.prog.splice(+b.dataset.rm, 1); save(); renderCfg(); });
+  $("startLbl").textContent = P.length ? "Démarrer" : "Commencer";
+  if (P.length) {
+    const tot = P.reduce((a, b) => a + blockReps(b), 0), nSets = P.reduce((a, b) => a + b.sets, 0);
+    const mins = Math.max(1, Math.round((tot * 2.5 + (nSets - 1) * cfg.rest + cfg.delay) / 60));
+    $("recap").innerHTML = `<span><b>${P.length}</b> exercices · <b>${tot}</b> reps</span><i class="dot"></i><span>≈ <b>${mins} min</b></span>`;
+  }
+}
+$("progAdd").onclick = () => { if (cfg.prog.length < 8) { cfg.prog.push(blockOf()); save(); renderCfg(); } };
 renderCfg();
 
 const show = id => document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
@@ -524,7 +632,7 @@ function addArmRep(k, auto = true) {
   say(left <= 3 ? `${n} ${name}. Encore ${left}` : `${n} ${name}`);
   if (!auto) beep(700, 0.08, 0.2);
 }
-function updateSet() { $("setInfo").textContent = `Série ${setIdx} / ${cfg.sets}`; }
+function updateSet() { $("setInfo").textContent = `${exoName(cfg.exo)} · Série ${setIdx}/${cfg.sets}${runList.length > 1 ? ` · Ex. ${blockIdx + 1}/${runList.length}` : ""}`; }
 
 function addRep(auto = true) {
   if (isSplit()) return addArmRep(lastArm, auto);
@@ -728,15 +836,24 @@ function loop() {
 }
 
 /* ---------- Séries et pauses ---------- */
+let runList = [], blockIdx = 0, baseCfg = null, recs = {};
+function applyBlock(b) { cfg.exo = b.exo; cfg.reps = b.reps; cfg.sets = b.sets; cfg.arms = b.arms; }
+function pushSet() {
+  const best = isSplit() ? Math.max(armReps.L, armReps.R) : reps;
+  history.push({ exo: cfg.exo, n: reps, best, txt: isSplit() ? `G ${armReps.L} · D ${armReps.R}` : `${reps}` });
+  if (best > 0 && recs[cfg.exo] > 0 && best > recs[cfg.exo]) setTimeout(() => say("Nouveau record !", false), 1200);
+  recs[cfg.exo] = Math.max(recs[cfg.exo] || 0, best);
+}
 function finishSet() {
-  history.push(isSplit() ? { n: reps, txt: `G ${armReps.L} · D ${armReps.R}` } : { n: reps, txt: `${reps}` });
-  if (setIdx >= cfg.sets) { endWorkout(); return; }
+  pushSet();
+  if (setIdx >= cfg.sets && blockIdx >= runList.length - 1) { endWorkout(); return; }
   startRest();
 }
 function startRest() {
   restLeft = cfg.rest; restTotal = cfg.rest; $("rest").classList.add("on");
-  const perArm = isSplit() ? " / bras" : "";
-  $("restNext").innerHTML = `<div><div class="nc-k">Prochaine série</div><div class="nc-v">${EXOS[cfg.exo].unit.charAt(0).toUpperCase() + EXOS[cfg.exo].unit.slice(1)} · ${cfg.reps} reps${perArm}</div></div><div class="nc-n">${setIdx + 1}<small>/${cfg.sets}</small></div>`;
+  const newBlock = setIdx >= cfg.sets, nb = newBlock ? runList[blockIdx + 1] : blockOf();
+  const perArm = nb.exo === "curls" && nb.arms === "sep" ? " / bras" : "";
+  $("restNext").innerHTML = `<div><div class="nc-k">${newBlock ? "Exercice suivant" : "Prochaine série"}</div><div class="nc-v">${exoName(nb.exo)} · ${nb.reps} reps${perArm}</div></div><div class="nc-n">${newBlock ? 1 : setIdx + 1}<small>/${nb.sets}</small></div>`;
   renderRest();
   restTimer = setInterval(() => {
     restLeft--; renderRest();
@@ -744,7 +861,7 @@ function startRest() {
     if (restLeft > 0 && restLeft <= 3) beep(880, 0.12);
     if (restLeft <= 0) nextSet();
   }, 1000);
-  setTimeout(() => say(`Pause, ${cfg.rest} secondes`, false), 900);
+  setTimeout(() => say(`Pause, ${cfg.rest} secondes${newBlock ? ". Ensuite : " + exoName(nb.exo) : ""}`, false), 900);
 }
 function renderRest() {
   const m = Math.floor(restLeft / 60), s = restLeft % 60;
@@ -754,8 +871,11 @@ function renderRest() {
 }
 function nextSet() {
   clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
-  setIdx++; reps = 0; armReps = { L: 0, R: 0 }; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null; lastCd = -1;
-  updateCount(); updateSet(); beep(1200, 0.35); say(`Série ${setIdx}, mets-toi en position`);
+  const newBlock = setIdx >= cfg.sets;
+  if (newBlock) { blockIdx++; applyBlock(runList[blockIdx]); setIdx = 1; } else setIdx++;
+  reps = 0; armReps = { L: 0, R: 0 }; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null; lastCd = -1;
+  updateCount(); updateSet(); beep(1200, 0.35);
+  say(newBlock ? `${exoName(cfg.exo)}, série 1, mets-toi en position` : `Série ${setIdx}, mets-toi en position`);
 }
 $("restSkip").onclick = nextSet;
 $("restPlus").onclick = () => { restLeft += 15; renderRest(); };
@@ -767,24 +887,95 @@ $("minusBtn").onclick = () => {
   if (reps > 0) { reps--; updateCount(); beep(400, 0.08, 0.2); }
 };
 $("endSetBtn").onclick = () => { say("Série terminée"); finishSet(); };
-$("stopBtn").onclick = () => { if (reps > 0) history.push(isSplit() ? { n: reps, txt: `G ${armReps.L} · D ${armReps.R}` } : { n: reps, txt: `${reps}` }); endWorkout(); };
+$("stopBtn").onclick = () => { if (reps > 0 && !restTimer) pushSet(); endWorkout(); };
 
 function endWorkout() {
   running = false; waitingHand = false; clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
   stopCamera(); try { wakeLock?.release(); } catch {}
   const total = history.reduce((a, b) => a + b.n, 0);
-  $("summary").innerHTML = history.map((r, i) => `<div class="sum-row"><span>Série ${i + 1}</span><b>${r.txt}</b></div>`).join("");
-  $("statTotal").textContent = total; $("statUnit").textContent = EXOS[cfg.exo].unit;
+  const exos = [...new Set(history.map(h => h.exo))];
+  const unit = exos.length === 1 ? EXOS[exos[0]].unit : "répétitions";
+  const cnt = {};
+  $("summary").innerHTML = history.map(r => { cnt[r.exo] = (cnt[r.exo] || 0) + 1; return `<div class="sum-row"><span>${exos.length > 1 ? exoName(r.exo) + " · " : ""}Série ${cnt[r.exo]}</span><b>${r.txt}</b></div>`; }).join("");
+  $("statTotal").textContent = total; $("statUnit").textContent = unit;
   $("statSets").textContent = history.length;
-  $("statTime").textContent = workoutStart ? Math.max(1, Math.round((Date.now() - workoutStart) / 60000)) : 0;
+  const dur = workoutStart ? Date.now() - workoutStart : 0;
+  $("statTime").textContent = dur ? Math.max(1, Math.round(dur / 60000)) : 0;
   $("doneSub").textContent = total ? "Beau travail, continue comme ça." : "";
-  say(`Bravo ! ${total} ${EXOS[cfg.exo].unit} au total`);
+  // records battus pendant la séance, puis sauvegarde
+  const sessions = loadSessions(), before = computeRecords(sessions);
+  const IC_T = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
+  $("doneRecs").innerHTML = exos.map(e => { const b = Math.max(...history.filter(h => h.exo === e).map(h => h.best)); return b > 0 && b > (before[e] || 0) ? `<span>${IC_T}Record ${exoName(e)} : ${b}</span>` : ""; }).join("");
+  if (total > 0) { sessions.push({ t: workoutStart || Date.now(), dur, sets: history.map(h => ({ exo: h.exo, n: h.n, best: h.best, txt: h.txt })) }); saveSessions(sessions); }
+  say(`Bravo ! ${total} ${unit} au total`);
+  if (baseCfg) { Object.assign(cfg, baseCfg); baseCfg = null; renderCfg(); }
   show("done");
 }
+
+
+/* ---------- Historique ---------- */
+const HKEY = "muscuHistory";
+function loadSessions() { try { return JSON.parse(localStorage.getItem(HKEY) || "[]"); } catch { return []; } }
+function saveSessions(a) { try { localStorage.setItem(HKEY, JSON.stringify(a.slice(-300))); } catch {} }
+function computeRecords(sessions) {
+  const r = {};
+  for (const s of sessions) for (const x of s.sets) r[x.exo] = Math.max(r[x.exo] || 0, x.best || 0);
+  return r;
+}
+const EXO_COL = { pompes: "#4ade80", squats: "#22d3ee", curls: "#a78bfa" };
+function renderHist() {
+  const S = loadSessions(), now = Date.now(), wk = S.filter(s => now - s.t < 7 * 864e5);
+  const sum = a => a.reduce((t, s) => t + s.sets.reduce((u, x) => u + x.n, 0), 0);
+  $("hsCount").textContent = S.length;
+  $("hsWeek").textContent = sum(wk);
+  $("hsTime").textContent = Math.round(wk.reduce((t, s) => t + (s.dur || 0), 0) / 60000);
+  $("histSub").textContent = S.length ? `Depuis le ${new Date(S[0].t).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}` : "Aucune séance pour l'instant";
+  const R = computeRecords(S);
+  $("histRecs").innerHTML = ["pompes", "squats", "curls"].map(e => `<div class="rec ${R[e] ? "" : "none"}"><b>${R[e] || "–"}</b><span>${exoName(e)}</span></div>`).join("");
+  // graphique : répétitions des 10 dernières séances, empilées par exercice
+  const last = S.slice(-10);
+  if (!last.length) $("histChart").innerHTML = '<div class="empty">Termine une séance pour voir ta progression.</div>';
+  else {
+    const W = 320, H = 120, pad = 18, bw = Math.min(22, (W - 20) / last.length - 8);
+    const tots = last.map(s => s.sets.reduce((u, x) => u + x.n, 0)), mx = Math.max(...tots, 1);
+    let g = "";
+    last.forEach((s, i) => {
+      const x = 10 + i * ((W - 20) / last.length) + ((W - 20) / last.length - bw) / 2;
+      let y = H - pad;
+      for (const e of ["pompes", "squats", "curls"]) {
+        const n = s.sets.filter(z => z.exo === e).reduce((u, z) => u + z.n, 0);
+        if (!n) continue;
+        const h = n / mx * (H - pad - 14); y -= h;
+        g += `<rect x="${x}" y="${y}" width="${bw}" height="${Math.max(h, 1)}" rx="3" fill="${EXO_COL[e]}"/>`;
+      }
+      g += `<text x="${x + bw / 2}" y="${y - 4}" text-anchor="middle" font-size="10" fill="#a1a1aa" font-weight="600">${tots[i]}</text>`;
+      g += `<text x="${x + bw / 2}" y="${H - 4}" text-anchor="middle" font-size="9" fill="#52525b">${new Date(s.t).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })}</text>`;
+    });
+    $("histChart").innerHTML = `<svg viewBox="0 0 ${W} ${H}">${g}</svg><div class="legend">${["pompes", "squats", "curls"].map(e => `<span><i style="background:${EXO_COL[e]}"></i>${exoName(e)}</span>`).join("")}</div>`;
+  }
+  $("histList").innerHTML = S.slice().reverse().slice(0, 30).map(s => {
+    const per = {}; for (const x of s.sets) per[x.exo] = (per[x.exo] || 0) + x.n;
+    const d = new Date(s.t);
+    return `<div class="sess"><div class="sess-top"><b>${d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })} · ${d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</b><span>${Math.max(1, Math.round((s.dur || 0) / 60000))} min · ${s.sets.length} séries</span></div><div class="sess-exos">${Object.entries(per).map(([e, n]) => `<span>${exoName(e)}<b>${n}</b></span>`).join("")}</div></div>`;
+  }).join("");
+  $("histClear").style.display = S.length ? "" : "none";
+  $("histClear").querySelector("span").textContent = "Effacer l'historique"; clearArmed = false;
+}
+let clearArmed = false;
+$("histClear").onclick = () => {
+  if (!clearArmed) { clearArmed = true; $("histClear").querySelector("span").textContent = "Appuie encore pour confirmer"; return; }
+  saveSessions([]); try { localStorage.removeItem(HKEY); } catch {} renderHist();
+};
+$("histBtn").onclick = () => { renderHist(); show("hist"); };
+$("histBack").onclick = () => show("setup");
+$("doneHist").onclick = () => { renderHist(); show("hist"); };
 
 /* ---------- Démarrage ---------- */
 $("startBtn").onclick = async () => {
   beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
+  baseCfg = { ...cfg, prog: cfg.prog.map(b => ({ ...b })) };
+  runList = cfg.prog.length ? cfg.prog.map(b => ({ ...b })) : [blockOf()];
+  blockIdx = 0; applyBlock(runList[0]); recs = computeRecords(loadSessions());
   reps = 0; armReps = { L: 0, R: 0 }; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null;
   updateCount(); updateSet(); show("workout"); workoutStart = Date.now();
   $("loading").style.display = "flex";
