@@ -97,6 +97,7 @@
   .go:active{transform:scale(.98);filter:brightness(.95)}
   .big{border:none;border-radius:16px;padding:18px;font-size:19px;font-weight:700;background:var(--acc);color:#04150b;width:100%}
   .ghost{border:1px solid #333743;background:transparent;color:var(--txt);border-radius:12px;padding:10px 14px;font-size:15px}
+  body>.sheet{position:fixed}
   .sheet{position:absolute;inset:0;background:#000b;backdrop-filter:blur(4px);display:none;align-items:flex-end;z-index:5}
   .sheet.on{display:flex}
   .sheet-box{background:#111113;border-top:1px solid #ffffff1a;width:100%;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom));font-size:14px;color:#a1a1aa;line-height:1.5}
@@ -230,6 +231,11 @@
   .hint{font-size:12px;color:#71717a;text-align:center;max-width:380px}
   .hint:empty{display:none}
   .eco-sub{font-size:11px;color:#71717a;margin-left:2px}
+  .hero{gap:9px}
+  .hero .help{width:36px;height:36px;flex:none}
+  .hero .help .ic{width:18px;height:18px}
+  .htxt h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px}
+  .htxt p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   /* Séance */
   #workout{position:relative;background:#09090b;font-family:Inter,system-ui,sans-serif}
   #stage{position:relative;flex:1;min-height:0;background:#000;overflow:hidden}
@@ -325,7 +331,7 @@
   <div class="scroll">
     <header class="hero">
       <div class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-      <div class="htxt"><h1>Compteur de muscu</h1><p>Comptage par caméra</p></div>
+      <div class="htxt"><h1>Compteur muscu</h1><p>Par caméra</p></div>
       <button class="help castbtn-h" data-cast aria-label="Caster sur la TV" hidden><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/><path d="M2 12a9 9 0 0 1 8 8"/><path d="M2 16a5 5 0 0 1 4 4"/><line x1="2" x2="2.01" y1="20" y2="20"/></svg></button>
       <button class="help" id="histBtn" aria-label="Historique"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></button>
       <button class="help" id="tipsBtn" aria-label="Conseils"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
@@ -394,6 +400,16 @@
       <button class="gbtn" id="progClose" style="width:100%;margin-top:12px">Fermer</button>
     </div>
   </div>
+  <div class="sheet" id="castSheet">
+    <div class="sheet-box">
+      <h2>Caster sur la TV</h2>
+      <p id="castWhy"></p>
+      <p><b>Solution 1 · depuis Chrome :</b> ouvre <b>mattzepolstudio.github.io/compteur-muscu</b> dans un onglet Chrome (pas l'appli installée), puis menu ⋮ → <b>Caster…</b> → ton Chromecast.</p>
+      <p><b>Solution 2 · recopie de l'écran :</b> descends le volet des réglages rapides → <b>Caster l'écran</b> (ou Smart View) → ton Chromecast. Le comptage continue normalement.</p>
+      <p class="ver" id="castErr"></p>
+      <button class="go" id="castClose"><span>OK</span></button>
+    </div>
+  </div>
   <div class="sheet" id="tipsSheet">
     <div class="sheet-box">
       <h2>Conseils</h2>
@@ -401,7 +417,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 17.11 · 23h00</p>
+      <p class="ver">Version 17.11 · 23h15</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -702,10 +718,24 @@ document.querySelectorAll("[data-cast]").forEach(b => b.onclick = async () => {
   if (castConn && castConn.state !== "terminated") {        // déjà connecté : appui = arrêter de caster
     try { castConn.terminate(); } catch {} castConn = null; setCastUI(""); return;
   }
-  if (!castReq) return;
+  if (!castReq) return castHelp("Ce navigateur ne sait pas envoyer une page vers un Chromecast.", "API Presentation absente");
   setCastUI("wait");
-  try { useConn(await castReq.start()); } catch { setCastUI(""); }
+  try { useConn(await castReq.start()); }
+  catch (e) {
+    setCastUI("");
+    if (e?.name === "AbortError") return;           // fenêtre de choix fermée par l'utilisateur
+    castHelp(e?.name === "NotFoundError" ? "Aucun Chromecast n'a été trouvé par l'appli. Vérifie que le téléphone et le Chromecast sont sur le même Wi-Fi."
+      : "Le cast direct de la vue TV n'est pas disponible ici (c'est souvent le cas depuis l'appli installée).", `${e?.name || "Erreur"} : ${e?.message || ""}`);
+  }
 });
+function castHelp(why, err) {
+  $("castWhy").textContent = why; $("castErr").textContent = err ? "Détail technique : " + err : "";
+  // la feuille est dans l'écran d'accueil : on l'affiche par-dessus l'écran courant
+  const sh = $("castSheet"); if (sh.parentElement !== document.body) document.body.appendChild(sh);
+  sh.classList.add("on");
+}
+$("castClose").onclick = () => $("castSheet").classList.remove("on");
+$("castSheet").onclick = e => { if (e.target.id === "castSheet") $("castSheet").classList.remove("on"); };
 
 /* ---------- Son et voix ---------- */
 let actx;
