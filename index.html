@@ -94,7 +94,7 @@
   <div class="chips" id="exoChips">
     <button class="chip" data-exo="pompes">Pompes</button>
     <button class="chip" data-exo="squats">Squats</button>
-    <button class="chip soon" disabled>Curls <em>bientôt</em></button>
+    <button class="chip" data-exo="curls">Curls</button>
   </div>
 
   <div class="label">Séance</div>
@@ -177,6 +177,9 @@ const EXOS = {
   pompes: { unit: "pompes", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 160, angDown: 95, drop: 0.4, minRep: 300, minGap: 500,
     joint: "Coude", ready: "Bras tendus, ne bouge plus…", hidden: "Bras et épaules non visibles", push: "Pousse ⬆",
     tip: "Pose le téléphone au sol à 1,5–2 m, <b>de profil</b> (idéal) ou <b>face à toi</b>. Épaules, coudes et mains doivent être visibles." },
+  curls: { unit: "curls", joints: [[11,13,15],[12,14,16]], top: [11,12], bottom: [15,16], angUp: 145, angDown: 65, drop: 0.6, minRep: 300, minGap: 600, perSide: true,
+    joint: "Coude", ready: "Bras le long du corps, ne bouge plus…", hidden: "Bras non visibles : recule un peu", go: "Monte ⬆", push: "Redescends ⬇",
+    tip: "Pose le téléphone à 1,5–2 m, <b>face à toi</b> ou <b>de profil</b>, à hauteur de poitrine si possible. Le haut du corps, des épaules aux mains, doit être visible. Les curls alternés comptent un curl par bras." },
   squats: { unit: "squats", joints: [[23,25,27],[24,26,28]], top: [23,24], bottom: [27,28], angUp: 160, angDown: 105, drop: 0.3, minRep: 500, minGap: 900,
     joint: "Genou", ready: "Debout, ne bouge plus…", hidden: "Jambes non visibles : recule un peu", push: "Remonte ⬆",
     tip: "Pose le téléphone à 2–3 m, <b>de profil</b> (idéal) ou <b>face à toi</b>, à hauteur de taille si possible (sur une chaise, contre un mur). Tout ton corps, des épaules aux pieds, doit être visible." }
@@ -403,9 +406,20 @@ function process(res) {
   const ar = video.videoWidth / video.videoHeight || 1;
   const X = EXOS[cfg.exo];
   const MINV = 0.6;                              // points peu fiables ignorés
-  const sides = X.joints.map(ix => ({ ix, v: vis(...ix.map(i => lm[i])) })).sort((a, b) => b.v - a.v);
+  let sides = X.joints.map(ix => ({ ix, v: vis(...ix.map(i => lm[i])) })).sort((a, b) => b.v - a.v);
+  if (X.perSide) {                               // curls : le bras le plus plié parmi les bras visibles
+    const ar0 = video.videoWidth / video.videoHeight || 1;
+    const ok = sides.filter(sd => sd.v >= 0.6).map(sd => ({ ...sd, a: angle(...sd.ix.map(i => ({ x: lm[i].x * ar0, y: lm[i].y }))) }));
+    if (ok.length) sides = ok.sort((a, b) => a.a - b.a);
+  }
   const goodY = ids => { const ok = ids.map(i => lm[i]).filter(q => (q.visibility ?? 0) >= MINV); return ok.length ? ok.reduce((t, q) => t + q.y, 0) / ok.length : null; };
-  const shY = goodY(X.top), wrY = goodY(X.bottom);
+  let shY = goodY(X.top), wrY = goodY(X.bottom);
+  if (X.perSide) {                               // curls : on suit le bras le plus haut (marche aussi en alterné)
+    const ds = [[X.top[0], X.bottom[0]], [X.top[1], X.bottom[1]]]
+      .filter(([t, b]) => (lm[t].visibility ?? 0) >= MINV && (lm[b].visibility ?? 0) >= MINV)
+      .map(([t, b]) => ({ t: lm[t].y, b: lm[b].y })).sort((a, b) => (a.b - a.t) - (b.b - b.t));
+    if (ds.length) { shY = ds[0].t; wrY = ds[0].b; } else shY = wrY = null;
+  }
   const angOk = sides[0].v >= MINV, hOk = shY != null && wrY != null;
   if (!angOk && !hOk) { setStatus(X.hidden); $("angle").textContent = ""; return; }   // on garde l'état, on ne compte rien
 
@@ -462,7 +476,7 @@ function process(res) {
   const wasDown = phase === "down";
   phase = (det.A.phase === "down" || det.H.phase === "down") ? "down" : "up";
   if (!wasDown && phase === "down") beep(520, 0.05, 0.12);
-  setStatus(phase === "up" ? "Descends ⬇" : X.push);
+  setStatus(phase === "up" ? (X.go || "Descends ⬇") : X.push);
   if ((doneA || doneH) && now - lastRepAt >= X.minGap) {
     lastRepAt = now; det.A.phase = det.H.phase = phase = "up"; det.A.hi = det.H.hi = 0;
     addRep();
