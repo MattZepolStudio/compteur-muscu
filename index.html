@@ -888,7 +888,7 @@
       <p><b>Démarrage « Main » :</b> montre ta main ouverte face à l'écran, 5 doigts écartés vers le haut, assez près de la caméra, et garde-la immobile un peu plus d'une seconde. Le délai de départ démarre ensuite. Le même geste pendant une pause lance la série suivante.</p>
       <p class="disclaimer">Repères généraux inspirés des recommandations de l’ACSM (American College of Sports Medicine). Ils ne remplacent ni un coach ni un avis médical : arrête-toi en cas de douleur, et demande conseil à un professionnel de santé si tu as un problème de santé ou une blessure.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 18.11 · 05h00</p>
+      <p class="ver">Version 18.11 · 05h20</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -1086,7 +1086,7 @@ document.querySelectorAll("#armsSeg button").forEach(b => b.onclick = () => { cf
 document.querySelectorAll("#trigSeg button").forEach(b => b.onclick = () => { cfg.trigger = b.dataset.t; save(); renderCfg(); });
 document.querySelectorAll("#camSeg button").forEach(b => b.onclick = () => { cfg.facing = b.dataset.f; save(); renderCfg(); });
 /* ---------- Programme (exercices enchaînés) ---------- */
-function exoName(e) { return EXOS[e]?.name || e; }
+function exoName(e) { return e && e.startsWith("g:") ? (GUIDED[e.slice(2)]?.name || e) : EXOS[e]?.name || e; }
 function blockOf() { return { exo: cfg.exo, reps: cfg.reps, sets: cfg.sets, arms: cfg.arms, load: (cfg.loads || {})[cfg.exo] || 0 }; }
 // Tonnage prévu : séries × répétitions × charge (×2 pour deux haltères ou deux bras)
 function plannedTon(b) {
@@ -1728,7 +1728,7 @@ $("minusBtn").onclick = () => {
   if (reps > 0) { reps--; updateCount(); beep(400, 0.08, 0.2); }
 };
 $("endSetBtn").onclick = () => { resumeWorkout(true); say("Série terminée"); finishSet(); };
-function stopAction() { resumeWorkout(true); if (reps > 0 && !restTimer) pushSet(); endWorkout(); }
+function stopAction() { if (RUN) RUN.queue = []; resumeWorkout(true); if (reps > 0 && !restTimer) pushSet(); endWorkout(); }
 // Arrêter : appui maintenu ~1 s (évite les arrêts par erreur)
 (() => {
   const b = $("stopBtn"); let t = null;
@@ -1840,7 +1840,7 @@ function endWorkout() {
   const sessions = loadSessions(), before = computeRecords(sessions);
   const IC_T = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
   $("doneRecs").innerHTML = exos.map(e => { const b = Math.max(...history.filter(h => h.exo === e).map(h => h.best)); return b > 0 && b > (before[e] || 0) ? `<span>${IC_T}Record ${exoName(e)} : ${b}${EXOS[e]?.timed ? " s" : ""}</span>` : ""; }).join("");
-  if (history.some(h => h.n > 0)) { sessions.push({ t: workoutStart || Date.now(), dur, kcal, ton, sets: history.map(h => ({ exo: h.exo, n: h.n, best: h.best, sec: h.sec, kg: h.kg, ton: h.ton, txt: h.txt })) }); saveSessions(sessions); }
+  if (history.some(h => h.n > 0)) { sessions.push({ run: RUN?.id, t: workoutStart || Date.now(), dur, kcal, ton, sets: history.map(h => ({ exo: h.exo, n: h.n, best: h.best, sec: h.sec, kg: h.kg, ton: h.ton, txt: h.txt })) }); saveSessions(sessions); }
   say(`Bravo ! ${total} ${unit} au total`);
   const exNames = [...new Set(history.map(h => exoName(h.exo)))];
   const hh = new Date().getHours();
@@ -1867,7 +1867,7 @@ function endWorkout() {
   $("doneBadges").innerHTML = (ton ? `<span class="tonb">${IC_W}Tonnage total : <b>${ton.toLocaleString("fr-FR")} kg</b></span>` : "") + (st ? `<span>${IC_F}${st} jour${st > 1 ? "s" : ""} d'affilée</span>` : "") +
     (cfg.goalSessions ? `<span>${IC_G}Semaine : ${weekSessions(S2)} / ${cfg.goalSessions} séances${weekSessions(S2) >= cfg.goalSessions ? " ✓" : ""}</span>` : "");
   lastShare = { kcal: cfg.weight ? kcal : 0, ton, date: new Date(workoutStart || Date.now()), total, unit, sets: history.length, mins: dur ? Math.max(1, Math.round(dur / 60000)) : 0, history: history.slice(), streak: st };
-  show("done");
+  if (!continueRun({ title: $("doneTitle").textContent, html: $("summary").innerHTML, kcal, reps: total && !onlyTimed ? total : 0, work: 0 })) show("done");
 }
 
 
@@ -2184,7 +2184,7 @@ function planFor(exo, p = cfg.profile) {
 }
 // Fréquence recommandée (ACSM) : 2–3 séances/semaine débutant, 3–4 intermédiaire, 4–5 avancé
 function weeklySessionsFor(p) { return [2, 3, 4][(p?.level || 2) - 1]; }
-function weekSessions(S) { const w = weekStart(); return S.filter(s => s.t >= w).length; }
+function weekSessions(S) { const w = weekStart(); return new Set(S.filter(s => s.t >= w).map(s => s.run || s.t)).size; }
 function weeklyGoalFor(p) {
   const base = [150, 300, 500][(p?.level || 2) - 1], f = p?.goal === "endurance" || p?.goal === "perte" ? 1.3 : p?.goal === "force" ? 0.8 : 1;
   return Math.round(base * f / 25) * 25;
@@ -2335,12 +2335,15 @@ function suggestPrograms() {
   if (!out.length && mine.length >= 2) out.push({ name: "Mon circuit", rest, blocks: mine.slice(0, 4).map(blockFor), sug: true });
   return out;
 }
+const isG = b => b.exo?.startsWith("g:");
+const gBlockSec = b => stepsDur(gdSteps(b.exo.slice(2), { ...gdP(b.exo.slice(2)), ...(b.p || {}) }));
 function progMinutes(p) {
-  const r = p.rest || cfg.rest, sets = p.blocks.reduce((a, b) => a + b.sets, 0);
-  const work = p.blocks.reduce((a, b) => a + b.sets * (EXOS[b.exo]?.timed ? (b.reps || 45) : (b.reps || 15) * 2.5 * (b.exo === "curls" && b.arms === "sep" ? 2 : 1)), 0);
-  return Math.max(1, Math.round((work + (sets - 1) * r + cfg.delay) / 60));
+  const cam = p.blocks.filter(b => !isG(b)), r = p.rest || cfg.rest, sets = cam.reduce((a, b) => a + b.sets, 0);
+  const work = cam.reduce((a, b) => a + b.sets * (EXOS[b.exo]?.timed ? (b.reps || 45) : (b.reps || 15) * 2.5 * (b.exo === "curls" && b.arms === "sep" ? 2 : 1)), 0);
+  const g = p.blocks.filter(isG).reduce((a, b) => a + gBlockSec(b), 0);
+  return Math.max(1, Math.round((work + Math.max(0, sets - 1) * r + g + cfg.delay) / 60));
 }
-const blkLabel = b => `${b.sets}×${EXOS[b.exo]?.timed ? (b.reps ? b.reps + "s" : "max") : (b.reps || "max")}`;
+const blkLabel = b => isG(b) ? `≈ ${fmtDur(gBlockSec(b))}` : `${b.sets}×${EXOS[b.exo]?.timed ? (b.reps ? b.reps + "s" : "max") : (b.reps || "max")}`;
 function progCard(p, actions) {
   return `<div class="card pcard2"><div class="pc-h"><span class="exo-ic${p.sug ? " on" : ""}">${IC_LIST}</span><div class="pc-t"><b>${p.name.replace(/</g, "&lt;")}</b><small>${p.blocks.length} exercice${p.blocks.length > 1 ? "s" : ""} · ≈ ${progMinutes(p)} min · repos ${fmtRest(p.rest || cfg.rest)}</small></div></div>
     <div class="pc-ex">${p.blocks.map(b => `<span>${exoName(b.exo)}<b>${blkLabel(b)}</b></span>`).join("")}</div><div class="pc-actions">${actions}</div></div>`;
@@ -2360,11 +2363,45 @@ function renderProgTab() {
   P.querySelectorAll("[data-cust]").forEach(b => b.onclick = () => openPE(sugCache[+b.dataset.cust], -1));
   $("newProg").onclick = () => openPE({ name: "", rest: planFor("pompes").rest, blocks: [] }, -1);
 }
+// Un programme peut mêler exercices caméra et séances guidées : on l'enchaîne en étapes.
+let RUN = null;
 function startProgram(p) {
   if (!p?.blocks?.length) return;
-  runOverride = p.blocks.map(b => ({ ...b, rest: b.rest || p.rest || cfg.rest }));
+  const segs = [];
+  for (const b of p.blocks) {
+    if (isG(b)) segs.push({ type: "g", key: b.exo.slice(2), p: { ...gdP(b.exo.slice(2)), ...(b.p || {}) } });
+    else { const last = segs[segs.length - 1], blk = { ...b, rest: b.rest || p.rest || cfg.rest }; if (last?.type === "cam") last.blocks.push(blk); else segs.push({ type: "cam", blocks: [blk] }); }
+  }
   $("progEdit").classList.remove("on");
-  $("startBtn").click();
+  RUN = segs.length > 1 ? { id: Date.now(), name: p.name || "Programme", start: Date.now(), parts: [], queue: segs.slice(1) } : null;
+  runSegment(segs[0]);
+}
+function runSegment(seg) {
+  if (seg.type === "cam") { runOverride = seg.blocks; $("startBtn").click(); }
+  else startGuided(seg.key, seg.p);
+}
+// appelé à la fin de chaque étape : enchaîne la suivante, ou affiche le résumé global
+function continueRun(part) {
+  if (!RUN) return false;
+  RUN.parts.push(part);
+  if (RUN.queue.length) {
+    const seg = RUN.queue.shift();
+    const nm = seg.type === "g" ? GUIDED[seg.key].name : exoName(seg.blocks[0].exo);
+    setTimeout(() => say(`Étape suivante : ${nm}`), 1200);
+    setTimeout(() => runSegment(seg), 2500);
+    return true;
+  }
+  const R = RUN; RUN = null;
+  const kcal = R.parts.reduce((a, x) => a + (x.kcal || 0), 0), reps = R.parts.reduce((a, x) => a + (x.reps || 0), 0), work = R.parts.reduce((a, x) => a + (x.work || 0), 0);
+  $("doneTitle").textContent = R.name;
+  $("statTime").textContent = fmtClock(Date.now() - R.start);
+  $("statKcal").textContent = kcal ? "≈" + kcal : "—";
+  if (reps) { $("statTotal").textContent = reps; $("statUnit").textContent = "répétitions"; $("statTotal").parentElement.querySelector(".stat-lab").lastChild.textContent = " Total"; }
+  else { $("statTotal").textContent = fmtClock(work * 1000); $("statTotal").parentElement.querySelector(".stat-lab").lastChild.textContent = " Effort"; }
+  $("summary").innerHTML = R.parts.map(x => `<div class="sec-k" style="margin:8px 0 2px">${x.title}</div>${x.html}`).join("");
+  $("deleteBtn").style.display = "none";
+  say(`Programme terminé. Bravo !`);
+  return false;
 }
 function setPickTab(t) {
   document.querySelectorAll("#pickTabs button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
@@ -2378,9 +2415,16 @@ document.querySelectorAll("#pickTabs button").forEach(b => b.onclick = () => set
 // Éditeur
 let pe = null;
 function openPE(p, idx) { pe = { name: p.name || "", rest: p.rest || cfg.rest, blocks: p.blocks.map(b => ({ ...b })), idx }; renderPE(); $("progEdit").classList.add("on"); }
+function guidedRow(b, i) {
+  const k = b.exo.slice(2), G = GUIDED[k], p = { ...gdP(k), ...(b.p || {}) };
+  const st = (f, lab, d) => p[f] == null ? "" : `<em>${lab}</em><div class="stepper"><button data-gf="${f}" data-i="${i}" data-d="${-d}">−</button><b>${p[f]}</b><button data-gf="${f}" data-i="${i}" data-d="${d}">+</button></div>`;
+  return `<div class="blk"><span class="exo-ic" style="background:${G.color};color:#052e16"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${G.icon}</svg></span><div class="bt"><b>${i + 1}. ${G.name}</b><small>Sans caméra · ≈ ${fmtDur(gBlockSec(b))}</small></div>
+    <div class="mv"><button data-up="${i}" ${i ? "" : "disabled"} aria-label="Monter">▲</button><button data-dn="${i}" ${i < pe.blocks.length - 1 ? "" : "disabled"} aria-label="Descendre">▼</button></div>
+    <div class="tune">${st("rounds", G.labels.rounds?.split(" ")[0] || "Tours", 1)}${st("work", "Effort s", 5)}<span class="mut" style="font-size:12px">≈ ${fmtDur(gBlockSec(b))}</span><button class="rm" data-rm="${i}" aria-label="Retirer">✕</button></div></div>`;
+}
 function renderPE() {
   $("peName").value = pe.name; $("peRest").textContent = fmtRest(pe.rest);
-  $("peList").innerHTML = pe.blocks.length ? pe.blocks.map((b, i) => { const X = EXOS[b.exo], t = X.timed;
+  $("peList").innerHTML = pe.blocks.length ? pe.blocks.map((b, i) => { if (isG(b)) return guidedRow(b, i); const X = EXOS[b.exo], t = X.timed;
     return `<div class="blk"><span class="exo-ic on">${svgIc(X.icon)}</span><div class="bt"><b>${i + 1}. ${X.name}</b><small>${X.muscle}</small></div>
       <div class="mv"><button data-up="${i}" ${i ? "" : "disabled"} aria-label="Monter">▲</button><button data-dn="${i}" ${i < pe.blocks.length - 1 ? "" : "disabled"} aria-label="Descendre">▼</button></div>
       <div class="tune"><em>Séries</em><div class="stepper"><button data-f="sets" data-i="${i}" data-d="-1">−</button><b>${b.sets}</b><button data-f="sets" data-i="${i}" data-d="1">+</button></div>
@@ -2388,13 +2432,14 @@ function renderPE() {
       <button class="rm" data-rm="${i}" aria-label="Retirer">✕</button></div></div>`; }).join("")
     : `<div class="pe-empty">Ajoute des exercices : ils s'enchaîneront dans cet ordre, avec ${fmtRest(pe.rest)} de repos entre chaque série.</div>`;
   const tot = { name: pe.name, rest: pe.rest, blocks: pe.blocks };
-  $("peSum").innerHTML = pe.blocks.length ? `${pe.blocks.length} exercice${pe.blocks.length > 1 ? "s" : ""} · ${pe.blocks.reduce((a, b) => a + b.sets, 0)} séries · ≈ ${progMinutes(tot)} min${pe.idx >= 0 ? ` · <button class="rest-stop" id="peDel">Supprimer ce programme</button>` : ""}` : "";
+  $("peSum").innerHTML = pe.blocks.length ? `${pe.blocks.length} exercice${pe.blocks.length > 1 ? "s" : ""} · ${pe.blocks.filter(b => !isG(b)).reduce((a, b) => a + b.sets, 0)} séries · ≈ ${progMinutes(tot)} min${pe.idx >= 0 ? ` · <button class="rest-stop" id="peDel">Supprimer ce programme</button>` : ""}` : "";
   $("peStart").disabled = $("peSave").disabled = !pe.blocks.length;
   $("peSave").textContent = "Enregistrer";
   const L = $("peList");
   L.querySelectorAll("[data-up]").forEach(b => b.onclick = () => { const i = +b.dataset.up; [pe.blocks[i - 1], pe.blocks[i]] = [pe.blocks[i], pe.blocks[i - 1]]; renderPE(); });
   L.querySelectorAll("[data-dn]").forEach(b => b.onclick = () => { const i = +b.dataset.dn; [pe.blocks[i + 1], pe.blocks[i]] = [pe.blocks[i], pe.blocks[i + 1]]; renderPE(); });
   L.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { pe.blocks.splice(+b.dataset.rm, 1); renderPE(); });
+  L.querySelectorAll("[data-gf]").forEach(b => b.onclick = () => { const B = pe.blocks[+b.dataset.i], f = b.dataset.gf, k = B.exo.slice(2); B.p = { ...gdP(k), ...(B.p || {}) }; const lim = f === "rounds" ? [1, 20] : [5, 600]; B.p[f] = Math.min(lim[1], Math.max(lim[0], B.p[f] + +b.dataset.d)); renderPE(); });
   L.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { const B = pe.blocks[+b.dataset.i], f = b.dataset.f, lim = f === "sets" ? [1, 10] : [0, EXOS[B.exo].timed ? 600 : 100]; B[f] = Math.min(lim[1], Math.max(lim[0], (B[f] || 0) + +b.dataset.d)); renderPE(); });
   const del = $("peDel"); if (del) del.onclick = () => { if (del.dataset.armed) { cfg.saved.splice(pe.idx, 1); save(); $("progEdit").classList.remove("on"); renderProgTab(); } else { del.dataset.armed = 1; del.textContent = "Confirmer la suppression"; } };
 }
@@ -2402,8 +2447,9 @@ $("peName").oninput = () => pe.name = $("peName").value;
 document.querySelectorAll("[data-pr]").forEach(b => b.onclick = () => { pe.rest = Math.min(600, Math.max(15, pe.rest + +b.dataset.pr)); renderPE(); });
 $("peClose").onclick = () => $("progEdit").classList.remove("on");
 $("peAdd").onclick = () => {
-  $("exoPickGrid").innerHTML = Object.entries(EXOS).map(([k, x]) => `<button class="exo" data-add="${k}"><span class="exo-ic">${svgIc(x.icon)}</span><b>${x.name}</b><small>${x.muscle}</small></button>`).join("");
-  $("exoPickGrid").querySelectorAll("[data-add]").forEach(b => b.onclick = () => { pe.blocks.push(blockFor(b.dataset.add)); $("exoPick").classList.remove("on"); renderPE(); setTimeout(() => $("peList").scrollTop = 1e5, 50); });
+  $("exoPickGrid").innerHTML = `<div class="sec-k" style="grid-column:1/-1">Avec la caméra</div>` + Object.entries(EXOS).map(([k, x]) => `<button class="exo" data-add="${k}"><span class="exo-ic">${svgIc(x.icon)}</span><b>${x.name}</b><small>${x.muscle}</small></button>`).join("")
+    + `<div class="sec-k" style="grid-column:1/-1">Sans caméra · coach vocal</div>` + Object.entries(GUIDED).map(([k, g]) => `<button class="exo" data-add="g:${k}"><span class="exo-ic" style="background:${g.color};color:#052e16"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${g.icon}</svg></span><b>${g.name}</b><small>≈ ${fmtDur(stepsDur(gdSteps(k)))}</small></button>`).join("");
+  $("exoPickGrid").querySelectorAll("[data-add]").forEach(b => b.onclick = () => { pe.blocks.push(b.dataset.add.startsWith("g:") ? { exo: b.dataset.add, sets: 1, p: { ...gdP(b.dataset.add.slice(2)) } } : blockFor(b.dataset.add)); $("exoPick").classList.remove("on"); renderPE(); setTimeout(() => $("peList").scrollTop = 1e5, 50); });
   $("exoPick").classList.add("on");
 };
 $("exoPickClose").onclick = () => $("exoPick").classList.remove("on");
@@ -2524,10 +2570,10 @@ const G2 = { key: null, steps: [], i: 0, endAt: 0, left: 0, paused: false, start
 const C2 = 339.29;
 function stepTitle(st) { return st.kind === "prep" ? "Prépare-toi" : st.kind === "rest" && !st.m ? "Repos" : MOVES[st.m]?.[0] || ""; }
 function nextWork(i) { for (let j = i + 1; j < G2.steps.length; j++) if (G2.steps[j].kind === "work" || G2.steps[j].m) return G2.steps[j]; return null; }
-function startGuided(key) {
+function startGuided(key, pOverride) {
   beep(1, 0.01, 0.001); say(" ");                 // déverrouille l'audio (geste utilisateur)
   keepAwake();
-  Object.assign(G2, { key, steps: gdSteps(key), i: -1, paused: false, start: Date.now(), pausedMs: 0, said: {}, workSec: 0 });
+  Object.assign(G2, { key, steps: gdSteps(key, pOverride || gdP(key)), i: -1, paused: false, start: Date.now(), pausedMs: 0, said: {}, workSec: 0 });
   $("gpName").textContent = GUIDED[key].name;
   $("gpPause").classList.remove("on"); $("gpLockOv").classList.remove("on");
   show("guided");
@@ -2592,7 +2638,7 @@ function holdBtn(b, ms, fn) {
   ["pointerup", "pointerleave", "pointercancel"].forEach(ev => b.addEventListener(ev, () => { clearTimeout(t); b.classList.remove("pressing"); }));
   b.addEventListener("contextmenu", e => e.preventDefault());
 }
-holdBtn($("gpStop"), 900, () => finishGuided(true));
+holdBtn($("gpStop"), 900, () => { if (RUN) RUN.queue = []; finishGuided(true); });
 $("gpLock").onclick = () => $("gpLockOv").classList.add("on");
 holdBtn($("gpUnlock"), 900, () => $("gpLockOv").classList.remove("on"));
 function finishGuided(stopped) {
@@ -2603,7 +2649,7 @@ function finishGuided(stopped) {
   const dur = Date.now() - G2.start - G2.pausedMs, w = cfg.weight || cfg.profile?.weight || 0;
   const kcal = w ? Math.round(G.met * w * (G2.workSec / 3600) + 1.5 * w * Math.max(0, dur / 1000 - G2.workSec) / 3600) : 0;
   const S = loadSessions(), t = G2.start;
-  if (G2.workSec > 5) { S.push({ t, dur, kcal, guided: { key: G2.key, name: G.name, work: G2.workSec }, sets: [] }); saveSessions(S); lastSessT = t; } else lastSessT = 0;
+  if (G2.workSec > 5) { S.push({ run: RUN?.id, t, dur, kcal, guided: { key: G2.key, name: G.name, work: G2.workSec }, sets: [] }); saveSessions(S); lastSessT = t; } else lastSessT = 0;
   say(stopped ? "Séance arrêtée. Bien joué quand même" : `Bravo ! ${G.name} terminé`);
   // résumé (même écran que les séances avec caméra)
   $("doneDate").textContent = new Date(t).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
@@ -2620,7 +2666,7 @@ function finishGuided(stopped) {
   document.querySelectorAll("#rpe button").forEach(b => b.classList.remove("on")); $("progTip").hidden = true;
   $("deleteBtn").textContent = "Supprimer"; delArmed = false; $("deleteBtn").style.display = lastSessT ? "" : "none";
   lastShare = { kcal, ton: 0, date: new Date(t), total: Math.round(G2.workSec / 60) || G2.workSec, unit: G2.workSec >= 60 ? "minutes d'effort" : "secondes d'effort", sets: works, mins: Math.max(1, Math.round(dur / 60000)), history: [], streak: stk };
-  show("done");
+  if (!continueRun({ title: G.name, html: $("summary").innerHTML, kcal, reps: 0, work: G2.workSec })) show("done");
 }
 
 /* ---------- Démarrage ---------- */
