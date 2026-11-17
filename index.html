@@ -612,6 +612,9 @@
     .sheet.full .sheet-box{overflow-y:auto}
     #peList{flex:none;overflow:visible;min-height:0}
   }
+  .disclaimer{font-size:11.5px;line-height:1.45;color:#71717a;border-top:1px solid #ffffff12;padding-top:10px;margin-top:4px}
+  .prog-tip{border-color:#22c55e55;background:linear-gradient(160deg,#22c55e1a,#22c55e05)}
+  .prog-tip[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -727,7 +730,7 @@
       <div class="reg-row"><div class="streak"><b id="streakN">0</b><span id="streakLab">jour d'affilée</span></div><div class="cal" id="cal"></div></div>
     </div>
     <div class="hcard">
-      <div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Objectif de la semaine <span>toutes répétitions</span></div>
+      <div class="hc-title"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Objectif de la semaine <span>2–3 séances conseillées pour débuter</span></div>
       <div class="goal-row">
         <div class="goal-main"><div class="goal-txt"><b id="goalDone">0</b><span id="goalOf"></span></div><div class="gbar"><i id="goalBar"></i></div></div>
         <div class="stepper goal-step"><button id="goalMinus" aria-label="moins"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button id="goalPlus" aria-label="plus"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div>
@@ -765,6 +768,7 @@
       <div class="stat"><div class="stat-lab"><svg class="ic xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Calories</div><div class="stat-num" id="statKcal">0</div><div class="stat-unit">kcal estimées</div></div>
     </div>
     <div class="card sets-card"><div class="sec-k" style="margin:0 0 6px">Séries</div><div id="summary"></div></div>
+    <div class="card sets-card prog-tip" id="progTip" hidden></div>
     <div class="card sets-card"><div class="sec-k" style="margin:0 0 8px">Comment c'était ?</div><div class="rpe" id="rpe"><button data-r="1">Facile</button><button data-r="2">Bien</button><button data-r="3">Dur</button><button data-r="4">À bloc</button></div></div>
   </div>
   <div class="done-foot">
@@ -808,8 +812,9 @@
       <p id="tipPlace"></p>
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main » :</b> montre ta main ouverte face à l'écran, 5 doigts écartés vers le haut, assez près de la caméra, et garde-la immobile un peu plus d'une seconde. Le délai de départ démarre ensuite. Le même geste pendant une pause lance la série suivante.</p>
+      <p class="disclaimer">Repères généraux inspirés des recommandations de l’ACSM (American College of Sports Medicine). Ils ne remplacent ni un coach ni un avis médical : arrête-toi en cas de douleur, et demande conseil à un professionnel de santé si tu as un problème de santé ou une blessure.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 18.11 · 03h15</p>
+      <p class="ver">Version 18.11 · 03h40</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -899,7 +904,7 @@ const EXOS = {
     hidden: "Corps non visible : recule un peu",
     tip: "Gainage chronométré. Téléphone au sol à 2 m, <b>de profil</b>. Tout le corps, des épaules aux pieds, doit être visible. Le chrono n'avance que si ton corps est droit et à l'horizontale." }
 };
-const DEF = { onboarded: false, profile: null, eco: false, perExo: {}, weight: 0, loads: {}, goal: 0, saved: [], prog: [], arms: "sep", trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
+const DEF = { goalSessions: 0, onboarded: false, profile: null, eco: false, perExo: {}, weight: 0, loads: {}, goal: 0, saved: [], prog: [], arms: "sep", trigger: "timer", exo: "pompes", reps: 12, sets: 4, rest: 90, delay: 10, voice: true, facing: "user" };
 let cfg = DEF;
 try { cfg = { ...DEF, ...JSON.parse(localStorage.getItem("pompesCfg") || "{}") }; } catch {}
 const save = () => { try { rememberExo(); localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {} };
@@ -1659,7 +1664,41 @@ function patchLastSession(fn) {
 document.querySelectorAll("#rpe button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#rpe button").forEach(x => x.classList.toggle("on", x === b));
   patchLastSession((S, i) => { S[i].rpe = +b.dataset.r; });
+  suggestProgression(+b.dataset.r);
 });
+// Progression : « Facile » deux séances de suite pour un exercice → on propose un peu plus.
+// « À bloc » deux fois de suite → on propose de rester au même niveau (ou de réduire un peu).
+function nextStep(exo) {
+  const X = EXOS[exo], m = { sets: cfg.sets, reps: cfg.reps, rest: cfg.rest, load: (cfg.loads || {})[exo] || 0, ...((cfg.perExo || {})[exo] || {}) };
+  if (X.load && m.load) return { ...m, load: m.load + (m.load >= 20 ? 2 : 1), what: `${X.load === "dumbbell" ? "Haltère" : "Charge"} ${m.load} → ${m.load + (m.load >= 20 ? 2 : 1)} kg` };
+  if (X.timed) return { ...m, reps: (m.reps || 30) + 5, what: `${m.reps || 30} → ${(m.reps || 30) + 5} s` };
+  if (!m.reps) return null;
+  return { ...m, reps: m.reps + 2, what: `${m.sets} × ${m.reps} → ${m.sets} × ${m.reps + 2}` };
+}
+function suggestProgression(rpe) {
+  const tip = $("progTip"), S = loadSessions(), cur = S.find(x => x.t === lastSessT);
+  tip.hidden = true; if (!cur) return;
+  const exos = [...new Set(cur.sets.map(x => x.exo))];
+  const prevRpe = e => { for (let i = S.length - 1; i >= 0; i--) if (S[i].t !== lastSessT && S[i].sets.some(x => x.exo === e)) return S[i].rpe; return null; };
+  if (rpe === 1) {
+    const ups = exos.filter(e => prevRpe(e) === 1).map(e => ({ e, n: nextStep(e) })).filter(x => x.n);
+    if (!ups.length) return;
+    tip.innerHTML = `<div class="sec-k" style="margin:0 0 6px">Prêt pour la suite</div><p class="mut" style="margin-bottom:8px">Deux séances faciles de suite : tu peux augmenter un peu.</p>` +
+      ups.map(u => `<div class="row" style="justify-content:space-between;padding:4px 0"><span><b>${exoName(u.e)}</b> · ${u.n.what}</span></div>`).join("") +
+      `<button class="go" id="applyProg" style="margin-top:8px;padding:11px"><span>Appliquer pour la prochaine fois</span></button>`;
+    tip.hidden = false;
+    $("applyProg").onclick = () => {
+      cfg.perExo = cfg.perExo || {};
+      for (const u of ups) { const { what, ...v } = u.n; cfg.perExo[u.e] = v; if (v.load != null) cfg.loads = { ...cfg.loads, [u.e]: v.load }; }
+      const m = cfg.perExo[cfg.exo]; if (m) { cfg.sets = m.sets; cfg.reps = m.reps; cfg.rest = m.rest; }
+      try { localStorage.setItem("pompesCfg", JSON.stringify(cfg)); } catch {}
+      tip.innerHTML = `<div class="sec-k" style="margin:0">C'est noté ✓</div><p class="mut">Tes prochains objectifs sont mis à jour.</p>`;
+    };
+  } else if (rpe === 4 && exos.some(e => prevRpe(e) === 4)) {
+    tip.innerHTML = `<div class="sec-k" style="margin:0 0 6px">Écoute ton corps</div><p class="mut">Deux séances « à bloc » de suite : garde le même objectif la prochaine fois, ou réduis un peu les répétitions. La progression vient aussi de la récupération.</p>`;
+    tip.hidden = false;
+  }
+}
 $("deleteBtn").onclick = () => {
   if (!delArmed) { delArmed = true; $("deleteBtn").textContent = "Confirmer ?"; return; }
   patchLastSession((S, i) => S.splice(i, 1)); lastSessT = 0; goTo("home");
@@ -1732,7 +1771,7 @@ function endWorkout() {
     return `<div class="setbar"><span>${exNames.length > 1 ? exoName(r.exo) + " " : "Série "}${cnt2[r.exo]}</span><div class="bar"><i class="${over ? "over" : ""}" style="width:${pct}%"></i></div><b>${r.n}${EXOS[r.exo]?.timed ? " s" : ""}${r.target ? `<small style="color:#71717a;font-size:13px">/${r.target}</small>` : ""}</b></div>`;
   }).join("") || '<div class="mut">Aucune série enregistrée.</div>';
   lastSessT = history.some(h => h.n > 0) ? (workoutStart || 0) : 0;
-  document.querySelectorAll("#rpe button").forEach(b => b.classList.remove("on"));
+  document.querySelectorAll("#rpe button").forEach(b => b.classList.remove("on")); $("progTip").hidden = true;
   $("deleteBtn").textContent = "Supprimer"; delArmed = false;
   $("deleteBtn").style.display = lastSessT ? "" : "none";
   if (baseCfg) { Object.assign(cfg, baseCfg); baseCfg = null; renderCfg(); }
@@ -1742,7 +1781,7 @@ function endWorkout() {
   const IC_G = '<svg class="ic tg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
   const IC_W = '<svg class="ic tg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></svg>';
   $("doneBadges").innerHTML = (ton ? `<span class="tonb">${IC_W}Tonnage total : <b>${ton.toLocaleString("fr-FR")} kg</b></span>` : "") + (st ? `<span>${IC_F}${st} jour${st > 1 ? "s" : ""} d'affilée</span>` : "") +
-    (cfg.goal ? `<span>${IC_G}Semaine : ${wkDone} / ${cfg.goal}${wkDone >= cfg.goal ? " ✓" : ""}</span>` : "");
+    (cfg.goalSessions ? `<span>${IC_G}Semaine : ${weekSessions(S2)} / ${cfg.goalSessions} séances${weekSessions(S2) >= cfg.goalSessions ? " ✓" : ""}</span>` : "");
   lastShare = { kcal: cfg.weight ? kcal : 0, ton, date: new Date(workoutStart || Date.now()), total, unit, sets: history.length, mins: dur ? Math.max(1, Math.round(dur / 60000)) : 0, history: history.slice(), streak: st };
   show("done");
 }
@@ -1838,13 +1877,13 @@ $("doneHist").onclick = () => goTo("hist");
 
 /* ---------- Objectif de la semaine ---------- */
 function renderGoal(S = loadSessions()) {
-  const done = weekReps(S);
+  const done = weekSessions(S), g = cfg.goalSessions || 0;
   $("goalDone").textContent = done;
-  $("goalOf").textContent = cfg.goal ? `/ ${cfg.goal} répétitions` : "répétitions · aucun objectif";
-  $("goalBar").style.width = cfg.goal ? Math.min(100, done / cfg.goal * 100) + "%" : "0%";
+  $("goalOf").textContent = g ? `/ ${g} séance${g > 1 ? "s" : ""} · ${weekReps(S)} reps` : `séance${done > 1 ? "s" : ""} · aucun objectif`;
+  $("goalBar").style.width = g ? Math.min(100, done / g * 100) + "%" : "0%";
 }
-$("goalMinus").onclick = () => { cfg.goal = Math.max(0, (cfg.goal || 0) - 25); save(); renderGoal(); };
-$("goalPlus").onclick = () => { cfg.goal = Math.min(5000, (cfg.goal || 0) + 25); save(); renderGoal(); };
+$("goalMinus").onclick = () => { cfg.goalSessions = Math.max(0, (cfg.goalSessions || 0) - 1); save(); renderGoal(); };
+$("goalPlus").onclick = () => { cfg.goalSessions = Math.min(7, (cfg.goalSessions || 0) + 1); save(); renderGoal(); };
 
 /* ---------- Sauvegarde / restauration ---------- */
 async function giveFile(blob, name, title) {
@@ -1998,10 +2037,10 @@ function renderHome() {
   $("helloDate").textContent = name ? `${greet} · ${ds}` : ds.charAt(0).toUpperCase() + ds.slice(1);
   $("helloTitle").textContent = name || greet;
   // objectif de la semaine + série de jours
-  const done = weekReps(S), goal = cfg.goal || 0, st = streakOf(S), pct = goal ? Math.min(1, done / goal) : 0;
+  const done = weekSessions(S), reps = weekReps(S), goal = cfg.goalSessions || 0, st = streakOf(S), pct = goal ? Math.min(1, done / goal) : 0;
   const C = 2 * Math.PI * 36;
-  $("goalCard").innerHTML = `<div class="ring"><svg viewBox="0 0 86 86"><circle cx="43" cy="43" r="36" class="rb"/><circle cx="43" cy="43" r="36" class="rf" style="stroke-dasharray:${C};stroke-dashoffset:${C * (1 - pct)}"/></svg><b class="num">${goal ? Math.round(pct * 100) + "%" : done}</b></div>
-    <div class="goal-txt2"><div class="sec-k" style="margin:0">${goal ? "Objectif de la semaine" : "Cette semaine"}</div><div class="num big2">${done}<small>${goal ? " / " + goal : ""} reps</small></div>
+  $("goalCard").innerHTML = `<div class="ring"><svg viewBox="0 0 86 86"><circle cx="43" cy="43" r="36" class="rb"/><circle cx="43" cy="43" r="36" class="rf" style="stroke-dasharray:${C};stroke-dashoffset:${C * (1 - pct)}"/></svg><b class="num">${goal ? `${done}/${goal}` : done}</b></div>
+    <div class="goal-txt2"><div class="sec-k" style="margin:0">${goal ? "Objectif de la semaine" : "Cette semaine"}</div><div class="num big2">${done}<small>${goal ? " / " + goal : ""} séance${(goal || done) > 1 ? "s" : ""}</small></div><div class="mut" style="font-size:12.5px">${reps} répétitions cette semaine</div>
     <div class="row" style="gap:6px;flex-wrap:wrap">${st ? `<span class="pill2">🔥 ${st} jour${st > 1 ? "s" : ""} d'affilée</span>` : ""}${goal ? "" : `<span class="pill2 dim">Fixer un objectif ›</span>`}</div></div>`;
   $("goalCard").onclick = () => goTo("hist");
   // reprendre : derniers exercices + programmes enregistrés
@@ -2044,13 +2083,18 @@ const lvlIcon = k => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${[
 // séries × répétitions conseillées selon le niveau et l'objectif
 function planFor(exo, p = cfg.profile) {
   const lvl = p?.level || 2, goal = p?.goal || "forme", X = EXOS[exo];
-  let reps = (BASE[exo] || [10, 12, 15])[lvl - 1], sets = [3, 4, 4][lvl - 1], rest = [90, 75, 60][lvl - 1];
-  if (goal === "force") { reps = X?.timed ? Math.round(reps * 1.2) : Math.max(4, Math.round(reps * 0.6)); sets += 1; rest = 120; }
-  if (goal === "endurance") { reps = Math.round(reps * 1.3); sets = 3; rest = 45; }
-  if (goal === "perte") { reps = Math.round(reps * 1.2); rest = 45; }
+  // Repères ACSM : débutant 1–3 séries, plus de séries avec l'expérience ; endurance > 15 reps et pauses < 90 s ;
+  // force : moins de répétitions, plus de séries, pauses plus longues. Valeurs générales, à ajuster au ressenti.
+  let reps = (BASE[exo] || [10, 12, 15])[lvl - 1], sets = [2, 3, 3][lvl - 1], rest = [90, 75, 60][lvl - 1];
+  if (goal === "force") { reps = X?.timed ? Math.round(reps * 1.2) : Math.max(4, Math.round(reps * 0.6)); sets += 1; rest = 150; }
+  if (goal === "endurance") { reps = X?.timed ? Math.round(reps * 1.3) : Math.max(16, Math.round(reps * 1.3)); rest = 45; }
+  if (goal === "perte") { reps = Math.round(reps * 1.2); rest = 60; }
   if (X?.timed) reps = Math.max(10, Math.round(reps / 5) * 5);
   return { sets, reps, rest };
 }
+// Fréquence recommandée (ACSM) : 2–3 séances/semaine débutant, 3–4 intermédiaire, 4–5 avancé
+function weeklySessionsFor(p) { return [2, 3, 4][(p?.level || 2) - 1]; }
+function weekSessions(S) { const w = weekStart(); return S.filter(s => s.t >= w).length; }
 function weeklyGoalFor(p) {
   const base = [150, 300, 500][(p?.level || 2) - 1], f = p?.goal === "endurance" || p?.goal === "perte" ? 1.3 : p?.goal === "force" ? 0.8 : 1;
   return Math.round(base * f / 25) * 25;
@@ -2059,7 +2103,7 @@ function applyProfile() {
   const p = cfg.profile; if (!p) return;
   cfg.perExo = cfg.perExo || {};
   for (const e of p.exos) { const pl = planFor(e); cfg.perExo[e] = { ...pl, load: (cfg.loads || {})[e] || 0 }; }
-  cfg.goal = weeklyGoalFor(p); cfg.weight = p.weight || cfg.weight;
+  cfg.goal = weeklyGoalFor(p); cfg.goalSessions = weeklySessionsFor(p); cfg.weight = p.weight || cfg.weight;
   cfg.exo = p.exos[0] || cfg.exo;
   const m = cfg.perExo[cfg.exo]; if (m) { cfg.sets = m.sets; cfg.reps = m.reps; cfg.rest = m.rest; }
 }
@@ -2107,9 +2151,10 @@ function renderOnb() {
   } else {
     const wg = weeklyGoalFor(op);
     html = `<h1>Ton plan${op.name ? ", " + op.name.replace(/</g, "") : ""}</h1><p class="lead">${LEVELS[op.level - 1].n} · ${GOALS.find(g => g.k === op.goal).n}</p>
-      <div class="card goal-card" style="cursor:default"><div class="ring"><svg viewBox="0 0 86 86"><circle cx="43" cy="43" r="36" class="rb"/><circle cx="43" cy="43" r="36" class="rf" style="stroke-dasharray:226;stroke-dashoffset:150"/></svg><b class="num">7j</b></div><div class="goal-txt2"><div class="sec-k" style="margin:0">Objectif par semaine</div><div class="num big2">${wg}<small> reps</small></div></div></div>
+      <div class="card goal-card" style="cursor:default"><div class="ring"><svg viewBox="0 0 86 86"><circle cx="43" cy="43" r="36" class="rb"/><circle cx="43" cy="43" r="36" class="rf" style="stroke-dasharray:226;stroke-dashoffset:150"/></svg><b class="num">${weeklySessionsFor(op)}×</b></div><div class="goal-txt2"><div class="sec-k" style="margin:0">Rythme conseillé</div><div class="num big2">${weeklySessionsFor(op)}<small> séances / semaine</small></div><div class="mut" style="font-size:12.5px">≈ ${wg} répétitions par semaine</div></div></div>
       <div class="card">${op.exos.map(e => { const pl = planFor(e, op); return `<div class="plan-row"><span class="exo-ic">${svgIc(EXOS[e].icon)}</span><span>${EXOS[e].name}</span><b>${pl.sets} × ${pl.reps}${EXOS[e].timed ? " s" : ""}</b><small class="mut">· ${fmtRest(pl.rest)}</small></div>`; }).join("")}</div>
-      <p class="mut" style="text-align:center">Modifiable à tout moment : Paramètres › Mon profil</p>`;
+      <p class="mut" style="text-align:center">Modifiable à tout moment : Paramètres › Mon profil</p>
+      <p class="disclaimer">Repères généraux inspirés des recommandations de l’ACSM (American College of Sports Medicine). Ils ne remplacent ni un coach ni un avis médical : arrête-toi en cas de douleur, et demande conseil à un professionnel de santé si tu as un problème de santé ou une blessure.</p>`;
     next = onbEdit ? "Enregistrer" : "C'est parti";
   }
   B.innerHTML = html; B.scrollTop = 0;
