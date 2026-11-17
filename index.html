@@ -309,6 +309,7 @@ function addRep(auto = true) {
 // Deux détecteurs indépendants : angle du coude (vue de profil) et descente des épaules
 // vers les mains (marche aussi de face). Le premier qui valide une répétition la compte.
 let dRef = null, sH = null, phaseA = "up", phaseH = "up";
+let armStart = 0, prevLm = null;
 let armed = false, armDelayEnd = 0, stillSince = 0, anchorY = null, lastCd = -1;
 const clamp = x => Math.max(0, Math.min(1, x));
 function avgY(lm, ids) {
@@ -363,10 +364,14 @@ function process(res) {
 
   if (!armed) {                                  // attend 1 s immobile, bras tendus
     phaseA = phaseH = phase = "up";
-    if (shY == null || anchorY == null || Math.abs(shY - anchorY) > 0.03) { anchorY = shY; stillSince = now; }
-    if (p > 0.3 || sides[0].v < 0.3) stillSince = now;
+    if (lastCd !== 0) {                          // fin du compte à rebours : on affiche 0 et on prévient
+      lastCd = 0; armStart = now; updateCount(); say(X.ready.replace("…", ""));
+    }
+    if (shY == null || anchorY == null || Math.abs(shY - anchorY) > 0.05) { anchorY = shY; stillSince = now; }
+    if (p > 0.4) stillSince = now;
     setStatus(X.ready);
-    if (now - stillSince > 1000) {
+    // immobile 0,7 s… ou au plus tard 4 s après la fin du compte à rebours
+    if (now - stillSince > 700 || now - armStart > 4000) {
       armed = true; dRef = sH; updateCount(); beep(1200, 0.25); say("C'est parti");
     }
     return;
@@ -410,7 +415,16 @@ function loop() {
     if (ts > lastTs) {
       lastTs = ts;
       const res = landmarker.detectForVideo(video, ts);
-      process(res); draw(res.landmarks?.[0]);
+      // lissage des points pour éviter que le squelette tremble
+      const cur = res.landmarks?.[0];
+      if (cur && prevLm) {
+        for (let i = 0; i < cur.length; i++) {
+          cur[i].x = prevLm[i].x * 0.5 + cur[i].x * 0.5;
+          cur[i].y = prevLm[i].y * 0.5 + cur[i].y * 0.5;
+        }
+      }
+      prevLm = cur ? cur.map(p => ({ x: p.x, y: p.y })) : null;
+      process(res); draw(cur);
     }
   }
   requestAnimationFrame(loop);
@@ -440,7 +454,7 @@ function renderRest() {
 }
 function nextSet() {
   clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
-  setIdx++; reps = 0; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null;
+  setIdx++; reps = 0; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up"; armed = false; armDelayEnd = 0; anchorY = null; lastCd = -1;
   updateCount(); updateSet(); beep(1200, 0.35); say(`Série ${setIdx}, mets-toi en position`);
 }
 $("restSkip").onclick = nextSet;
