@@ -404,8 +404,7 @@
     <div class="sheet-box">
       <h2>Caster sur la TV</h2>
       <p id="castWhy"></p>
-      <p><b>Solution 1 · depuis Chrome :</b> ouvre <b>mattzepolstudio.github.io/compteur-muscu</b> dans un onglet Chrome (pas l'appli installée), puis menu ⋮ → <b>Caster…</b> → ton Chromecast.</p>
-      <p><b>Solution 2 · recopie de l'écran :</b> descends le volet des réglages rapides → <b>Caster l'écran</b> (ou Smart View) → ton Chromecast. Le comptage continue normalement.</p>
+      <p><b>Solution qui marche tout de suite · recopie de l'écran :</b> descends le volet des réglages rapides → <b>Caster l'écran</b> (ou Smart View) → ton Chromecast. Le comptage continue normalement.</p>
       <p class="ver" id="castErr"></p>
       <button class="go" id="castClose"><span>OK</span></button>
     </div>
@@ -417,7 +416,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main levée » :</b> lève le bras au-dessus de la tête, main ouverte, paume face à la caméra, 5 doigts écartés, pendant 1 seconde. Le délai de départ démarre ensuite.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 17.11 · 23h15</p>
+      <p class="ver">Version 17.11 · 23h30</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -724,7 +723,7 @@ document.querySelectorAll("[data-cast]").forEach(b => b.onclick = async () => {
   catch (e) {
     setCastUI("");
     if (e?.name === "AbortError") return;           // fenêtre de choix fermée par l'utilisateur
-    castHelp(e?.name === "NotFoundError" ? "Aucun Chromecast n'a été trouvé par l'appli. Vérifie que le téléphone et le Chromecast sont sur le même Wi-Fi."
+    castHelp(e?.name === "NotFoundError" ? "Chrome sur Android ne sait pas envoyer directement cette vue vers un Chromecast (il faudrait une application Cast enregistrée auprès de Google)."
       : "Le cast direct de la vue TV n'est pas disponible ici (c'est souvent le cas depuis l'appli installée).", `${e?.name || "Erreur"} : ${e?.message || ""}`);
   }
 });
