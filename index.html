@@ -184,7 +184,7 @@
   <div class="scroll">
     <header class="hero">
       <div class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-      <div class="htxt"><h1>Compteur de muscu</h1><p>Comptage par caméra</p></div>
+      <div class="htxt"><h1>Compteur de muscu</h1><p>Comptage par caméra · v17.11-18h30</p></div>
       <button class="help" id="tipsBtn" aria-label="Conseils"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
     </header>
 
@@ -806,6 +806,7 @@ $("startBtn").onclick = async () => {
   }
   requestAnimationFrame(loop);
 };
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 $("againBtn").onclick = () => show("setup");
 </script>
 </body>
