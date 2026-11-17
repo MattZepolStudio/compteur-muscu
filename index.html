@@ -78,8 +78,8 @@
   <button class="big" id="startBtn">Commencer</button>
 
   <div class="tips">
-    <b>Placement du téléphone :</b> pose-le au sol à 1,5–2 m, <b>de profil</b> par rapport à toi, à hauteur d'épaule si possible. Tout ton corps (de la tête aux pieds) doit être visible.<br><br>
-    <b>Comment ça compte :</b> une répétition = coudes pliés (≈ 90°) puis bras tendus. Les demi-pompes ne comptent pas.<br><br>
+    <b>Placement du téléphone :</b> pose-le au sol à 1,5–2 m, <b>de profil</b> (idéal) ou <b>face à toi</b>. Tes épaules, coudes et mains doivent être bien visibles.<br><br>
+    <b>Comment ça compte :</b> une répétition = descente (coudes pliés, épaules vers le sol) puis bras tendus. La barre en bas montre ta descente : elle doit passer au vert. Les demi-pompes ne comptent pas.<br><br>
     Les boutons <b>+1 / −1</b> permettent de corriger à la main si besoin.
   </div>
 </section>
@@ -246,32 +246,57 @@ function addRep(auto = true) {
   if (!auto) beep(700, 0.08, 0.2);
 }
 
+// Deux détecteurs indépendants : angle du coude (vue de profil) et descente des épaules
+// vers les mains (marche aussi de face). Le premier qui valide une répétition la compte.
+let dRef = null, sH = null, phaseA = "up", phaseH = "up";
+const clamp = x => Math.max(0, Math.min(1, x));
+function avgY(lm, ids) {
+  const ok = ids.map(i => lm[i]).filter(p => (p.visibility ?? 0) > 0.3);
+  return ok.length ? ok.reduce((t, p) => t + p.y, 0) / ok.length : null;
+}
+function countRep() {
+  phaseA = phaseH = "up"; phase = "up";
+  const now = performance.now();
+  if (now - lastRepAt > 400) { lastRepAt = now; addRep(); }
+}
 function process(res) {
   const lm = res.landmarks?.[0];
-  if (!lm) { setStatus("Personne détectée ? Recule un peu"); posOkFrames = 0; return; }
-  const a = analyse(lm);
-  if (!a.ok) { setStatus(a.msg); posOkFrames = 0; return; }
-  smooth = smooth == null ? a.elbow : smooth * 0.6 + a.elbow * 0.4;
-  $("angle").textContent = `Coude ${Math.round(smooth)}°`;
-  const pct = Math.max(0, Math.min(1, (UP_ANGLE - smooth) / (UP_ANGLE - DOWN_ANGLE + 10)));
-  $("phaseFill").style.width = (pct * 100) + "%";
-  $("phaseFill").style.background = smooth <= DOWN_ANGLE ? "var(--acc)" : "var(--warn)";
+  if (!lm) { setStatus("Je ne te vois pas : recule un peu"); $("angle").textContent = ""; return; }
+  const ar = video.videoWidth / video.videoHeight || 1;
+  const sides = [[11,13,15],[12,14,16]].map(ix => ({ ix, v: vis(...ix.map(i => lm[i])) })).sort((a, b) => b.v - a.v);
+  const shY = avgY(lm, [11, 12]), wrY = avgY(lm, [15, 16]);
+  if (sides[0].v < 0.3 && (shY == null || wrY == null)) { setStatus("Bras et épaules non visibles"); return; }
 
-  if (!a.horizontal) { setStatus("Mets-toi en position de pompe"); posOkFrames = 0; return; }
-  posOkFrames++;
-  if (posOkFrames < 5) return;
+  // Détecteur 1 : angle du coude (corrigé du format de l'image)
+  let pA = 0;
+  if (sides[0].v >= 0.3) {
+    const [S, E, W] = sides[0].ix.map(i => ({ x: lm[i].x * ar, y: lm[i].y }));
+    const ang = angle(S, E, W);
+    smooth = smooth == null ? ang : smooth * 0.6 + ang * 0.4;
+    pA = clamp((160 - smooth) / (160 - 95));
+  }
+  // Détecteur 2 : hauteur des épaules au-dessus des poignets, comparée à la position bras tendus
+  let pH = 0;
+  if (shY != null && wrY != null) {
+    const d = wrY - shY;
+    sH = sH == null ? d : sH * 0.6 + d * 0.4;
+    if (dRef == null || sH > dRef) dRef = sH; else dRef = dRef * 0.998 + sH * 0.002;
+    if (dRef > 0.04) pH = clamp((1 - sH / dRef) / 0.4);
+  }
+
+  const p = Math.max(pA, pH);
+  $("phaseFill").style.width = (p * 100) + "%";
+  $("phaseFill").style.background = p >= 0.85 ? "var(--acc)" : "var(--warn)";
+  $("angle").textContent = `${smooth != null ? "Coude " + Math.round(smooth) + "° · " : ""}Descente ${Math.round(p * 100)}%`;
+
+  if (phaseA === "up" && pA >= 0.85) { phaseA = "down"; }
+  if (phaseH === "up" && pH >= 0.85) { phaseH = "down"; }
+  const wasDown = phase === "down";
+  phase = (phaseA === "down" || phaseH === "down") ? "down" : "up";
+  if (!wasDown && phase === "down") beep(520, 0.05, 0.12);
   setStatus(phase === "up" ? "Descends ⬇" : "Pousse ⬆");
 
-  if (phase === "up") {
-    if (smooth < DOWN_ANGLE) { phase = "down"; minAngleInRep = smooth; beep(520, 0.05, 0.12); }
-  } else {
-    minAngleInRep = Math.min(minAngleInRep, smooth);
-    if (smooth > UP_ANGLE) {
-      phase = "up";
-      const now = performance.now();
-      if (now - lastRepAt > 450) { lastRepAt = now; addRep(); }
-    }
-  }
+  if ((phaseA === "down" && pA <= 0.25) || (phaseH === "down" && pH <= 0.25)) countRep();
 }
 
 const SKEL = [[11,13],[13,15],[12,14],[14,16],[11,12],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
@@ -333,7 +358,7 @@ function renderRest() {
 }
 function nextSet() {
   clearInterval(restTimer); restTimer = null; $("rest").classList.remove("on");
-  setIdx++; reps = 0; phase = "up"; smooth = null; posOkFrames = 0;
+  setIdx++; reps = 0; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up";
   updateCount(); updateSet(); beep(1200, 0.35); say(`C'est reparti, série ${setIdx}`);
 }
 $("restSkip").onclick = nextSet;
@@ -358,7 +383,7 @@ function endWorkout() {
 /* ---------- Démarrage ---------- */
 $("startBtn").onclick = async () => {
   beep(1, 0.01, 0.001); say(" ");           // débloque l'audio sur iOS (geste utilisateur)
-  reps = 0; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0;
+  reps = 0; setIdx = 1; history = []; phase = "up"; smooth = null; posOkFrames = 0; dRef = sH = null; phaseA = phaseH = "up";
   updateCount(); updateSet(); show("workout");
   $("loading").style.display = "flex";
   try {
