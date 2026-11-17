@@ -491,7 +491,7 @@
       <p>La barre en bas de l'écran de séance passe au vert quand le mouvement est assez ample.</p>
       <p><b>Démarrage « Main » :</b> montre ta main ouverte face à l'écran, 5 doigts écartés vers le haut, assez près de la caméra, et garde-la immobile un peu plus d'une seconde. Le délai de départ démarre ensuite. Le même geste pendant une pause lance la série suivante.</p>
       <p>Les boutons <b>+1 / −1</b> corrigent à la main si besoin.</p>
-      <p class="ver">Version 18.11 · 01h05</p>
+      <p class="ver">Version 18.11 · 01h15</p>
       <button class="go" id="tipsClose"><span>OK</span></button>
     </div>
   </div>
@@ -852,7 +852,7 @@ function palmCheck(h, score = 1) {
 }
 function isOpenPalm(h) { return palmCheck(h).ok; }
 // Signal main : seul le modèle de la main tourne (pas besoin du corps), et la main doit rester immobile
-let handAnchor = null;
+let waitingHand = false, openSince = 0, handAnchor = null;
 function handSignal(ts) {
   const hr = handLm.detectForVideo(video, ts);
   const hands = hr.landmarks || [];
